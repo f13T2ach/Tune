@@ -1,0 +1,49 @@
+﻿<UserControl x:Class="Tune.Components.SwitchMusic"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Tune.Components"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="400">
+    
+    <!-- 【修复点1】使用 Viewbox 作为外层，确保任意尺寸都能完美自适应缩放 -->
+    <Viewbox Stretch="Uniform">
+        <!-- 【修复点2】内部 Grid 固定宽高为 400x400，解决了路径被裁剪错乱的问题 -->
+        <Grid Width="400" Height="400" Background="Black">
+
+            <!-- 1. LAST 按钮 -->
+            <Button x:Name="PART_LastButton">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Path Data="M 0,0 L 400,0 L 0,400 Z" Fill="White" />
+                            <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20">
+                                <ContentPresenter.Content>
+                                    <TextBlock Text="LAST" Foreground="Black" FontSize="60" FontWeight="Bold" FontFamily="Arial"/>
+                                </ContentPresenter.Content>
+                            </ContentPresenter>
+                        </Grid>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <!-- 2. NEXT 按钮 -->
+            <Button x:Name="PART_NextButton">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Path Data="M 400,400 L 400,0 L 0,400 Z" Fill="Black" Stroke="White" StrokeThickness="20" />
+                            <ContentPresenter HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="20">
+                                <ContentPresenter.Content>
+                                    <TextBlock Text="NEXT" Foreground="White" FontSize="64" FontWeight="Bold" FontFamily="Arial"/>
+                                </ContentPresenter.Content>
+                            </ContentPresenter>
+                        </Grid>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+        </Grid>
+    </Viewbox>
+</UserControl>

@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Docs/">
+    <File Path="Problems.md" />
+    <File Path="Tune-en.md" />
+    <File Path="Tune.md" />
+  </Folder>
+  <Project Path="Tune/Tune.csproj" />
+</Solution>

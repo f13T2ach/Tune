@@ -1,0 +1,94 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\Components\KnobBorder.png" />
+    <None Remove="Assets\Components\Loop\List.png" />
+    <None Remove="Assets\Components\Loop\NoLoop.png" />
+    <None Remove="Assets\Components\Loop\Random.png" />
+    <None Remove="Assets\Components\Loop\Single.png" />
+    <None Remove="Assets\Components\PauseButton.png" />
+    <None Remove="Assets\Components\PlayButton.png" />
+    <None Remove="Assets\Components\Timeline.png" />
+    <None Remove="Assets\Rajdhani\Rajdhani-Bold.ttf" />
+    <None Remove="Assets\Rajdhani\Rajdhani-Light.ttf" />
+    <None Remove="Assets\Rajdhani\Rajdhani-Medium.ttf" />
+    <None Remove="Assets\Rajdhani\Rajdhani-Regular.ttf" />
+    <None Remove="Assets\Rajdhani\Rajdhani-SemiBold.ttf" />
+    <None Remove="Assets\Tune.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="DevBase.Format" Version="1.7.3" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
+    <PackageReference Include="NAudio" Version="2.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="TagLibSharp" Version="2.3.0" />
+    <PackageReference Include="WPFLocalizeExtension" Version="3.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Components\KnobBorder.png" />
+    <Resource Include="Assets\Components\Loop\List.png" />
+    <Resource Include="Assets\Components\Loop\NoLoop.png" />
+    <Resource Include="Assets\Components\Loop\Random.png" />
+    <Resource Include="Assets\Components\Loop\Single.png" />
+    <Resource Include="Assets\Components\PauseButton.png" />
+    <Resource Include="Assets\Components\PlayButton.png" />
+    <Resource Include="Assets\Components\Timeline.png" />
+    <Resource Include="Assets\Rajdhani\Rajdhani-Bold.ttf" />
+    <Resource Include="Assets\Rajdhani\Rajdhani-Light.ttf" />
+    <Resource Include="Assets\Rajdhani\Rajdhani-Medium.ttf" />
+    <Resource Include="Assets\Rajdhani\Rajdhani-Regular.ttf" />
+    <Resource Include="Assets\Rajdhani\Rajdhani-SemiBold.ttf" />
+    <Resource Include="Assets\Tune.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Appearance\Demo\" />
+    <Folder Include="Persistence\Lifecycle\" />
+    <Folder Include="Utils\JsonUtils\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Helpers\DialogExtentions\PlaylistDialogExtention.cs" />
+    <None Include="Values\Config\LoggerConfig.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Assets\Localization\LangStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LangStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Local\TuneSettings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TuneSettings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Assets\Localization\LangStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>LangStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Local\TuneSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>TuneSettings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>

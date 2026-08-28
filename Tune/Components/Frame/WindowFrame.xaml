@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="Tune.Components.Frame.WindowFrame"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <!-- 根 Grid：背景色可通过外部控制 -->
+    <Grid Background="Black">
+        <!-- 外边框 -->
+        <Border x:Name="OuterBorder"
+                BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=UserControl}, FallbackValue=White}"
+                BorderThickness="{Binding BorderThickness, RelativeSource={RelativeSource AncestorType=UserControl}, FallbackValue=2.5}"
+                Opacity="1" />
+
+        <!-- 内部容器：Margin 自动偏移边框厚度，使内容不被边框遮挡 -->
+        <Grid Margin="{Binding BorderThickness, RelativeSource={RelativeSource AncestorType=UserControl}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30" />
+                <!-- 标题栏高度 -->
+                <RowDefinition Height="*" />
+                <!-- 内容区域 -->
+            </Grid.RowDefinitions>
+
+            <!-- 标题栏 -->
+            <Border Grid.Row="0" Background="White">
+                <TextBlock Text="{Binding Title, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                           Foreground="Black"
+                           FontSize="23"
+                           FontWeight="Medium"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Margin="0,3,0,0" />
+            </Border>
+
+            <!-- 内容占位符 -->
+            <ContentPresenter Grid.Row="1" />
+        </Grid>
+    </Grid>
+</UserControl>
