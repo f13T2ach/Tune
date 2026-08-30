@@ -24,6 +24,19 @@ namespace Tune.Components.UI
             set => CreatedPlaylist = value;
         }
 
+        private string? _argument;
+
+        public override string? Argument
+        {
+            get => _argument;
+            set
+            {
+                _argument = value;
+                if (!string.IsNullOrEmpty(value))
+                    DescriptionTextBlock.Text = value;
+            }
+        }
+
         // ==== Constructor ====
         public CreatePlaylist()
         {
@@ -31,8 +44,6 @@ namespace Tune.Components.UI
             this.DataContext = this;
             this.Height = 220;
             this.Width = 800;
-            if (!String.IsNullOrEmpty(Argument))
-                this.DescriptionTextBlock.Text = Argument;
             
 
             ConfirmButton.Click += OnConfirmClick;

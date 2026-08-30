@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Tune.Helpers;
 using Tune.Services.Interfaces;
 using Tune.Values.Enums;
 
@@ -67,7 +68,7 @@ namespace Tune.Services
                 }
                 catch (Exception ex)
                 {
-                    // Log exception but continue
+                    LoggerHelper.LogError(ex, nameof(LoadAllAsync));
                 }
             });
 

@@ -18,7 +18,7 @@ namespace Tune.Local.DAO
         /// <param name="key">设置项名称</param>
         /// <param name="defaultValue">如果键不存在则返回的默认值</param>
         /// <returns>设置值</returns>
-        public static T GetUserSetting<T>(string key, T defaultValue = default)
+        public static T? GetUserSetting<T>(string key, T? defaultValue = default)
         {
             try
             {
@@ -81,7 +81,7 @@ namespace Tune.Local.DAO
         /// <param name="key">键</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns>配置值</returns>
-        public static string GetAppConfig(string key, string defaultValue = "")
+        public static string? GetAppConfig(string key, string? defaultValue = "")
         {
             try
             {
@@ -98,9 +98,9 @@ namespace Tune.Local.DAO
         /// 从 App.config 读取并转换为指定类型
         /// </summary>
         /// <typeparam name="T">目标类型（需支持 Convert.ChangeType）</typeparam>
-        public static T GetAppConfig<T>(string key, T defaultValue = default)
+        public static T? GetAppConfig<T>(string key, T? defaultValue = default)
         {
-            string raw = GetAppConfig(key, null);
+            string? raw = GetAppConfig(key, null);
             if (string.IsNullOrEmpty(raw))
                 return defaultValue;
 
@@ -129,7 +129,7 @@ namespace Tune.Local.DAO
         /// <summary>
         /// 优先从 User Settings 读取，若不存在则从 App.config 读取
         /// </summary>
-        public static T GetSetting<T>(string key, T defaultValue = default)
+        public static T? GetSetting<T>(string key, T? defaultValue = default)
         {
             // 先尝试从 TuneSettings 读取
             try

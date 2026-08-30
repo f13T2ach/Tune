@@ -20,7 +20,9 @@ namespace Tune.Models.Lyric
         public override AList<TimeStampedLyric> TranslatedLyrics { get; set; } = new AList<TimeStampedLyric>();
         public override List<TimeSpan> TranslatedTimestamps { get; set; } = new List<TimeSpan>();
 
+#pragma warning disable CS8618  // I dont care
         public LrcLyric() { }
+#pragma warning restore CS8618
 
         public LrcLyric(string lyricPath)
         {

@@ -117,6 +117,39 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="ConvertFtoCDesc" xml:space="preserve">
+    <value>You are about to add a single track to a folder playlist (a playlist imported from a folder). This will cause the playlist to no longer update with the original folder.</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="CreateNewPlaylisyTitle" xml:space="preserve">
+    <value>Create a empty list by entering name, or import from directory.</value>
+  </data>
+  <data name="EmptyControlAreaDesc" xml:space="preserve">
+    <value>Go to settings to display cover, EQ curve, or more</value>
+  </data>
+  <data name="EmptyPlaylist_C" xml:space="preserve">
+    <value>To add music, press "+"</value>
+  </data>
+  <data name="EmptyPlaylist_F" xml:space="preserve">
+    <value>Folder is empty</value>
+  </data>
+  <data name="ImportDirectory" xml:space="preserve">
+    <value>Import from directory</value>
+  </data>
+  <data name="InputPlaylistNameHere" xml:space="preserve">
+    <value>Input name here...</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>New</value>
+  </data>
   <data name="NoDescription" xml:space="preserve">
     <value>No Description</value>
   </data>

@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using Tune.Assets.Localization;
 using Tune.Generic.DialogGenerics;
 using Tune.Helpers;
 using Tune.Helpers.DialogExtentions;
@@ -24,6 +25,19 @@ namespace Tune.Components.UI
             set => SelectedPlaylist = value;
         }
 
+        private string? _argument;
+
+        public override string? Argument
+        {
+            get => _argument;
+            set
+            {
+                _argument = value;
+                if (!string.IsNullOrEmpty(value))
+                    DescriptionTextBlock.Text = value;
+            }
+        }
+
         // ==== Events ====
         public event EventHandler<PlaylistBase>? PlaylistSelected;
 
@@ -34,10 +48,6 @@ namespace Tune.Components.UI
             // MUST definite the size of the dialog
             this.Height = 400;
             this.Width = 700;
-
-            // Process the arguments
-            if (!String.IsNullOrEmpty(Argument))
-                this.DescriptionTextBlock.Text = Argument;
 
             // Register events
             ConfirmButton.Click += OnConfirmClick;
@@ -107,7 +117,7 @@ namespace Tune.Components.UI
         private void OnCreateClick(object sender, RoutedEventArgs e)
         {
             var creator = new CreatePlaylist();
-            var newPlaylist = creator.ShowCreatePlaylistDialog("请填写新歌单信息");
+            var newPlaylist = creator.ShowCreatePlaylistDialog(LangStrings.CreateNewPlaylisyTitle);
             if (newPlaylist != null && _service != null)
             {
                 SetPlaylists(_service.GetAllPlaylists());

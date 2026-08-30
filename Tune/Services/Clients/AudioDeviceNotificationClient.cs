@@ -1,29 +1,52 @@
 ﻿using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 
-
+// To Update to NAudio 3.0, we used AI to update our code.
 namespace Tune.Services.Clients
 {
-    public class AudioDeviceNotificationClient : IMMNotificationClient
+    public class AudioDeviceManager
     {
-        // 自定义事件，用于通知外部
-        public event EventHandler<string>? DefaultDeviceChanged;
-        public event EventHandler<(string DeviceId, DeviceState NewState)>? DeviceStateChanged;
+        private MMDeviceEnumerator? _deviceEnumerator;
+        private MMDeviceNotificationClient? _notificationClient;
 
-        // 必须实现的接口方法
-        public void OnDefaultDeviceChanged(DataFlow flow, Role role, string defaultDeviceId)
+        public AudioDeviceManager()
         {
-            DefaultDeviceChanged?.Invoke(this, defaultDeviceId);
+            _deviceEnumerator = new MMDeviceEnumerator();
+
+            // 1. 创建通知客户端
+            _notificationClient = _deviceEnumerator.CreateNotificationClient();
+
+            // 2. 订阅事件
+            _notificationClient.DefaultDeviceChanged += OnDefaultDeviceChanged;
+            _notificationClient.DeviceStateChanged += OnDeviceStateChanged;
+            // 其他事件也可以订阅，例如：
+            // _notificationClient.DeviceAdded += OnDeviceAdded;
+            // _notificationClient.DeviceRemoved += OnDeviceRemoved;
         }
 
-        public void OnDeviceStateChanged(string deviceId, DeviceState newState)
+        private void OnDefaultDeviceChanged(object? sender, DefaultDeviceChangedEventArgs e)
         {
-            DeviceStateChanged?.Invoke(this, (deviceId, newState));
+            // e.DeviceId 和 e.Flow / e.Role 提供了详细信息
+            Console.WriteLine($"默认设备变更: {e.DeviceId}");
         }
 
-        // 以下为空实现
-        public void OnDeviceAdded(string pwstrDeviceId) { }
-        public void OnDeviceRemoved(string deviceId) { }
-        public void OnPropertyValueChanged(string pwstrDeviceId, PropertyKey key) { }
+        private void OnDeviceStateChanged(object? sender, DeviceStateChangedEventArgs e)
+        {
+            // e.DeviceId 和 e.DeviceState
+            Console.WriteLine($"设备 '{e.DeviceId}' 状态变更: {e.NewState}");
+        }
+
+        // 记得在合适的时候取消订阅和释放资源
+        public void Dispose()
+        {
+            if (_notificationClient != null)
+            {
+                _notificationClient.DefaultDeviceChanged -= OnDefaultDeviceChanged;
+                _notificationClient.DeviceStateChanged -= OnDeviceStateChanged;
+                // 如果客户端实现了 IDisposable，应调用 Dispose
+                // _notificationClient.Dispose();
+            }
+            _deviceEnumerator?.Dispose();
+        }
     }
 }

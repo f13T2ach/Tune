@@ -12,7 +12,7 @@ namespace Tune.Helpers.DialogExtentions
         /// </summary>
         public static PlaylistBase? ShowSelectPlaylistDialog(
             this SelectPlaylist control,
-            string description = "选择歌单以继续操作")
+            string description = "选择歌单")
         {
             var window = new DialogInstance<string?, PlaylistBase?>(control);
             return window.ShowDialog(description);

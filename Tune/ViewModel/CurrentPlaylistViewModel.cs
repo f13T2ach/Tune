@@ -1,7 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using Tune.Appearance;
 using Tune.Client.Controllers;
 using Tune.Client.Presenters;
+using Tune.Models.Messages;
 using Tune.Models.Music;
 
 namespace Tune.ViewModel
@@ -47,7 +50,7 @@ namespace Tune.ViewModel
             //_playerController.PropertyChanged += OnPlayerControllerPropertyChanged;
         }
 
-        
+        [RelayCommand] public void NavigateToMain() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(Main)));
 
         public void Dispose()
         {

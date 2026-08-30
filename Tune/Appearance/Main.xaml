@@ -6,6 +6,7 @@
       xmlns:local="clr-namespace:Tune.Appearance"
       xmlns:vm="clr-namespace:Tune.ViewModel"
       xmlns:svc="clr-namespace:Tune.Services"
+      xmlns:lang="clr-namespace:Tune.Assets.Localization"
       xmlns:converters="clr-namespace:Tune.Helpers.ValueConverters"
       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       mc:Ignorable="d" 
@@ -43,7 +44,7 @@
                         <RowDefinition Height="74*"/>
                     </Grid.RowDefinitions>
                     <!--Left Up Content-->
-                    <Grid Grid.RowSpan="1" Margin="48,32,40,0">
+                    <Grid Grid.RowSpan="1" Margin="48,32,15,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="567*"/>
                             <ColumnDefinition Width="337*"/>
@@ -102,7 +103,7 @@
                         </Grid>
                         <!--Knob-->
                         <Grid Grid.Column="1">
-                            <StackPanel Orientation="Vertical" Margin="22,0,8,0">
+                            <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="24,0,12,0">
                                 <Grid Margin="0,0,0,15">
                                     <Grid Width="140" Height="140" HorizontalAlignment="Left">
                                         <Border BorderBrush="White" BorderThickness="3" Width="70" Height="35" Margin="0,18,0,0" VerticalAlignment="Top" HorizontalAlignment="Right">
@@ -226,7 +227,7 @@
                     <Grid Grid.Row="0">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,0">
                         <TextBlock Text="EMPTY" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                            <TextBlock HorizontalAlignment="Center" FontSize="30" Text="转到设置显示封面、EQ曲线或更多"/>
+                            <TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" FontSize="30" Text="{x:Static lang:LangStrings.EmptyControlAreaDesc}"/>
                         </StackPanel>
                     </Grid>
                     <!--Right Down Content-->

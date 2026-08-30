@@ -33,7 +33,7 @@ namespace Tune.Models.Results
         /// </summary>
         public string? ErrorMessage { get; }
 
-        private ResultContentWithExceptions(bool success, T content, IReadOnlyList<Exception>? exceptions, string? errorMessage)
+        private ResultContentWithExceptions(bool success, T? content, IReadOnlyList<Exception>? exceptions, string? errorMessage)
         {
             Success = success;
             Content = content;
@@ -93,8 +93,12 @@ namespace Tune.Models.Results
             if (ex == null) throw new ArgumentNullException(nameof(ex));
             if (Success)
                 throw new InvalidOperationException("Cannot add an exception to a successful result.");
+            var newList = new List<Exception>();
+            if (Exceptions == null)
+            { newList = new List<Exception>() { ex }; }
+            else
+            { newList = new List<Exception>(Exceptions) { ex }; }
 
-            var newList = new List<Exception>(Exceptions) { ex };
             var newMsg = ErrorMessage != null
                 ? ErrorMessage + "; " + ex.Message
                 : string.Join("; ", newList.Select(e => e.Message));
@@ -104,7 +108,7 @@ namespace Tune.Models.Results
         /// <summary>
         /// Deconstructs the result into its components for pattern matching.
         /// </summary>
-        public void Deconstruct(out bool success, out T content, out IReadOnlyList<Exception> exceptions, out string? errorMessage)
+        public void Deconstruct(out bool success, out T? content, out IReadOnlyList<Exception>? exceptions, out string? errorMessage)
         {
             success = Success;
             content = Content;

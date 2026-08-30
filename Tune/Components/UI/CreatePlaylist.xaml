@@ -8,6 +8,7 @@
              xmlns:components="clr-namespace:Tune.Components"
              xmlns:input="clr-namespace:Tune.Components.InputBox"
              xmlns:frame="clr-namespace:Tune.Components.Frame"
+             xmlns:lang="clr-namespace:Tune.Assets.Localization"
              mc:Ignorable="d" 
              d:DesignHeight="220" d:DesignWidth="800"
              >
@@ -26,7 +27,7 @@
             <Grid Grid.Row="0" Margin="0,0,0,7">
                 <StackPanel Orientation="Vertical">
                     <TextBlock x:Name="DescriptionTextBlock" 
-                               Text="新建歌单" 
+                               Text="..." 
                                FontSize="28"/>
                 </StackPanel>
             </Grid>
@@ -36,17 +37,17 @@
                 <!--无法读取text属性-->
                 <input:SimpleInputBox x:Name="NameInputBox"     
                                       Height="44"
-                                      Hint="请输入歌单名称..."/>
+                                      Hint="{x:Static lang:LangStrings.InputPlaylistNameHere}"/>
             </Grid>
 
             <!-- 按钮区域 -->
             <Grid Grid.Row="2">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <components:Button Text="取消" FontSize="30" x:Name="CancelButton" Width="135" Margin="10,0,0,0"/>
-                    <components:Button Text="创建" FontSize="30" x:Name="ConfirmButton" Width="135" Margin="10,0,0,0"/>
+                    <components:Button Text="{x:Static lang:LangStrings.Cancel}" FontSize="30" x:Name="CancelButton" Width="135" Margin="10,0,0,0"/>
+                    <components:Button Text="{x:Static lang:LangStrings.Create}" FontSize="30" x:Name="ConfirmButton" Width="135" Margin="10,0,0,0"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                    <components:Button FontSize="30" Text="导入文件夹" Margin="0,0,10,0" Click="OnImportFolderClick"/>
+                    <components:Button FontSize="30" Text="{x:Static lang:LangStrings.ImportDirectory}" Margin="0,0,10,0" Click="OnImportFolderClick"/>
                     <!--<components:Button FontSize="30" Text="导入其他" Margin="0,0,10,0"/>-->
                 </StackPanel>
             </Grid>

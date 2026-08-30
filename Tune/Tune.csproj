@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Components\HomeButton.png" />
     <None Remove="Assets\Components\KnobBorder.png" />
     <None Remove="Assets\Components\Loop\List.png" />
     <None Remove="Assets\Components\Loop\NoLoop.png" />
@@ -17,6 +18,7 @@
     <None Remove="Assets\Components\PauseButton.png" />
     <None Remove="Assets\Components\PlayButton.png" />
     <None Remove="Assets\Components\Timeline.png" />
+    <None Remove="Assets\Components\TimelineEnd.png" />
     <None Remove="Assets\Rajdhani\Rajdhani-Bold.ttf" />
     <None Remove="Assets\Rajdhani\Rajdhani-Light.ttf" />
     <None Remove="Assets\Rajdhani\Rajdhani-Medium.ttf" />
@@ -30,13 +32,14 @@
     <PackageReference Include="DevBase.Format" Version="1.7.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
-    <PackageReference Include="NAudio" Version="2.3.0" />
+    <PackageReference Include="NAudio" Version="3.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="TagLibSharp" Version="2.3.0" />
     <PackageReference Include="WPFLocalizeExtension" Version="3.10.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Components\HomeButton.png" />
     <Resource Include="Assets\Components\KnobBorder.png" />
     <Resource Include="Assets\Components\Loop\List.png" />
     <Resource Include="Assets\Components\Loop\NoLoop.png" />
@@ -45,6 +48,7 @@
     <Resource Include="Assets\Components\PauseButton.png" />
     <Resource Include="Assets\Components\PlayButton.png" />
     <Resource Include="Assets\Components\Timeline.png" />
+    <Resource Include="Assets\Components\TimelineEnd.png" />
     <Resource Include="Assets\Rajdhani\Rajdhani-Bold.ttf" />
     <Resource Include="Assets\Rajdhani\Rajdhani-Light.ttf" />
     <Resource Include="Assets\Rajdhani\Rajdhani-Medium.ttf" />
@@ -78,8 +82,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Assets\Localization\LangStrings.zh-CN.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Assets\Localization\LangStrings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>LangStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>

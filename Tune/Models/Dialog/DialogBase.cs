@@ -31,7 +31,7 @@ namespace Tune.Models.Dialog
             set => this.Height = value;
         }
 
-        public TArg? Argument { get; set; }             // As this is an Argument, we just need to read it
+        public virtual TArg? Argument { get; set; }             // As this is an Argument, we just need to read it
 
         public virtual TResult? Result { get; set; }
 

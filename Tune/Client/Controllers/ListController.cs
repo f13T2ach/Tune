@@ -1,6 +1,6 @@
-﻿
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Windows;
+using Tune.Assets.Localization;
 using Tune.Components.UI;
 using Tune.Helpers;
 using Tune.Helpers.DialogExtentions;
@@ -26,6 +26,8 @@ namespace Tune.Client.Controllers
     public partial class ListController : ObservableObject
     {
         private EListPlayStatus ListPlayStatus { get; set; }
+
+        public PlaylistBase? CurrentPlaylist { get; set; }
 
         [ObservableProperty]
         public string? _listIconSource;
@@ -56,12 +58,17 @@ namespace Tune.Client.Controllers
         public void OnSetPlaylist()
         {
             var selector = new SelectPlaylist();
-            var selected = selector.ShowSelectPlaylistDialog("请选择歌单");
+            var selected = selector.ShowSelectPlaylistDialog(LangStrings.SelectPlaylistToPlay);
         }
 
         public ListController()
         {
             GetLoopStatusFromSettings();
+        }
+
+        public void SetPlaylist(PlaylistBase playlist)
+        {
+
         }
 
         private void GetLoopStatusFromSettings()

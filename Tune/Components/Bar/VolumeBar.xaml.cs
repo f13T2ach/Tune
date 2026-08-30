@@ -5,7 +5,7 @@ namespace Tune.Components
     public partial class VolumeBar : UserControl
     {
         // 内部可用最大宽度（总宽度 526 - 边框 6 - 画布边距 6 - 线宽 3.5，留出余地）
-        private const double MaxWidth = 510;
+        private new const double MaxWidth = 510;
 
         public VolumeBar()
         {

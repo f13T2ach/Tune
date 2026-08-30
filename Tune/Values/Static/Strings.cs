@@ -4,6 +4,8 @@
     {
         public static string APPLICATION_NAME = "Tune";
 
+        public static string UNKNOWN = "Unknown";
+
         public static string EMPTY = String.Empty;
         public static string NO_CONTENT = "--";
         public static string DURATION_MIN_SEC_ZERO = "0'0''";

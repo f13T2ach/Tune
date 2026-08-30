@@ -10,7 +10,9 @@ namespace Tune.Helpers
                 throw new ArgumentException("File path cannot be null or empty", nameof(audioFilePath));
 
             // 获取目录部分
-            string directory = Path.GetDirectoryName(audioFilePath);
+
+            string? directory = Path.GetDirectoryName(audioFilePath);
+            
             string fileNameWithoutExt = Path.GetFileNameWithoutExtension(audioFilePath);
 
             // 如果 directory 为 null 或空字符串，说明传入的是纯文件名（不含路径）

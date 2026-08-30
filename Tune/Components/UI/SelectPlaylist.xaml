@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:components="clr-namespace:Tune.Components"
              xmlns:generic="clr-namespace:Tune.Generic.DialogGenerics"
+             xmlns:lang="clr-namespace:Tune.Assets.Localization"
              xmlns:frame="clr-namespace:Tune.Components.Frame"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="700">
@@ -92,7 +93,7 @@
             <!-- 标题行 -->
             <Grid Grid.Row="0" Margin="0,0,0,10">
                 <StackPanel Orientation="Vertical">
-                    <TextBlock x:Name="DescriptionTextBlock" Text="选择歌单来继续操作" FontSize="28"/>
+                    <TextBlock x:Name="DescriptionTextBlock" Text="..." FontSize="28"/>
                 </StackPanel>
             </Grid>
 
@@ -119,11 +120,11 @@
             </Grid>
             <Grid Grid.Row="2">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <components:Button Text="取消" FontSize="30" x:Name="CancelButton" Width="135" Margin="10,0,0,0"/>
-                    <components:Button Text="确认" FontSize="30" x:Name="ConfirmButton" Width="135" Margin="10,0,0,0"/>
+                    <components:Button Text="{x:Static lang:LangStrings.Cancel}" FontSize="30" x:Name="CancelButton" Width="135" Margin="10,0,0,0"/>
+                    <components:Button Text="{x:Static lang:LangStrings.Confirm}" FontSize="30" x:Name="ConfirmButton" Width="135" Margin="10,0,0,0"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                    <components:Button FontSize="30" Text="新建" x:Name="CreateButton" Width="135" Margin="0,0,10,0"/>
+                    <components:Button FontSize="30" Text="{x:Static lang:LangStrings.New}" x:Name="CreateButton" Width="135" Margin="0,0,10,0"/>
                 </StackPanel>
             </Grid>
         </Grid>

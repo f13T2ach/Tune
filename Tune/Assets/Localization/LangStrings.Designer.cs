@@ -22,7 +22,7 @@ namespace Tune.Assets.Localization {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class LangStrings {
+    public class LangStrings {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Tune.Assets.Localization {
         ///   返回此类使用的缓存的 ResourceManager 实例。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Tune.Assets.Localization.LangStrings", typeof(LangStrings).Assembly);
@@ -51,7 +51,7 @@ namespace Tune.Assets.Localization {
         ///   使用此强类型资源类的所有资源查找执行重写。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,9 +61,108 @@ namespace Tune.Assets.Localization {
         }
         
         /// <summary>
+        ///   查找类似 Cancel 的本地化字符串。
+        /// </summary>
+        public static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Confirm 的本地化字符串。
+        /// </summary>
+        public static string Confirm {
+            get {
+                return ResourceManager.GetString("Confirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 You are about to add a single track to a folder playlist (a playlist imported from a folder). This will cause the playlist to no longer update with the original folder. 的本地化字符串。
+        /// </summary>
+        public static string ConvertFtoCDesc {
+            get {
+                return ResourceManager.GetString("ConvertFtoCDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Create 的本地化字符串。
+        /// </summary>
+        public static string Create {
+            get {
+                return ResourceManager.GetString("Create", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Create a empty list by entering name, or import from directory. 的本地化字符串。
+        /// </summary>
+        public static string CreateNewPlaylisyTitle {
+            get {
+                return ResourceManager.GetString("CreateNewPlaylisyTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Go to settings to display cover, EQ curve, or more 的本地化字符串。
+        /// </summary>
+        public static string EmptyControlAreaDesc {
+            get {
+                return ResourceManager.GetString("EmptyControlAreaDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 To add music, press &quot;+&quot; 的本地化字符串。
+        /// </summary>
+        public static string EmptyPlaylist_C {
+            get {
+                return ResourceManager.GetString("EmptyPlaylist_C", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Folder is empty 的本地化字符串。
+        /// </summary>
+        public static string EmptyPlaylist_F {
+            get {
+                return ResourceManager.GetString("EmptyPlaylist_F", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Import from directory 的本地化字符串。
+        /// </summary>
+        public static string ImportDirectory {
+            get {
+                return ResourceManager.GetString("ImportDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Input name here... 的本地化字符串。
+        /// </summary>
+        public static string InputPlaylistNameHere {
+            get {
+                return ResourceManager.GetString("InputPlaylistNameHere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 New 的本地化字符串。
+        /// </summary>
+        public static string New {
+            get {
+                return ResourceManager.GetString("New", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 No Description 的本地化字符串。
         /// </summary>
-        internal static string NoDescription {
+        public static string NoDescription {
             get {
                 return ResourceManager.GetString("NoDescription", resourceCulture);
             }
@@ -72,7 +171,7 @@ namespace Tune.Assets.Localization {
         /// <summary>
         ///   查找类似 No Name 的本地化字符串。
         /// </summary>
-        internal static string NoName {
+        public static string NoName {
             get {
                 return ResourceManager.GetString("NoName", resourceCulture);
             }
@@ -81,7 +180,7 @@ namespace Tune.Assets.Localization {
         /// <summary>
         ///   查找类似 Part of your local playlists are not successfully initialized 的本地化字符串。
         /// </summary>
-        internal static string PartOfPlaylistNotInited {
+        public static string PartOfPlaylistNotInited {
             get {
                 return ResourceManager.GetString("PartOfPlaylistNotInited", resourceCulture);
             }
@@ -90,7 +189,7 @@ namespace Tune.Assets.Localization {
         /// <summary>
         ///   查找类似 Select a playlist to play 的本地化字符串。
         /// </summary>
-        internal static string SelectPlaylistToPlay {
+        public static string SelectPlaylistToPlay {
             get {
                 return ResourceManager.GetString("SelectPlaylistToPlay", resourceCulture);
             }
@@ -99,7 +198,7 @@ namespace Tune.Assets.Localization {
         /// <summary>
         ///   查找类似 Unknown 的本地化字符串。
         /// </summary>
-        internal static string Unknown {
+        public static string Unknown {
             get {
                 return ResourceManager.GetString("Unknown", resourceCulture);
             }

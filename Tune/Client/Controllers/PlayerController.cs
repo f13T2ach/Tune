@@ -10,7 +10,7 @@ namespace Tune.Client.Controllers
     {
         private readonly IAudioPlayerEngine _engine;
 
-        private bool _wasPlayingBeforeDrag;
+        //private bool _wasPlayingBeforeDrag;
 
 
 

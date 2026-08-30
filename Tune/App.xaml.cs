@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System.Globalization;
 using System.Windows;
 using Tune.Appearance;
 using Tune.Client.Controllers;
@@ -26,8 +27,9 @@ namespace Tune
 
         protected override async void OnStartup(StartupEventArgs e)
         {
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo("zh-CN");
             base.OnStartup(e);
-
+            
             try
             {
                 // Work environment init

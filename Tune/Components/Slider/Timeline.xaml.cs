@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace Tune.Components
 {
@@ -18,6 +19,21 @@ namespace Tune.Components
             get => (ICommand)GetValue(DragCompletedCommandProperty);
             set => SetValue(DragCompletedCommandProperty, value);
         }*/
+        // 在 Timeline 类中添加依赖属性
+        public static readonly DependencyProperty IsEndedProperty =
+            DependencyProperty.Register(
+                nameof(IsEnded),
+                typeof(bool),
+                typeof(Timeline),
+                new PropertyMetadata(false, OnIsEndedChanged));
+
+        public bool IsEnded
+        {
+            get => (bool)GetValue(IsEndedProperty);
+            set => SetValue(IsEndedProperty, value);
+        }
+
+        
 
 
         public static readonly DependencyProperty CurrentSecondsProperty =
@@ -124,7 +140,8 @@ namespace Tune.Components
         {
             if (RedLine == null || ActualWidth <= 3 || TotalSeconds <= 0)
             {
-                RedLine.Margin = new Thickness(0, 0, 0, 0);
+                // 这AI魔了
+                // RedLine.Margin = new Thickness(0, 0, 0, 0);
                 return;
             }
 
@@ -190,6 +207,20 @@ namespace Tune.Components
             //     PART_DragArea.ReleaseMouseCapture();
             //     RaiseEvent(new RoutedEventArgs(DragCompletedEvent, this));
             // }
+        }
+
+        private static void OnIsEndedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (Timeline)d;
+            control.UpdateTimelineImage();
+        }
+
+        private void UpdateTimelineImage()
+        {
+            if (TimelineImage == null) return;
+            string imageName = IsEnded ? "TimelineEnd.png" : "Timeline.png";
+            var uri = new Uri($"pack://application:,,,/Tune;component/Assets/Components/{imageName}", UriKind.Absolute);
+            TimelineImage.Source = new BitmapImage(uri);
         }
 
         // 辅助：计算鼠标位置对应的比例（0~1）

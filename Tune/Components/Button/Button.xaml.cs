@@ -58,6 +58,13 @@ namespace Tune.Components
             InitializeComponent();
             // 初始状态
             SetDefaultState();
+
+            Click += Button_Click;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            //do nothing
         }
 
         static Button()
