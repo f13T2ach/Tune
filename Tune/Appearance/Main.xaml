@@ -244,10 +244,9 @@
                             <Grid Grid.Row="0">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <components:Button Margin="10,0,0,0" Text="循环" Command="{Binding SetLoopStatusCommand}" VerticalAlignment="Center"/>
+                                    <components:Button Margin="10,0,0,0" Text="列表" Command="{Binding NavigateToPlaylistCommand}" VerticalAlignment="Center"/>
                                     <components:Button Margin="10,0,0,0" Text="收藏" VerticalAlignment="Center"/>
-                                    <components:Button Margin="10,0,0,0" Text="EQ" VerticalAlignment="Center"/>
-                                    <components:Button Margin="10,0,0,0" Text="均衡" VerticalAlignment="Center"/>
-                                    <components:Button Margin="10,0,0,0" Text="混音" VerticalAlignment="Center"/>
+                                    <components:Button Margin="10,0,0,0" Text="调音" VerticalAlignment="Center"/>
                                     <components:Button Margin="10,0,0,0" Text="设置" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Grid>

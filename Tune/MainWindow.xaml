@@ -12,7 +12,7 @@
     <Grid>
         <Viewbox Stretch="Uniform" StretchDirection="Both">
             <Grid Height="792" Width="1600">
-                <pages:Main/>
+                <ContentControl x:Name="PageContainer" />
             </Grid>
         </Viewbox>
         

@@ -51,6 +51,8 @@ namespace Tune.Engine
         /// </summary>
         void Play();
 
+        //void Seek(double seconds);
+
 
         /// <summary>
         /// 暂停

@@ -1,10 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using Tune.Appearance;
 using Tune.Client.Controllers;
 using Tune.Client.Presenters;
 using Tune.Engine;
 using Tune.Helpers.FormatConverters;
 using Tune.Local;
+using Tune.Models.Messages;
 using Tune.Models.Music;
 using Tune.Models.Results;
 using Tune.Services.FileDialog;
@@ -17,8 +20,11 @@ namespace Tune.ViewModel
     public partial class MainViewModel : ObservableObject
     {
         // ==== Instance ====
-        private readonly PlayerController _playerController;    // Player Controller
-        private readonly ListController _listController;    // Playlist Controller
+        private readonly PlayerController _playerController;
+        private readonly ListController _listController;
+        private readonly MusicLyricPresenter _musicLyric;
+        private readonly MusicDisplayPresenter _musicDisplay;
+
         [ObservableProperty]
         private Music _currentMusic = new Music();  // Music Instance
 
@@ -27,16 +33,14 @@ namespace Tune.ViewModel
         private readonly IAudioDeviceService _audioDeviceService;    // DI
         private readonly IFileDialogService _fileDialogService; // DI
 
-        // ==== Presenter Clients ====
-        public MusicLyricPresenter MusicLyric { get; } = new MusicLyricPresenter();     // Lyric Presenter
-        public MusicDisplayPresenter MusicDisplay { get; } = new MusicDisplayPresenter();       // Metadata Display Presenter
-
         // ==== Event Handlers ====
         private readonly EventHandler<double> _progressHandler;     // Progress Event Handler
 
         // ==== Instance Resolver for Binding ====
         public PlayerController PlayerControl => _playerController;
         public ListController ListController => _listController;
+        public MusicDisplayPresenter MusicDisplay => _musicDisplay;
+        public MusicLyricPresenter MusicLyric => _musicLyric;   // 若需要公开
 
         // ==== System Services ===
         public DateTime CurrentTime => _timeService.CurrentTime;
@@ -44,33 +48,34 @@ namespace Tune.ViewModel
 
 
         public MainViewModel(
-            IFileDialogService fileDialogService,
-            IAudioPlayerEngine player,
-            ITimeService timeService,
-            IAudioDeviceService audioDeviceService)
+        IFileDialogService fileDialogService,
+        ITimeService timeService,
+        IAudioDeviceService audioDeviceService,
+        PlayerController playerController,
+        ListController listController,
+        MusicDisplayPresenter musicDisplay,
+        MusicLyricPresenter musicLyric)
         {
-            // DI Init & Object Instantiation
             _fileDialogService = fileDialogService;
-            _playerController = new PlayerController(player);
-            _listController = new ListController();
             _timeService = timeService;
             _audioDeviceService = audioDeviceService;
+            _playerController = playerController;
+            _listController = listController;
+            _musicDisplay = musicDisplay;
+            _musicLyric = musicLyric;
 
-            // System Events
-            _audioDeviceService.DeviceChanged
-                += OnAudioDeviceChanged;
-            _timeService.TimeChanged
-                += OnTimeChanged;
+            // Events registration
+            _audioDeviceService.DeviceChanged += OnAudioDeviceChanged;
+            _timeService.TimeChanged += OnTimeChanged;
+            //_playerController.PropertyChanged += OnPlayerControllerPropertyChanged;
 
-            // Player Events
-            _progressHandler = (_, seconds) => MusicLyric.UpdateLyricsBySecond(seconds);
-
+            _progressHandler = (_, seconds) => _musicLyric.UpdateLyricsBySecond(seconds);
             _playerController.ProgressUpdated += _progressHandler;
-            _playerController.TotalSecondsChanged += (_, _) => MusicDisplay.SetTotalSeconds(_playerController.TotalSeconds);
+            _playerController.TotalSecondsChanged += (_, _) => _musicDisplay.SetTotalSeconds(_playerController.TotalSeconds);
 
-            // Reset UI
+            // Update
             UpdateDisplayProperties();
-            MusicLyric.UpdateLyricsBySecond(0);
+            _musicLyric.UpdateLyricsBySecond(0);
         }
 
         /// <summary>
@@ -139,6 +144,7 @@ namespace Tune.ViewModel
             OnPropertyChanged(nameof(CurrentTime));
         }
 
+
         /// <summary>
         /// Event of Audio Device Changed: 
         /// Update UI
@@ -196,6 +202,7 @@ namespace Tune.ViewModel
         [RelayCommand] public void SetNoLoop() => _listController.OnSetNoLoop();
         [RelayCommand] public void SetLoopStatus() => _listController.OnSetLoopStatus();
         [RelayCommand] public void SetPlaylist() => _listController.OnSetPlaylist();
+        [RelayCommand] public void NavigateToPlaylist() =>WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(CurrentPlaylist)));
         #endregion
 
         #region ==== UI Update Methods ====
@@ -220,6 +227,7 @@ namespace Tune.ViewModel
             _audioDeviceService.DeviceChanged -= OnAudioDeviceChanged;
             _timeService.TimeChanged -= OnTimeChanged;
             _playerController.ProgressUpdated -= _progressHandler;
+            //_playerController.PropertyChanged -= OnPlayerControllerPropertyChanged;
         }
 
 

@@ -73,7 +73,7 @@ namespace Tune.Helpers.JSONConverters
                 if (isEmptyToken != null && isEmptyToken.Type == JTokenType.Boolean)
                     playlist.isEmptyOrNotInited = isEmptyToken.Value<bool>();
 
-                // Read SourceFrom (can be null or array)
+                // Read SourceFrom
                 JToken? sourceToken = collectionPlaylistRaw["SourceFrom"];
                 if (sourceToken != null && sourceToken.Type == JTokenType.Array)
                 {
@@ -102,7 +102,7 @@ namespace Tune.Helpers.JSONConverters
                     var musicList = new List<Music>();
                     foreach (JToken item in (JArray)musicListToken)
                     {
-                        // Skip null tokens
+                        // Skip null
                         if (item.Type == JTokenType.Null)
                             continue;
 
@@ -116,7 +116,7 @@ namespace Tune.Helpers.JSONConverters
                                 musicList.Add(music);
                             }
                         }
-                        // Optionally handle other types? Ignored for now.
+                        // TODO: handle other types? Ignored for now.
                     }
                     playlist.MusicList = musicList;
                 }
@@ -147,7 +147,6 @@ namespace Tune.Helpers.JSONConverters
                 if (raw == null)
                     throw new ArgumentNullException(nameof(raw), "JSON object cannot be null.");
 
-                // Safely read the "Type" field
                 JToken? typeToken = raw["Type"];
                 if (typeToken == null)
                     throw new InvalidOperationException("Missing 'Type' field in JSON.");
@@ -157,13 +156,12 @@ namespace Tune.Helpers.JSONConverters
                 if (string.IsNullOrEmpty(typeString))
                     throw new InvalidOperationException("'Type' field is empty or not a valid string.");
 
-                // Compare case-insensitively
-                // ============= 在此处判断类型 =============
+                // ============= GET TYPLE HERE =============
                 if (string.Equals(typeString, EPlaylistType.Collection.ToString(), StringComparison.OrdinalIgnoreCase))
                 {
                     return FromJSONToCollectionPlaylist(raw);
                 }
-                // ============= 在此处判断类型 =============
+                // ============= GET TYPE HERE =============
                 else
                 {
                     throw new NotSupportedException($"Playlist type '{typeString}' is not supported for deserialization.");

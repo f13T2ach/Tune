@@ -10,6 +10,10 @@ namespace Tune.Client.Controllers
     {
         private readonly IAudioPlayerEngine _engine;
 
+        private bool _wasPlayingBeforeDrag;
+
+
+
         public PlayerController(IAudioPlayerEngine engine)
         {
             _engine = engine;
@@ -128,10 +132,13 @@ namespace Tune.Client.Controllers
         public void Seek(double seconds)
         {
             seconds = Math.Clamp(seconds, 0, TotalSeconds);
+            //_engine.Pause();
             _engine.CurrentSeconds = seconds;
             // Auto Play.
             // **NOTE**: We can delete this to let user manually play after adjusting the progress
             _engine.Play();
+
+            ProgressUpdated?.Invoke(this, seconds);
         }
 
 

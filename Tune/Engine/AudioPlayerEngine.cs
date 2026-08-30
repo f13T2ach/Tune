@@ -1,5 +1,6 @@
 ﻿using NAudio.Wave;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Threading;
 
 namespace Tune.Engine
@@ -26,16 +27,18 @@ namespace Tune.Engine
             {
                 if (_audioReader == null) return;
                 // 避免无效值
-                var target = Math.Max(0, Math.Min(TotalSeconds, value));
-                var targetTime = TimeSpan.FromSeconds(target);
+                //var target = Math.Max(0, Math.Min(TotalSeconds, value));
+                //var targetTime = TimeSpan.FromSeconds(target);
 
                 // 如果正在播放，先暂停再跳转（防止卡顿/杂音）
-                bool wasPlaying = IsPlaying;
-                if (wasPlaying) Pause();
+                //bool wasPlaying = IsPlaying;
+                //if (wasPlaying) Pause();
 
-                _audioReader.CurrentTime = targetTime;
+                _audioReader.CurrentTime = TimeSpan.FromSeconds(value);
+                Debug.WriteLine(_waveOut?.GetPosition());
+                //Debug.WriteLine(_audioReader.Position);
 
-                if (wasPlaying) Play();
+                //if (wasPlaying) Play();
 
                 OnPropertyChanged(nameof(CurrentSeconds));
             }
@@ -116,15 +119,21 @@ namespace Tune.Engine
         {
             if (_waveOut == null || _audioReader == null) return;
 
-            // 如果已经到达结尾，自动从头开始
+            //_waveOut = new WaveOutEvent();
+            //_waveOut.Init(_audioReader);
+            //_waveOut.PlaybackStopped += OnPlaybackStopped;
+
+            //_progressTimer?.Stop();
+            /*
             if (CurrentSeconds >= TotalSeconds - 0.1)
             {
                 CurrentSeconds = 0;
-            }
+            }*/
+            //CurrentSeconds = 8;
 
             _waveOut.Play();
             IsPlaying = true;
-            _progressTimer.Start();
+            _progressTimer?.Start();
         }
 
         /// <summary> Pause </summary>

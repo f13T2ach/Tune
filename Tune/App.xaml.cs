@@ -1,6 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
+using Tune.Appearance;
+using Tune.Client.Controllers;
 using Tune.Client.Logger;
+using Tune.Client.Presenters;
 using Tune.Engine;
 using Tune.Helpers;
 using Tune.Persistence.PlaylistStorage;
@@ -36,7 +39,18 @@ namespace Tune
                 services.AddSingleton<IAudioPlayerEngine, AudioPlayerEngine>();
                 services.AddSingleton<ITimeService, TimeService>();
                 services.AddSingleton<IAudioDeviceService, AudioDeviceService>();
+
+                services.AddSingleton<PlayerController>();          // 注意：PlayerController 依赖 IAudioPlayerEngine，DI 会自动注入
+                services.AddSingleton<ListController>();
+                services.AddSingleton<MusicDisplayPresenter>();
+                services.AddSingleton<MusicLyricPresenter>();
+
+                // Shared viewmodels & windows
+                services.AddSingleton<Main>();
+                services.AddSingleton<CurrentPlaylist>();
+
                 services.AddSingleton<MainViewModel>();
+                services.AddTransient<CurrentPlaylistViewModel>();
                 Services = services.BuildServiceProvider();
 
                 // Register loadable services
