@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using Tune.Client.Logger;
 using Tune.Helpers;
@@ -128,7 +126,7 @@ namespace Tune.Persistence.PlaylistStorage
             var failedIds = new List<string>();
             lock (_saveLock)   // lock
             {
-                if(!Directory.Exists(_playlistDirectory))
+                if (!Directory.Exists(_playlistDirectory))
                     Directory.CreateDirectory(_playlistDirectory);
                 foreach (PlaylistBase item in list)
                 {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Tune.Values.Paths;
+﻿using Tune.Values.Paths;
 
 namespace Tune.Client.Logger
 {

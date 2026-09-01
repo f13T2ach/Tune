@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Tune.Persistence
+﻿namespace Tune.Persistence
 {
     /// <summary>
     /// The interface of Persistence Provider

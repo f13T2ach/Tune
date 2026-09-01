@@ -12,7 +12,7 @@ namespace Tune.Helpers
             // 获取目录部分
 
             string? directory = Path.GetDirectoryName(audioFilePath);
-            
+
             string fileNameWithoutExt = Path.GetFileNameWithoutExtension(audioFilePath);
 
             // 如果 directory 为 null 或空字符串，说明传入的是纯文件名（不含路径）

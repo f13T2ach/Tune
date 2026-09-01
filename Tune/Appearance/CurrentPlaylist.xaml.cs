@@ -1,5 +1,5 @@
-﻿using System.Windows.Controls;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Windows.Controls;
 using Tune.ViewModel;
 
 namespace Tune.Appearance

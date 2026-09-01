@@ -1,8 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Tune.Appearance;
 using Tune.Client.Controllers;
 using Tune.Client.Presenters;

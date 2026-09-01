@@ -1,5 +1,4 @@
-﻿using System;
-using Tune.Client.Logger;
+﻿using Tune.Client.Logger;
 
 namespace Tune.Helpers
 {

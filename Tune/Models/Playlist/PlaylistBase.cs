@@ -30,11 +30,11 @@ namespace Tune.Models.Playlist
         {
             return Name == null ? base.ToString() : Name;
         }
-        
+
         public abstract void SavePlaylist();
 
         public override abstract JObject? ToJObject();
 
-        
+
     }
 }

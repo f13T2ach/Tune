@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Windows;
 using Tune.Models.Playlist;
 using Tune.Models.Results;
 using Tune.Services.Interfaces;
@@ -60,7 +59,7 @@ namespace Tune.Persistence.PlaylistStorage
                 _isInitialized = true;
 
                 if (!loadResult.Success)
-                    return ResultWithExceptions.FailureResult(loadResult.Exceptions ?? new[] {new Exception("PlaylistService.Initialize() failed and get null loadResult.Exceptions") }, Assets.Localization.LangStrings.PartOfPlaylistNotInited);
+                    return ResultWithExceptions.FailureResult(loadResult.Exceptions ?? new[] { new Exception("PlaylistService.Initialize() failed and get null loadResult.Exceptions") }, Assets.Localization.LangStrings.PartOfPlaylistNotInited);
 
                 return ResultWithExceptions.SuccessResult();
             }
@@ -109,9 +108,9 @@ namespace Tune.Persistence.PlaylistStorage
         /// <returns></returns>
         public ResultWithExceptions DeletePlaylist(string id)
         {
-            
+
             var deleteResult = _provider.DeletePlaylist(id);
-            if (!deleteResult.Success) 
+            if (!deleteResult.Success)
                 return deleteResult;
 
             _cache.TryRemove(id, out _);

@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Windows;
 using System.Windows.Controls;
 using Tune.Appearance.SoundEffectTools;
@@ -85,7 +84,7 @@ namespace Tune.Appearance
             }
             catch (ObjectDisposedException ex)
             {
-                LoggerHelper.LogError("SoundEffect Failed to navigate to page: " + ex.Message,ex,nameof(NavigateTo));
+                LoggerHelper.LogError("SoundEffect Failed to navigate to page: " + ex.Message, ex, nameof(NavigateTo));
             }
         }
     }

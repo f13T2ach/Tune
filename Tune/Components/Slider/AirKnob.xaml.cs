@@ -1,14 +1,21 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Tune.Local; // 确保 TuneSettings 可用
+using Tune.Local;
 
 namespace Tune.Components
 {
     public partial class AirKnob
     {
         private const double MaxAngle = 223.0;
+        private const double StrokeHalfWidth = 1.5;
+        private const double DefaultAnimationDuration = 400; // ms
+        private const double NearEndPointThreshold = 20.0;
+
         private Point _currentEndPoint;
         private bool _isDragging;
         private double _dragStartAngle;
@@ -17,21 +24,16 @@ namespace Tune.Components
         // ========== 动画状态 ==========
         private double _animStartValue;
         private double _animEndValue;
-        private double _animDuration = 400; // ms
-        public double AnimationDelay { get; set; } = 200; // 动画前摇 ms
-        private System.Diagnostics.Stopwatch _animationWatch = new();
+        private double _animDuration = DefaultAnimationDuration;
+        public double AnimationDelay { get; set; } = 200;
+        private readonly Stopwatch _animationWatch = new();
         private bool _isAnimating;
         private bool _animationStarted;
+        private bool _isLoading;
 
-        // ========== 设置加载标志 ==========
-        private bool _isLoading = false;
-
-        // ========== 新增依赖属性：设置键名 ==========
+        // ========== 依赖属性 ==========
         public static readonly DependencyProperty SettingsKeyProperty =
-            DependencyProperty.Register(
-                nameof(SettingsKey),
-                typeof(string),
-                typeof(AirKnob),
+            DependencyProperty.Register(nameof(SettingsKey), typeof(string), typeof(AirKnob),
                 new PropertyMetadata(null));
 
         public string SettingsKey
@@ -49,26 +51,19 @@ namespace Tune.Components
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            // 从设置加载初始值（如果指定了 SettingsKey）
             if (!string.IsNullOrEmpty(SettingsKey))
             {
                 _isLoading = true;
-                object settingValue = TuneSettings.Default[SettingsKey];
-                if (settingValue is double doubleValue)
-                {
-                    Value = doubleValue;
-                }
-                else if (settingValue is int intValue)
-                {
-                    Value = intValue;
-                }
-                // 其他类型可扩展
+                if (TuneSettings.Default[SettingsKey] is double d)
+                    Value = d;
+                else if (TuneSettings.Default[SettingsKey] is int i)
+                    Value = i;
                 _isLoading = false;
             }
             UpdateFan();
         }
 
-        // ========== 依赖属性 ==========
+        // ========== 依赖属性定义 ==========
         public double MinValue
         {
             get => (double)GetValue(MinValueProperty);
@@ -126,9 +121,7 @@ namespace Tune.Components
         private static void OnValueParamsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is AirKnob knob && knob.IsLoaded)
-            {
                 knob.UpdateFan();
-            }
         }
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -137,27 +130,25 @@ namespace Tune.Components
             {
                 knob.UpdateFan();
                 knob.ValueTextBlock.Text = knob.Value.ToString("0");
-
-                // ===== 自动保存逻辑（非拖动、非动画、非加载时） =====
-                if (!string.IsNullOrEmpty(knob.SettingsKey) &&
-                    !knob._isLoading &&
-                    !knob._isDragging &&
-                    !knob._isAnimating)
-                {
-                    knob.SaveToSettings();
-                }
+                knob.TrySaveToSettings();
             }
         }
 
-        // ========== 保存到设置 ==========
-        private void SaveToSettings()
+        // ========== 保存逻辑 ==========
+        private void TrySaveToSettings()
         {
             if (string.IsNullOrEmpty(SettingsKey)) return;
+            if (_isLoading || _isDragging || _isAnimating) return;
+            SaveToSettings();
+        }
+
+        private void SaveToSettings()
+        {
             TuneSettings.Default[SettingsKey] = Value;
             TuneSettings.Default.Save();
         }
 
-        // ========== 角度计算（保持不变） ==========
+        // ========== 角度计算 ==========
         private double ComputeAngle()
         {
             if (MaxValue <= MinValue) return 0;
@@ -176,85 +167,116 @@ namespace Tune.Components
         {
             double size = Math.Min(ActualWidth, ActualHeight);
             double radius = size / 2.0 - 3;
-            Point center = new Point(ActualWidth / 2.0, ActualHeight / 2.0 - YDiff);
+            Point center = new(ActualWidth / 2.0, ActualHeight / 2.0 - YDiff);
             Vector v = point - center;
-            double radians = Math.Atan2(v.Y, v.X);
-            double angle = radians * 180.0 / Math.PI;
+            double angle = Math.Atan2(v.Y, v.X) * 180.0 / Math.PI;
             if (angle < 0) angle += 360.0;
             return angle;
         }
 
-        // ========== 扇形绘制（保持不变） ==========
+        // ========== 核心绘制（重构后） ==========
         private void UpdateFan()
         {
-            double angle = ComputeAngle();
+            if (!ValidateSize()) return;
+
+            var geo = BuildGeometry();
+            ApplyGeometry(geo);
+
+            UpdateValueText();
+            if (_isDragging)
+                UpdateDotPosition();
+        }
+
+        private bool ValidateSize()
+        {
             if (ActualWidth < 1 || ActualHeight < 1)
             {
                 FanFillPath.Data = null;
                 FanStrokePath.Data = null;
-                return;
+                return false;
             }
+            return true;
+        }
 
+        private (PathGeometry fill, PathGeometry stroke, Point endPoint) BuildGeometry()
+        {
+            double angle = ComputeAngle();
             double size = Math.Min(ActualWidth, ActualHeight);
             double radius = size / 2.0 - 3 - RDiff;
-            double strokeHalf = 1.5;
-            double innerRadius = radius - strokeHalf;
-            Point center = new Point(ActualWidth / 2.0, ActualHeight / 2.0 - YDiff);
-            Point startInner = new Point(center.X + innerRadius, center.Y);
+            double innerRadius = radius - StrokeHalfWidth;
+            Point center = new(ActualWidth / 2.0, ActualHeight / 2.0 - YDiff);
 
             if (angle <= 0)
-            {
-                FanFillPath.Data = null;
-                var baseLineGeo = new PathGeometry();
-                var lineFigure = new PathFigure() { StartPoint = center };
-                lineFigure.Segments.Add(new LineSegment(startInner, true));
-                baseLineGeo.Figures.Add(lineFigure);
-                FanStrokePath.Data = baseLineGeo;
-                _currentEndPoint = startInner;
-                return;
-            }
+                return BuildZeroAngleGeometry(center, innerRadius);
 
-            double rad = angle * Math.PI / 180.0;
-            Point endOuter = new Point(center.X + radius * Math.Cos(rad),
-                                       center.Y + radius * Math.Sin(rad));
-            Point endInner = new Point(center.X + innerRadius * Math.Cos(rad),
-                                       center.Y + innerRadius * Math.Sin(rad));
+            return BuildPositiveAngleGeometry(center, radius, innerRadius, angle);
+        }
 
-            _currentEndPoint = endOuter;
+        private (PathGeometry fill, PathGeometry stroke, Point endPoint) BuildZeroAngleGeometry(Point center, double innerRadius)
+        {
+            Point startInner = new(center.X + innerRadius, center.Y);
+            var lineFig = new PathFigure { StartPoint = center };
+            lineFig.Segments.Add(new LineSegment(startInner, true));
+            var stroke = new PathGeometry();
+            stroke.Figures.Add(lineFig);
+            return (null, stroke, startInner);
+        }
 
-            bool isLargeArc = angle > 180;
-            var fillFigure = new PathFigure(
-                center,
-                new List<PathSegment>
-                {
-                    new LineSegment(new Point(center.X + radius, center.Y), true),
-                    new ArcSegment(endOuter, new Size(radius, radius), 0,
-                                   isLargeArc, SweepDirection.Clockwise, true)
-                }, true);
-            var geometry = new PathGeometry(new List<PathFigure> { fillFigure });
-            geometry.Freeze();
-            FanFillPath.Data = geometry;
+        private (PathGeometry fill, PathGeometry stroke, Point endPoint) BuildPositiveAngleGeometry(
+            Point center, double radius, double innerRadius, double angleDeg)
+        {
+            double rad = angleDeg * Math.PI / 180.0;
+            Point endOuter = new(
+                center.X + radius * Math.Cos(rad),
+                center.Y + radius * Math.Sin(rad));
+            Point endInner = new(
+                center.X + innerRadius * Math.Cos(rad),
+                center.Y + innerRadius * Math.Sin(rad));
 
-            var borderGeometry = new PathGeometry();
-            var radius1 = new PathFigure() { StartPoint = center };
-            radius1.Segments.Add(new LineSegment(startInner, true));
-            borderGeometry.Figures.Add(radius1);
+            bool isLargeArc = angleDeg > 180;
 
-            var radius2 = new PathFigure() { StartPoint = center };
-            radius2.Segments.Add(new LineSegment(endInner, true));
-            borderGeometry.Figures.Add(radius2);
+            // --- 填充扇形 ---
+            var fillFigure = new PathFigure { StartPoint = center };
+            fillFigure.Segments.Add(new LineSegment(new Point(center.X + radius, center.Y), true));
+            fillFigure.Segments.Add(new ArcSegment(endOuter, new Size(radius, radius), 0,
+                isLargeArc, SweepDirection.Clockwise, true));
+            fillFigure.IsClosed = true;
+            var fillGeometry = new PathGeometry(new List<PathFigure> { fillFigure });
+            fillGeometry.Freeze();
 
-            var arcFigure = new PathFigure() { StartPoint = startInner };
-            arcFigure.Segments.Add(
-                new ArcSegment(endInner, new Size(innerRadius, innerRadius), 0,
-                               isLargeArc, SweepDirection.Clockwise, true));
-            borderGeometry.Figures.Add(arcFigure);
-            borderGeometry.Freeze();
-            FanStrokePath.Data = borderGeometry;
+            // --- 描边 ---
+            var strokeGeometry = new PathGeometry();
+
+            // 半径1
+            var radius1Fig = new PathFigure { StartPoint = center };
+            radius1Fig.Segments.Add(new LineSegment(new Point(center.X + innerRadius, center.Y), true));
+            strokeGeometry.Figures.Add(radius1Fig);
+
+            // 半径2
+            var radius2Fig = new PathFigure { StartPoint = center };
+            radius2Fig.Segments.Add(new LineSegment(endInner, true));
+            strokeGeometry.Figures.Add(radius2Fig);
+
+            // 内弧
+            var arcFig = new PathFigure { StartPoint = new Point(center.X + innerRadius, center.Y) };
+            arcFig.Segments.Add(new ArcSegment(endInner, new Size(innerRadius, innerRadius), 0,
+                isLargeArc, SweepDirection.Clockwise, true));
+            strokeGeometry.Figures.Add(arcFig);
+            strokeGeometry.Freeze();
+
+            return (fillGeometry, strokeGeometry, endOuter);
+        }
+
+        private void ApplyGeometry((PathGeometry fill, PathGeometry stroke, Point endPoint) geo)
+        {
+            FanFillPath.Data = geo.fill;
+            FanStrokePath.Data = geo.stroke;
+            _currentEndPoint = geo.endPoint;
+        }
+
+        private void UpdateValueText()
+        {
             ValueTextBlock.Text = ((int)Value).ToString("D2");
-
-            if (_isDragging)
-                UpdateDotPosition();
         }
 
         // ========== 白点定位 ==========
@@ -268,12 +290,10 @@ namespace Tune.Components
         // ========== 动画 ==========
         public void AnimateValueTo(double targetValue)
         {
-            if (_isDragging)
-                return;
+            if (_isDragging) return;
 
             targetValue = Math.Clamp(targetValue, MinValue, MaxValue);
-            if (Math.Abs(Value - targetValue) < 0.01)
-                return;
+            if (Math.Abs(Value - targetValue) < 0.01) return;
 
             _animStartValue = Value;
             _animEndValue = targetValue;
@@ -287,8 +307,7 @@ namespace Tune.Components
 
         private void AnimationRendering(object? sender, EventArgs e)
         {
-            if (!_isAnimating)
-                return;
+            if (!_isAnimating) return;
 
             double elapsed = _animationWatch.Elapsed.TotalMilliseconds;
 
@@ -304,11 +323,9 @@ namespace Tune.Components
                 return;
             }
 
-            double progress = Math.Clamp(
-                _animationWatch.Elapsed.TotalMilliseconds / _animDuration,
-                0, 1);
-            double easedProgress = progress * progress * (3 - 2 * progress);
-            Value = _animStartValue + (_animEndValue - _animStartValue) * easedProgress;
+            double progress = Math.Clamp(elapsed / _animDuration, 0, 1);
+            double eased = progress * progress * (3 - 2 * progress);
+            Value = _animStartValue + (_animEndValue - _animStartValue) * eased;
 
             if (progress >= 1)
             {
@@ -316,7 +333,7 @@ namespace Tune.Components
                 _isAnimating = false;
                 _animationWatch.Stop();
                 CompositionTarget.Rendering -= AnimationRendering;
-                // 动画结束，保存一次（因为最后一次 Value 赋值会触发 OnValueChanged）
+                // 最后 Value 变更会触发 TrySaveToSettings（因 _isAnimating 已 false）
             }
         }
 
@@ -327,7 +344,7 @@ namespace Tune.Components
                 _isAnimating = false;
                 _animationWatch.Stop();
                 CompositionTarget.Rendering -= AnimationRendering;
-                Value = _animEndValue; // 触发保存（因为 _isAnimating = false）
+                Value = _animEndValue; // 触发保存逻辑
             }
         }
 
@@ -340,7 +357,7 @@ namespace Tune.Components
             ValueTextBlock.Text = ((int)Value).ToString("D2");
 
             Point pos = e.GetPosition(this);
-            if (IsNearEndPoint(pos, _currentEndPoint, threshold: 20))
+            if (IsNearEndPoint(pos, _currentEndPoint))
             {
                 _isDragging = true;
                 _dragStartAngle = ComputeAngle();
@@ -356,31 +373,28 @@ namespace Tune.Components
 
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
-            if (_isDragging)
+            if (!_isDragging) return;
+
+            Point pos = e.GetPosition(this);
+            double rawAngle = ComputeAngleFromPoint(pos);
+
+            double delta = rawAngle - _dragStartRawAngle;
+            delta = ((delta + 180) % 360 + 360) % 360 - 180;
+
+            double effectiveDelta = delta / (1.0 + Damping);
+            double effectiveAngle = _dragStartAngle + effectiveDelta;
+            effectiveAngle = Math.Clamp(effectiveAngle, 0, MaxAngle);
+
+            double newValue = AngleToValue(effectiveAngle);
+            double change = Math.Abs(newValue - Value);
+            double maxAllowedChange = (MaxValue - MinValue) / 2.0;
+
+            if (change <= maxAllowedChange)
+                Value = newValue;
+            else
             {
-                Point pos = e.GetPosition(this);
-                double rawAngle = ComputeAngleFromPoint(pos);
-
-                double delta = rawAngle - _dragStartRawAngle;
-                delta = ((delta + 180) % 360 + 360) % 360 - 180;
-
-                double effectiveDelta = delta / (1.0 + Damping);
-                double effectiveAngle = _dragStartAngle + effectiveDelta;
-                effectiveAngle = Math.Clamp(effectiveAngle, 0, MaxAngle);
-
-                double newValue = AngleToValue(effectiveAngle);
-                double change = Math.Abs(newValue - Value);
-                double maxAllowedChange = (MaxValue - MinValue) / 2.0;
-
-                if (change <= maxAllowedChange)
-                {
-                    Value = newValue; // 拖动过程中会触发 OnValueChanged，但 _isDragging 为 true，不保存
-                }
-                else
-                {
-                    _dragStartAngle = ComputeAngle();
-                    _dragStartRawAngle = rawAngle;
-                }
+                _dragStartAngle = ComputeAngle();
+                _dragStartRawAngle = rawAngle;
             }
         }
 
@@ -391,16 +405,13 @@ namespace Tune.Components
 
             if (_isDragging)
             {
-                // 拖动结束，保存最终值
-                if (!string.IsNullOrEmpty(SettingsKey))
-                    SaveToSettings();
-
+                SaveToSettings(); // 拖动结束保存
                 _isDragging = false;
                 ReleaseMouseCapture();
             }
         }
 
-        private bool IsNearEndPoint(Point p, Point endPoint, double threshold = 20)
+        private bool IsNearEndPoint(Point p, Point endPoint, double threshold = NearEndPointThreshold)
         {
             return (p - endPoint).LengthSquared < threshold * threshold;
         }

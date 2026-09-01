@@ -33,7 +33,7 @@ namespace Tune.Components
             set => SetValue(IsEndedProperty, value);
         }
 
-        
+
 
 
         public static readonly DependencyProperty CurrentSecondsProperty =

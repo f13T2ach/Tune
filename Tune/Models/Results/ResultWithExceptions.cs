@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Tune.Models.Results
+﻿namespace Tune.Models.Results
 {
     /// <summary>
     /// Represents the result of an operation that may have encountered one or more exceptions.

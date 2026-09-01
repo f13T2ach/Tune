@@ -5,7 +5,6 @@ using Tune.Appearance;
 using Tune.Client.Controllers;
 using Tune.Client.Presenters;
 using Tune.Models.Messages;
-using Tune.Models.Music;
 
 namespace Tune.ViewModel
 {
@@ -34,7 +33,7 @@ namespace Tune.ViewModel
         [RelayCommand]
         private void TimelineStartDragging() => _playerController.BeginDrag();
 
-        
+
 
         public CurrentPlaylistViewModel(
             PlayerController playerController,

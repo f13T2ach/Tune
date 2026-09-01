@@ -1,11 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Windows;
 using Tune.Assets.Localization;
 using Tune.Components.UI;
-using Tune.Helpers;
 using Tune.Helpers.DialogExtentions;
 using Tune.Models.Playlist;
-using Tune.Values.Config;
 using Tune.Values.Enums;
 using Tune.Values.Static;
 

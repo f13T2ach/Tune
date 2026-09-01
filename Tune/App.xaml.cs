@@ -22,14 +22,14 @@ namespace Tune
 
         public App()
         {
-            
+
         }
 
         protected override async void OnStartup(StartupEventArgs e)
         {
             Thread.CurrentThread.CurrentUICulture = new CultureInfo("zh-CN");
             base.OnStartup(e);
-            
+
             try
             {
                 // Work environment init
@@ -69,9 +69,9 @@ namespace Tune
             }
             catch (Exception ex)
             {
-                
+
                 MessageBox.Show($"Tune encountered an error while starting up, log file has been already saved at {LoggerInstance.Instance.LogFilePath}", "Tune", MessageBoxButton.OK, MessageBoxImage.Error);
-                LoggerHelper.LogError("Failed at starting up.",ex,nameof(OnStartup));
+                LoggerHelper.LogError("Failed at starting up.", ex, nameof(OnStartup));
                 Shutdown();
             }
         }

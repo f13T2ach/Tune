@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using Tune.Values.Paths;
 
 namespace Tune.Utils.FileUtils

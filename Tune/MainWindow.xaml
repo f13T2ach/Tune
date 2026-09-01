@@ -4,13 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Tune"
-        
+        xmlns:behaviors="clr-namespace:Tune.Behaviors"
         xmlns:pages="clr-namespace:Tune.Appearance"
         mc:Ignorable="d"
         Background="Black"
-        Title="Tune" Height="792" Width="1600">
+        Title="Tune" Height="792" Width="1600"
+        behaviors:WindowBehavior.AspectRatio="1.945"
+        behaviors:WindowBehavior.MinWidth="800"
+        behaviors:WindowBehavior.MinHeight="400">
     <Grid>
         <ContentControl x:Name="PageContainer" />
-
     </Grid>
 </Window>

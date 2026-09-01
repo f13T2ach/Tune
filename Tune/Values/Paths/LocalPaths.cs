@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Tune.Values.Paths
+﻿namespace Tune.Values.Paths
 {
     /// <summary>
     /// If the suffixes is "NL", means it doesn't have "\\" at start.
@@ -11,7 +7,7 @@ namespace Tune.Values.Paths
     /// </summary>
     public static class LocalPaths
     {
-        
+
         public static string LOCAL_PLAYLIST_N = "playlists";
 
         public static string LOCAL_LOG_N = "logs";

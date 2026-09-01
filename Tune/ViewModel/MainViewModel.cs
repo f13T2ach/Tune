@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using Tune.Appearance;
 using Tune.Client.Controllers;
 using Tune.Client.Presenters;
-using Tune.Engine;
 using Tune.Helpers.FormatConverters;
 using Tune.Local;
 using Tune.Models.Messages;
@@ -202,7 +201,7 @@ namespace Tune.ViewModel
         [RelayCommand] public void SetNoLoop() => _listController.OnSetNoLoop();
         [RelayCommand] public void SetLoopStatus() => _listController.OnSetLoopStatus();
         [RelayCommand] public void SetPlaylist() => _listController.OnSetPlaylist();
-        [RelayCommand] public void NavigateToPlaylist() =>WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(CurrentPlaylist)));
+        [RelayCommand] public void NavigateToPlaylist() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(CurrentPlaylist)));
         [RelayCommand] public void NavigateToSoundEffect() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(SoundEffect)));
         #endregion
 

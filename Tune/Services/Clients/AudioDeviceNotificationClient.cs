@@ -1,5 +1,4 @@
 ﻿using NAudio.CoreAudioApi;
-using NAudio.CoreAudioApi.Interfaces;
 
 // To Update to NAudio 3.0, we used AI to update our code.
 namespace Tune.Services.Clients
