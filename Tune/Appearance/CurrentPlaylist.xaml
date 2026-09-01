@@ -76,7 +76,7 @@
                             </Grid>
                             <!--Blank-->
                             <Grid Grid.Row="1">
-                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,0">
+                                <StackPanel x:Name="EmptylistDesc" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,0">
                                     <TextBlock Text="EMPTY" HorizontalAlignment="Center" FontWeight="SemiBold"/>
                                     <TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" FontSize="30" Text="{x:Static lang:LangStrings.EmptyPlaylist_C}"/>
                                 </StackPanel>

@@ -203,6 +203,7 @@ namespace Tune.ViewModel
         [RelayCommand] public void SetLoopStatus() => _listController.OnSetLoopStatus();
         [RelayCommand] public void SetPlaylist() => _listController.OnSetPlaylist();
         [RelayCommand] public void NavigateToPlaylist() =>WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(CurrentPlaylist)));
+        [RelayCommand] public void NavigateToSoundEffect() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(SoundEffect)));
         #endregion
 
         #region ==== UI Update Methods ====

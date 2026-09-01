@@ -1,0 +1,126 @@
+﻿<UserControl x:Class="Tune.Appearance.SoundEffect"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Tune.Appearance"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:vm="clr-namespace:Tune.ViewModel"
+             xmlns:svc="clr-namespace:Tune.Services"
+             xmlns:lang="clr-namespace:Tune.Assets.Localization"
+             xmlns:converters="clr-namespace:Tune.Helpers.ValueConverters"
+             xmlns:components="clr-namespace:Tune.Components"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1600">
+
+    <UserControl.Resources>
+        <converters:SecondsToDurationConverter x:Key="SecondsToDurationFormat" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisConverter" />
+    </UserControl.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- ===== 自定义顶部工具栏（第0行） ===== -->
+        <Border Grid.Row="0" 
+            Background="#404040" 
+            Padding="8,4">
+            <Grid>
+                <StackPanel Orientation="Horizontal" 
+                    HorizontalAlignment="Left" 
+                    VerticalAlignment="Center">
+
+                    <!-- Title -->
+                    <Grid Width="160">
+                        <components:ClickableTextBlock HorizontalAlignment="Center" Text="" x:Name="TitleButton" Click="OnBackToMainClick" FontFamily="/Tune;component/Assets/Rajdhani/#Rajdhani" Foreground="White" VerticalAlignment="Center" FontSize="32" Margin="2,2,8,0"/>
+                    </Grid>
+                    
+                    <components:Button Text="帮助" Tag="Tune.Appearance.SoundEffectTools.HelpPage"  Click="OnToolBarButtonClick" Margin="2,0" />
+
+                    <Rectangle Width="1" 
+                       Height="40" 
+                       Fill="#888888" 
+                       Margin="8,0" 
+                       VerticalAlignment="Center" />
+
+                    <!-- EQ -->
+                    <components:Button Text="均衡器" Tag="Tune.Appearance.SoundEffectTools.EqualizerPage" Click="OnToolBarButtonClick" Margin="2,0" />
+                    <!-- Effect -->
+                    <components:Button Text="效果器" Tag="Tune.Appearance.SoundEffectTools.EffectPage" Click="OnToolBarButtonClick" Margin="2,0" />
+
+                    <Rectangle Width="1" 
+                       Height="40" 
+                       Fill="#888888" 
+                       Margin="8,0" 
+                       VerticalAlignment="Center" />
+
+                    <!-- Analysis -->
+
+                    <components:Button Text="分析" Tag="Tune.Appearance.SoundEffectTools.AnalysisPage"  Click="OnToolBarButtonClick" Margin="2,0" />
+                    <Rectangle Width="1" 
+                                Height="40" 
+                                Fill="#888888" 
+                                Margin="8,0" 
+                                VerticalAlignment="Center" />
+                    <!-- Music Info -->
+                    <components:Button Text="歌曲"  Tag="Tune.Appearance.SoundEffectTools.SongPage"  Click="OnToolBarButtonClick" Margin="2,0" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" 
+                            HorizontalAlignment="Right" 
+                            VerticalAlignment="Center">
+
+                    <!-- 新建 -->
+                    <TextBlock Text="{Binding MusicDisplay.Title}" VerticalAlignment="Center" FontSize="28"/>
+
+                        <!-- 自定义分隔符（竖线） -->
+                    <Rectangle Width="1" 
+                                Height="40" 
+                                Fill="#888888" 
+                                Margin="8,0" 
+                                VerticalAlignment="Center" />
+
+                    <components:Timeline HorizontalAlignment="Center" Width="200" Margin="2,0"
+                                         IsEnded="True"
+CurrentSeconds="{Binding PlayerController.CurrentSeconds, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+TotalSeconds="{Binding MusicDisplay.TotalSeconds, Mode=OneWay}" Height="21">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="DragCompleted">
+                                <i:InvokeCommandAction Command="{Binding SeekCommand}" 
+                            CommandParameter="{Binding PlayerController.CurrentSeconds}" />
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="DragStarted">
+                                <i:InvokeCommandAction Command="{Binding TimelineStartDraggingCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </components:Timeline>
+                    <Grid HorizontalAlignment="Right" Width="30" Margin="8,0,2,0">
+                        <Viewbox>
+                            <components:Pause IsPlaying="{Binding PlayerController.IsPlaying, Mode=OneWay}" ToggleCommand="{Binding PlayerController.TogglePlayPauseCommand}"/>
+                        </Viewbox>
+                    </Grid>
+
+                    <Rectangle Width="1" 
+                                Height="40" 
+                                Fill="#888888" 
+                                Margin="8,0" 
+                                VerticalAlignment="Center" />
+
+                    <!-- SoundEffect ON/OFF -->
+                    <components:Button Text="ON" Margin="2,0" />
+                    <!-- Close -->
+                    <components:Button Text=" - " Command="{Binding NavigateToMainCommand}" Margin="2,0" />
+                </StackPanel>
+            </Grid>
+
+
+        </Border>
+
+        
+        <Grid Grid.Row="1">
+            <ContentControl x:Name="PageContainer" />
+        </Grid>
+    </Grid>
+</UserControl>

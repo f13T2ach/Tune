@@ -50,9 +50,11 @@ namespace Tune
                 // Shared viewmodels & windows
                 services.AddSingleton<Main>();
                 services.AddSingleton<CurrentPlaylist>();
+                services.AddSingleton<SoundEffect>();
 
                 services.AddSingleton<MainViewModel>();
                 services.AddTransient<CurrentPlaylistViewModel>();
+                services.AddTransient<SoundEffectViewModel>();
                 Services = services.BuildServiceProvider();
 
                 // Register loadable services

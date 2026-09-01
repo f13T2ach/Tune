@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Components\Contents\SoundEffectToolsHelp.png" />
     <None Remove="Assets\Components\HomeButton.png" />
     <None Remove="Assets\Components\KnobBorder.png" />
     <None Remove="Assets\Components\Loop\List.png" />
@@ -39,6 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Components\Contents\SoundEffectToolsHelp.png" />
     <Resource Include="Assets\Components\HomeButton.png" />
     <Resource Include="Assets\Components\KnobBorder.png" />
     <Resource Include="Assets\Components\Loop\List.png" />

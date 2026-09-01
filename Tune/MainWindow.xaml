@@ -10,11 +10,7 @@
         Background="Black"
         Title="Tune" Height="792" Width="1600">
     <Grid>
-        <Viewbox Stretch="Uniform" StretchDirection="Both">
-            <Grid Height="792" Width="1600">
-                <ContentControl x:Name="PageContainer" />
-            </Grid>
-        </Viewbox>
-        
+        <ContentControl x:Name="PageContainer" />
+
     </Grid>
 </Window>

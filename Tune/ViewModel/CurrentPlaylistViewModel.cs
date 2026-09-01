@@ -15,26 +15,26 @@ namespace Tune.ViewModel
     /// </summary>
     public partial class CurrentPlaylistViewModel : ObservableObject
     {
-        // ==== 共享控制器与呈现器（通过 DI 注入单例） ====
+        // ==== Shared ====
         private readonly PlayerController _playerController;
         private readonly ListController _listController;
         private readonly MusicDisplayPresenter _musicDisplay;
         private readonly MusicLyricPresenter _musicLyric;
 
-        // ==== 公开属性供 XAML 绑定 ====
+        // ==== Public Properties ====
         public PlayerController PlayerController => _playerController;
         public ListController ListController => _listController;
         public MusicDisplayPresenter MusicDisplay => _musicDisplay;
         public MusicLyricPresenter MusicLyric => _musicLyric;
 
-        // ==== 命令（委托给 PlayerController） ====
+        // ==== Player Commands ====
         [RelayCommand]
         private void Seek(double seconds) => _playerController.Seek(seconds);
 
         [RelayCommand]
         private void TimelineStartDragging() => _playerController.BeginDrag();
 
-        // 注：SwitchMusic 组件内部可能使用自身的命令，此处无需额外暴露
+        
 
         public CurrentPlaylistViewModel(
             PlayerController playerController,
