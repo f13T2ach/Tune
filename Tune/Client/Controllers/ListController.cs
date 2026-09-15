@@ -12,25 +12,16 @@ namespace Tune.Client.Controllers
     {
         private EListPlayStatus ListPlayStatus { get; set; }
 
-        // ==== observal ====
+        // ==== Observable Properties ====
         [ObservableProperty]
         private PlaylistBase? _currentPlaylist;
 
-        /// <summary>
-        /// When CurrentPlaylist Changed, update private properties.
-        /// THIS SHOULD BE CALLED AT LAST!!!(AFTER SAVING PLAYLIST(IF IT'S NEEDED TO SAVE))
-        /// </summary>
-        /// <param name="oldValue"></param>
-        /// <param name="newValue"></param>
-        partial void OnCurrentPlaylistChanged(PlaylistBase? oldValue, PlaylistBase? newValue)
-        {
-            CurrentPlaylistName = newValue?.Name ?? string.Empty;
-            CurrentPlaylistDescription = newValue?.Description ?? string.Empty;
-            CurrentPlaylistCount = newValue?.MusicList?.Count ?? 0;
-            CurrentPlaylistType = newValue?.Type ?? EPlaylistType.Empty;
-        }
+        [ObservableProperty]
+        private bool _isPlaylistNull = true;
 
-        // 辅助绑定属性（只读）
+        [ObservableProperty]
+        private bool _isPlaylistEmpty = false;  // Behaviour: Null -> false, Empty -> true, Non-empty -> false
+
         [ObservableProperty]
         private string _currentPlaylistName = string.Empty;
 
@@ -43,7 +34,6 @@ namespace Tune.Client.Controllers
         [ObservableProperty]
         private EPlaylistType _currentPlaylistType;
 
-        // 原有的 Icon 属性保持不变
         [ObservableProperty]
         private string? _listIconSource;
 
@@ -52,21 +42,76 @@ namespace Tune.Client.Controllers
             GetLoopStatusFromSettings();
         }
 
-        // ---------- 播放列表切换逻辑 ----------
-        public void SetPlaylist(PlaylistBase? playlist)
+        /// <summary>
+        /// When CurrentPlaylist Changed, update private properties.
+        /// THIS (to change_currentPlaylist) SHOULD BE CALLED AT LAST!!!(AFTER SAVING PLAYLIST(IF IT'S NEEDED TO SAVE))
+        /// </summary>
+        /// <param name="oldValue"></param>
+        /// <param name="newValue"></param>
+        partial void OnCurrentPlaylistChanged(PlaylistBase? oldValue, PlaylistBase? newValue)
         {
-            if (playlist == null) return;
-            CurrentPlaylist = playlist;
-            // 可添加额外逻辑，如保存上次播放列表到设置
+            CurrentPlaylistName = newValue?.Name ?? string.Empty;
+            CurrentPlaylistDescription = newValue?.Description ?? string.Empty;
+            CurrentPlaylistCount = newValue?.MusicList?.Count ?? 0;
+            CurrentPlaylistType = newValue?.Type ?? EPlaylistType.Empty;
+            IsPlaylistNull = newValue == null;
+            if(newValue != null)
+            {
+                IsPlaylistEmpty = newValue.MusicList.Count == 0;
+            }
+            else
+            {
+                IsPlaylistEmpty = false;
+            }
         }
 
+        // ============== Playlist Switching Logic ==============
+
+        /// <summary>
+        /// Set the current playlist. Passing <c>null</c> clears the current playlist
+        /// and toggles <see cref="isPlaylistNull"/> to <c>true</c>.
+        /// </summary>
+        public void SetPlaylist(PlaylistBase? playlist)
+        {
+            // NOTE: Unlike the previous version, null is now a valid input.
+            // Assigning null triggers OnCurrentPlaylistChanged and broadcasts the
+            // "null playlist" state to all bindings (name/description/count/type).
+            CurrentPlaylist = playlist;
+            // Additional logic (e.g. persist the last playlist to settings) may go here.
+        }
+
+        /// <summary>
+        /// Show the playlist selector dialog and apply the user's choice.
+        /// The dialog also exposes a <c>LoadNullPlaylist</c> event, which is raised
+        /// when the user explicitly picks the "None" entry and confirms.
+        /// </summary>
         public void OnSetPlaylist()
         {
             var selector = new SelectPlaylist();
-            var selected = selector.ShowSelectPlaylistDialog(LangStrings.SelectPlaylistToPlay);
-            if (selected != null)
+
+            // Subscribe to the "None" option. When the user confirms it, clear the
+            // current playlist so the UI switches to the null-playlist state.
+            void HandleLoadNullPlaylist(object? sender, EventArgs e)
             {
-                SetPlaylist(selected);
+                SetPlaylist(null);
+            }
+
+            selector.LoadNullPlaylist += HandleLoadNullPlaylist;
+
+            try
+            {
+                var selected = selector.ShowSelectPlaylistDialog(LangStrings.SelectPlaylistToPlay);
+
+                // If the user confirmed a real playlist, apply it.
+                if (selected != null)
+                {
+                    SetPlaylist(selected);
+                }
+            }
+            finally
+            {
+                // Always unsubscribe to avoid keeping a reference to the dialog.
+                selector.LoadNullPlaylist -= HandleLoadNullPlaylist;
             }
         }
 
@@ -75,7 +120,7 @@ namespace Tune.Client.Controllers
             SetPlaylist(playlist);
         }
 
-        // ---------- 循环模式切换（已有）----------
+        // ============== Loop Mode ==============
         public void OnSetNoLoop()
         {
             ListPlayStatus = EListPlayStatus.NoLoop;

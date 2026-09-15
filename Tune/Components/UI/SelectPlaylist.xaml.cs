@@ -4,6 +4,7 @@ using Tune.Assets.Localization;
 using Tune.Generic.DialogGenerics;
 using Tune.Helpers;
 using Tune.Helpers.DialogExtentions;
+using Tune.Models.DisplayItems;
 using Tune.Models.Playlist;
 using Tune.Persistence.PlaylistStorage;
 using Tune.Values.Static;
@@ -41,11 +42,17 @@ namespace Tune.Components.UI
         // ==== Events ====
         public event EventHandler<PlaylistBase>? PlaylistSelected;
 
+        /// <summary>
+        /// Raised when the user selects the "None" option and confirms.
+        /// Consumers should treat this as a request to load / clear the current playlist.
+        /// </summary>
+        public event EventHandler? LoadNullPlaylist;
+
         // ==== Constructor ====
         public SelectPlaylist()
         {
             InitializeComponent();
-            // MUST definite the size of the dialog
+            // MUST define the size of the dialog
             this.Height = 400;
             this.Width = 700;
 
@@ -70,29 +77,38 @@ namespace Tune.Components.UI
         // ==== UI Logic ====
         public void SetPlaylists(IEnumerable<PlaylistBase> playlists)
         {
-            if (playlists == null)
+            // Build the display list; the special "None" entry is always prepended.
+            var items = new List<PlaylistDisplayItem>
             {
-                PlaylistListBox.ItemsSource = null;
-                SelectedPlaylist = null;
-                ConfirmButton.IsEnabled = false;
-                return;
+                PlaylistDisplayItem.None
+            };
+
+            if (playlists != null)
+            {
+                items.AddRange(playlists
+                    .Where(p => p != null)
+                    .Select(p => new PlaylistDisplayItem(p)));
             }
 
-            var items = playlists
-                .Where(p => p != null)
-                .Select(p => new PlaylistDisplayItem(p))
-                .ToList();
             PlaylistListBox.ItemsSource = items;
             PlaylistListBox.SelectedItem = null;
+
+            // Reset selection state; Confirm stays disabled until a choice is made.
+            SelectedPlaylist = null;
+            ConfirmButton.IsEnabled = false;
         }
 
         private void OnPlaylistListBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (PlaylistListBox.SelectedItem is PlaylistDisplayItem item)
             {
+                // The "None" item is represented by a null Playlist reference,
+                // but it is still a valid selectable option, so Confirm must stay enabled.
                 SelectedPlaylist = item.Playlist;
                 ConfirmButton.IsEnabled = true;
-                PlaylistSelected?.Invoke(this, SelectedPlaylist);
+
+                if (!item.IsNone && item.Playlist != null)
+                    PlaylistSelected?.Invoke(this, item.Playlist);
             }
             else
             {
@@ -103,9 +119,22 @@ namespace Tune.Components.UI
 
         private void OnConfirmClick(object sender, RoutedEventArgs e)
         {
-            if (SelectedPlaylist != null)
+            // Distinguish between "no selection" and the explicit "None" selection.
+            if (PlaylistListBox.SelectedItem is PlaylistDisplayItem item)
+            {
+                if (item.IsNone)
+                {
+                    // Broadcast the "load null playlist" event before closing the dialog.
+                    LoadNullPlaylist?.Invoke(this, EventArgs.Empty);
+                }
+                else
+                {
+                    SelectedPlaylist = item.Playlist;
+                }
+
                 RaiseConfirm();   // We must Raise UI events when ready to disappear
-                                  // Similiar to base.xxx(); in Java
+                                  // Similar to base.xxx(); in Java
+            }
         }
 
         private void OnCancelClick(object sender, RoutedEventArgs e)
@@ -124,12 +153,6 @@ namespace Tune.Components.UI
             }
         }
 
-
-        private sealed class PlaylistDisplayItem
-        {
-            public PlaylistBase Playlist { get; }
-            public PlaylistDisplayItem(PlaylistBase playlist) => Playlist = playlist;
-            public override string ToString() => Playlist.Name;
-        }
+        
     }
 }

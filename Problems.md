@@ -49,3 +49,53 @@ Problems 记录了 Tune 开发过程中遇到的未解决问题，包含问题TA
 
 #### 记录
 2026/8/28 一般重要
+
+
+### 草稿
+```
+<UserControl.Resources>
+        <Style x:Key="MyTabItemStyle" TargetType="ListBoxItem">
+            <!-- 字形相关：全程不变 -->
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="#6B7280"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="8,0,0,0"/>
+
+            <!-- 固定宽度 -->
+            <Setter Property="Width" Value="160"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Grid SnapsToDevicePixels="True">
+                            <!-- 未选中背景 -->
+                            <Image x:Name="StandbyBg"
+                           Stretch="Uniform"
+                           Source="/Assets/Components/Tab/TabStandby.png"/>
+
+                            <!-- 选中背景，默认隐藏 -->
+                            <Image x:Name="ClickedBg"
+                           Stretch="Uniform"
+                           Visibility="Collapsed"
+                           Source="/Assets/Components/Tab/TabClicked.png"/>
+
+                            <!-- 文字：居中显示，字体不受任何 Trigger 影响 -->
+                            <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="StandbyBg" Property="Visibility" Value="Collapsed"/>
+                                <Setter TargetName="ClickedBg" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+```

@@ -4,44 +4,44 @@ using CommunityToolkit.Mvvm.Messaging;
 using Tune.Appearance;
 using Tune.Client.Controllers;
 using Tune.Client.Presenters;
-using Tune.Helpers.FormatConverters;
-using Tune.Local;
 using Tune.Models.Messages;
 using Tune.Models.Music;
-using Tune.Models.Results;
 using Tune.Services.FileDialog;
 using Tune.Services.Interfaces;
 
 namespace Tune.ViewModel
 {
     // **TODO**
-    // 1. The _waveOut cant response immediately (depends on the buffer size???).
+    // 1.
     public partial class MainViewModel : ObservableObject
     {
         // ==== Instance ====
         private readonly PlayerController _playerController;
         private readonly ListController _listController;
+        private readonly MusicPlaybackController _playback;
         private readonly MusicLyricPresenter _musicLyric;
         private readonly MusicDisplayPresenter _musicDisplay;
-
-        [ObservableProperty]
-        private Music _currentMusic = new Music();  // Music Instance
 
         // ==== System Services & Resources ====
         private readonly ITimeService _timeService;   // DI
         private readonly IAudioDeviceService _audioDeviceService;    // DI
         private readonly IFileDialogService _fileDialogService; // DI
 
-        // ==== Event Handlers ====
-        private readonly EventHandler<double> _progressHandler;     // Progress Event Handler
-
         // ==== Instance Resolver for Binding ====
         public PlayerController PlayerControl => _playerController;
         public ListController ListController => _listController;
+        public MusicPlaybackController Playback => _playback;
         public MusicDisplayPresenter MusicDisplay => _musicDisplay;
         public MusicLyricPresenter MusicLyric => _musicLyric;   // 若需要公开
 
-        // ==== System Services ===
+        /// <summary>
+        /// The music currently loaded into the player.
+        /// Forwarded from the shared MusicPlaybackController so that existing
+        /// XAML bindings (e.g. MusicDisplay) keep working without modification.
+        /// </summary>
+        public Music CurrentMusic => _playback.CurrentMusic;
+
+        // ==== System Services ====
         public DateTime CurrentTime => _timeService.CurrentTime;
         public string CurrentDeviceName => _audioDeviceService.DeviceName;
 
@@ -52,6 +52,7 @@ namespace Tune.ViewModel
         IAudioDeviceService audioDeviceService,
         PlayerController playerController,
         ListController listController,
+        MusicPlaybackController playback,
         MusicDisplayPresenter musicDisplay,
         MusicLyricPresenter musicLyric)
         {
@@ -60,76 +61,28 @@ namespace Tune.ViewModel
             _audioDeviceService = audioDeviceService;
             _playerController = playerController;
             _listController = listController;
+            _playback = playback;
             _musicDisplay = musicDisplay;
             _musicLyric = musicLyric;
 
             // Events registration
             _audioDeviceService.DeviceChanged += OnAudioDeviceChanged;
             _timeService.TimeChanged += OnTimeChanged;
-            //_playerController.PropertyChanged += OnPlayerControllerPropertyChanged;
 
-            _progressHandler = (_, seconds) => _musicLyric.UpdateLyricsBySecond(seconds);
-            _playerController.ProgressUpdated += _progressHandler;
-            _playerController.TotalSecondsChanged += (_, _) => _musicDisplay.SetTotalSeconds(_playerController.TotalSeconds);
-
-            // Update
-            UpdateDisplayProperties();
-            _musicLyric.UpdateLyricsBySecond(0);
+            // Forward CurrentMusic changes from the shared controller
+            // so that bindings on MainViewModel stay reactive.
+            _playback.PropertyChanged += OnPlaybackPropertyChanged;
         }
 
         /// <summary>
-        /// Execute the functions of updating UI properties: 
-        /// `UpdateMetadata()` is to update the info of music.
-        /// `UpdateTotalSeconds()` is to update the total sec of music.
-        /// `UpdateCurrentLyrics(0)` is to reset the music queue to 0.
-        ///  **NOTE**: This would **RESET** the playing progress
+        /// Forward CurrentMusic change notification from MusicPlaybackController.
         /// </summary>
-        private void UpdateDisplayProperties()
+        private void OnPlaybackPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            UpdateMetadata();
-            UpdateTotalSeconds();
-        }
-
-        /// <summary>
-        /// Update Music Intance (Unload the _player first) : 
-        /// 1. Instance is EMPTY
-        ///    Set IsPlaying = false , set current lyric data null
-        /// 2. Instance is VALID
-        ///    Load it to player, load to current lyric data
-        ///    set volume.
-        /// Afterwards, Update and Reset UI.
-        /// </summary>
-        /// <param name="music"></param>
-        private PlayerControllerLoadResult UpdateMusic(Music music)
-        {
-            if (music == null)
-                return new PlayerControllerLoadResult(false);
-            PlayerControllerLoadResult result;
-
-            if (!music.isEmpty)
+            if (e.PropertyName == nameof(MusicPlaybackController.CurrentMusic))
             {
-                double volume =
-                    UIVolumeToDoubleVolume.Convert(
-                        TuneSettings.Default.PlayerVolume);
-                result = _playerController.Load(music.MusicPath, volume);
+                OnPropertyChanged(nameof(CurrentMusic));
             }
-            else
-            {
-                _playerController.Unload();
-                result = new PlayerControllerLoadResult(true);
-            }
-            if (!result.IsSucceeded)
-            {
-                return result;
-            }
-
-            CurrentMusic = music;
-            MusicLyric.UpdateLyric(music.Lyrics);   // It would handle lyric load failure
-
-            MusicDisplay.Update(music);
-            MusicLyric.UpdateLyricsBySecond(0);
-            UpdateDisplayProperties();
-            return result;
         }
 
         /// <summary>
@@ -162,11 +115,7 @@ namespace Tune.ViewModel
         [RelayCommand] private void TimelineStartDragging() => _playerController.BeginDrag();
 
         [RelayCommand]
-        private void Stop()
-        {
-            _playerController.Stop();
-            MusicLyric.UpdateLyricsBySecond(0);
-        }
+        private void Stop() => _playback.Stop();
 
         /// <summary>
         /// OpenFile and Play
@@ -179,7 +128,7 @@ namespace Tune.ViewModel
             {
                 return;
             }
-            var result = UpdateMusic(new Music(filePath));
+            var result = _playback.PlayMusic(new Music(filePath));
             if (!result.IsSucceeded)
             {
                 return;
@@ -192,29 +141,13 @@ namespace Tune.ViewModel
         /// Behaviour: load a empty Music();
         /// </summary>
         [RelayCommand]
-        public void UnloadCurrentMusic()
-        {
-            CurrentMusic = new Music();
-            UpdateMusic(CurrentMusic);
-        }
+        public void UnloadCurrentMusic() => _playback.Unload();
 
         [RelayCommand] public void SetNoLoop() => _listController.OnSetNoLoop();
         [RelayCommand] public void SetLoopStatus() => _listController.OnSetLoopStatus();
         [RelayCommand] public void SetPlaylist() => _listController.OnSetPlaylist();
         [RelayCommand] public void NavigateToPlaylist() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(CurrentPlaylist)));
         [RelayCommand] public void NavigateToSoundEffect() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(SoundEffect)));
-        #endregion
-
-        #region ==== UI Update Methods ====
-        /// <summary>
-        /// Update (from Music Instance) metadatas to UI
-        /// </summary>
-        private void UpdateMetadata() => MusicDisplay.Update(CurrentMusic);
-
-        /// <summary>
-        /// Update total seconds
-        /// </summary>
-        private void UpdateTotalSeconds() => MusicDisplay.SetTotalSeconds(_playerController.TotalSeconds);
         #endregion
 
         /// <summary>
@@ -226,8 +159,7 @@ namespace Tune.ViewModel
         {
             _audioDeviceService.DeviceChanged -= OnAudioDeviceChanged;
             _timeService.TimeChanged -= OnTimeChanged;
-            _playerController.ProgressUpdated -= _progressHandler;
-            //_playerController.PropertyChanged -= OnPlayerControllerPropertyChanged;
+            _playback.PropertyChanged -= OnPlaybackPropertyChanged;
         }
 
 

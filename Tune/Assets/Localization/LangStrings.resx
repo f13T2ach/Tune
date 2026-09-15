@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddMusicToPlaylist" xml:space="preserve">
+    <value>Add Music to Playlist</value>
+  </data>
+  <data name="Analysis" xml:space="preserve">
+    <value>Analysis</value>
+  </data>
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
@@ -132,6 +138,12 @@
   <data name="CreateNewPlaylisyTitle" xml:space="preserve">
     <value>Create a empty list by entering name, or import from directory.</value>
   </data>
+  <data name="CurrentSelectedMusic" xml:space="preserve">
+    <value>Click the button below to select music</value>
+  </data>
+  <data name="EffectsPedal" xml:space="preserve">
+    <value>Effects</value>
+  </data>
   <data name="EmptyControlAreaDesc" xml:space="preserve">
     <value>Go to settings to display cover, EQ curve, or more</value>
   </data>
@@ -140,6 +152,12 @@
   </data>
   <data name="EmptyPlaylist_F" xml:space="preserve">
     <value>Folder is empty</value>
+  </data>
+  <data name="EQ" xml:space="preserve">
+    <value>EQ</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Help</value>
   </data>
   <data name="ImportDirectory" xml:space="preserve">
     <value>Import from directory</value>
@@ -156,11 +174,23 @@
   <data name="NoName" xml:space="preserve">
     <value>No Name</value>
   </data>
+  <data name="None" xml:space="preserve">
+    <value>None</value>
+  </data>
   <data name="PartOfPlaylistNotInited" xml:space="preserve">
     <value>Part of your local playlists are not successfully initialized</value>
   </data>
+  <data name="SelectPlayingMusic" xml:space="preserve">
+    <value>Select Now Playing</value>
+  </data>
   <data name="SelectPlaylistToPlay" xml:space="preserve">
     <value>Select a playlist to play</value>
+  </data>
+  <data name="Song" xml:space="preserve">
+    <value>Song</value>
+  </data>
+  <data name="SoundEffectTools" xml:space="preserve">
+    <value>Sound Effects</value>
   </data>
   <data name="Unknown" xml:space="preserve">
     <value>Unknown</value>

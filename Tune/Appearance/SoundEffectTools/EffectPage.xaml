@@ -4,12 +4,27 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Tune.Appearance.SoundEffectTools"
+             xmlns:tab="clr-namespace:Tune.Components.TabFrame"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="1600">
+    
     <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,0">
-            <TextBlock Text="EFFECT" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-            <TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" FontSize="30" Text="效果器"/>
-        </StackPanel>
+        <tab:TabFrame SelectedIndex="0">
+
+            <tab:TabFrame.TabTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Header}" FontSize="30" Margin="0,5,0,0" />
+                </DataTemplate>
+            </tab:TabFrame.TabTemplate>
+
+            <tab:TabFrameItem Header="效果链">
+                <TextBlock Text="正在准备效果链" Margin="16"/>
+            </tab:TabFrameItem>
+
+            <tab:TabFrameItem Header="混响">
+                <TextBlock Text="正在准备混响" Margin="16"/>
+            </tab:TabFrameItem>
+
+        </tab:TabFrame>
     </Grid>
 </UserControl>

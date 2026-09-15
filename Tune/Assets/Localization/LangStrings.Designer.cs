@@ -61,6 +61,24 @@ namespace Tune.Assets.Localization {
         }
         
         /// <summary>
+        ///   查找类似 Add Music to Playlist 的本地化字符串。
+        /// </summary>
+        public static string AddMusicToPlaylist {
+            get {
+                return ResourceManager.GetString("AddMusicToPlaylist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Analysis 的本地化字符串。
+        /// </summary>
+        public static string Analysis {
+            get {
+                return ResourceManager.GetString("Analysis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Cancel 的本地化字符串。
         /// </summary>
         public static string Cancel {
@@ -106,6 +124,24 @@ namespace Tune.Assets.Localization {
         }
         
         /// <summary>
+        ///   查找类似 Click the button below to select music 的本地化字符串。
+        /// </summary>
+        public static string CurrentSelectedMusic {
+            get {
+                return ResourceManager.GetString("CurrentSelectedMusic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Effects 的本地化字符串。
+        /// </summary>
+        public static string EffectsPedal {
+            get {
+                return ResourceManager.GetString("EffectsPedal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Go to settings to display cover, EQ curve, or more 的本地化字符串。
         /// </summary>
         public static string EmptyControlAreaDesc {
@@ -129,6 +165,24 @@ namespace Tune.Assets.Localization {
         public static string EmptyPlaylist_F {
             get {
                 return ResourceManager.GetString("EmptyPlaylist_F", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 EQ 的本地化字符串。
+        /// </summary>
+        public static string EQ {
+            get {
+                return ResourceManager.GetString("EQ", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Help 的本地化字符串。
+        /// </summary>
+        public static string Help {
+            get {
+                return ResourceManager.GetString("Help", resourceCulture);
             }
         }
         
@@ -178,6 +232,15 @@ namespace Tune.Assets.Localization {
         }
         
         /// <summary>
+        ///   查找类似 None 的本地化字符串。
+        /// </summary>
+        public static string None {
+            get {
+                return ResourceManager.GetString("None", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Part of your local playlists are not successfully initialized 的本地化字符串。
         /// </summary>
         public static string PartOfPlaylistNotInited {
@@ -187,11 +250,38 @@ namespace Tune.Assets.Localization {
         }
         
         /// <summary>
+        ///   查找类似 Select Now Playing 的本地化字符串。
+        /// </summary>
+        public static string SelectPlayingMusic {
+            get {
+                return ResourceManager.GetString("SelectPlayingMusic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Select a playlist to play 的本地化字符串。
         /// </summary>
         public static string SelectPlaylistToPlay {
             get {
                 return ResourceManager.GetString("SelectPlaylistToPlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Song 的本地化字符串。
+        /// </summary>
+        public static string Song {
+            get {
+                return ResourceManager.GetString("Song", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Sound Effects 的本地化字符串。
+        /// </summary>
+        public static string SoundEffectTools {
+            get {
+                return ResourceManager.GetString("SoundEffectTools", resourceCulture);
             }
         }
         

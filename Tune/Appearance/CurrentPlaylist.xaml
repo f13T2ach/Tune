@@ -9,6 +9,7 @@
       xmlns:frame="clr-namespace:Tune.Components.Frame"
       xmlns:svc="clr-namespace:Tune.Services"
       xmlns:converters="clr-namespace:Tune.Helpers.ValueConverters"
+      xmlns:content="clr-namespace:Tune.Components.Content"
       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       mc:Ignorable="d" 
       d:DesignHeight="800" d:DesignWidth="1600"
@@ -19,6 +20,7 @@
         <converters:SecondsToDurationConverter x:Key="SecondsToDurationFormat" />
         <converters:BoolToVisibilityConverter x:Key="BoolToVisConverter" />
     </UserControl.Resources>
+    
     <Grid >
         <!--Main Box-->
         <Grid >
@@ -43,27 +45,30 @@
                                 <Grid Margin="10">
 
                                     <StackPanel Orientation="Vertical" Margin="10,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
-                                        <TextBlock Text="此处显示歌单名" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding ListController.CurrentPlaylistName}" FontWeight="SemiBold"/>
                                         <Grid Height="5"/>
-                                        <TextBlock Text="无注释"/>
+                                        <TextBlock Text="{Binding ListController.CurrentPlaylistDescription}"/>
 
                                     </StackPanel>
 
                                     <StackPanel Orientation="Horizontal" Margin="12,0,0,6" VerticalAlignment="Bottom" HorizontalAlignment="Left">
                                         <Grid Grid.Row="1" Background="White" Margin="0,0,12,0">
-                                            <TextBlock Foreground="Black" Text="单曲歌单" FontSize="23" Margin="4,2,4,0" VerticalAlignment="Center"/>
+                                            <TextBlock Foreground="Black" Text="{Binding ListController.CurrentPlaylistType}" FontSize="23" Margin="4,2,4,0" VerticalAlignment="Center"/>
                                         </Grid>
                                         <Grid Grid.Row="1" Background="White" Margin="0,0,12,0">
                                             <TextBlock Foreground="Black" Text="2026/8/30" FontSize="23" Margin="4,2,4,0" VerticalAlignment="Center"/>
                                         </Grid>
                                         <Grid Grid.Row="1" Background="White" Margin="0,0,12,0">
-                                            <TextBlock Foreground="Black" Text="10首歌曲" FontSize="23" Margin="4,2,4,0" VerticalAlignment="Center"/>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Foreground="Black" Text="{Binding ListController.CurrentPlaylistCount}" FontSize="23" Margin="4,2,4,0" VerticalAlignment="Center"/>
+                                                <TextBlock Foreground="Black" Text="首歌曲" FontSize="23" Margin="4,2,4,0" VerticalAlignment="Center"/>
+                                            </StackPanel>
                                         </Grid>
                                     </StackPanel>
 
                                     <StackPanel Orientation="Horizontal" Margin="20" HorizontalAlignment="Right" VerticalAlignment="Bottom">
 
-                                        <components:Button Margin="10,0,0,0" Text=" + " VerticalAlignment="Center"/>
+                                        <components:Button Margin="10,0,0,0" Text=" + " Command="{Binding AddMusicClickedCommand}" VerticalAlignment="Center"/>
                                         <components:Button Margin="10,0,0,0" Text="播放" VerticalAlignment="Center"/>
                                         <Grid Width="2" Background="White" Opacity="0.7" Margin="12,0,2,0"/>
                                         <components:Button Margin="10,0,0,0" Text="重命名" VerticalAlignment="Center"/>
@@ -76,10 +81,61 @@
                             </Grid>
                             <!--Blank-->
                             <Grid Grid.Row="1">
-                                <StackPanel x:Name="EmptylistDesc" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,0">
+                                <!-- Empty hint -->
+                                <StackPanel x:Name="EmptylistDesc"
+                Visibility="{Binding ListController.IsPlaylistEmpty, Converter={StaticResource BoolToVisConverter}}"
+                HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,0">
                                     <TextBlock Text="EMPTY" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                                    <TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" FontSize="30" Text="{x:Static lang:LangStrings.EmptyPlaylist_C}"/>
+                                    <TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"
+                   FontSize="30" Text="{x:Static lang:LangStrings.EmptyPlaylist_C}"/>
                                 </StackPanel>
+
+                                <!-- Music list (visible when playlist is not empty) -->
+                                <ListBox ItemsSource="{Binding MusicList}"
+             HorizontalContentAlignment="Stretch"
+             Background="Transparent"
+             BorderThickness="0"
+             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ListBox.Style>
+                                        <Style TargetType="ListBox">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ListController.IsPlaylistEmpty}" Value="True">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ListBox.Style>
+
+                                    <!-- Remove default ListBoxItem selection visual -->
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem">
+                                            <Setter Property="Padding" Value="0"/>
+                                            <Setter Property="Margin" Value="0"/>
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ListBoxItem">
+                                                        <ContentPresenter HorizontalAlignment="Stretch"/>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <content:MusicItem
+                    Music="{Binding}"
+                    ClickCommand="{Binding DataContext.ClickItemCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                    ClickCommandParameter="{Binding}"
+                    PlayNextCommand="{Binding DataContext.PlayNextCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                    AddToPlaylistCommand="{Binding DataContext.AddToPlaylistCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                    MoreCommand="{Binding DataContext.MoreCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                    DeleteCommand="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"/>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
                             </Grid>
 
                         </Grid>

@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using Tune.Generic.DialogGenerics;
 using Tune.Helpers;
+using Tune.Models.Music;
 using Tune.Models.Playlist;
 using Tune.Values.Config;
 using Tune.Values.Static;
@@ -10,6 +11,7 @@ namespace Tune.Components.UI
 {
     public partial class CreatePlaylist : DialogBaseStringPlaylistBase
     {
+        
 
         // ==== Internal Properties ====
         private PlaylistBase? CreatedPlaylist { get; set; }
@@ -41,7 +43,6 @@ namespace Tune.Components.UI
             this.DataContext = this;
             this.Height = 220;
             this.Width = 800;
-
 
             ConfirmButton.Click += OnConfirmClick;
             CancelButton.Click += OnCancelClick;

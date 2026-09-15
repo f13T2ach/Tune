@@ -47,6 +47,8 @@ namespace Tune
                 services.AddSingleton<MusicDisplayPresenter>();
                 services.AddSingleton<MusicLyricPresenter>();
 
+                services.AddSingleton<MusicPlaybackController>();
+
                 // Shared viewmodels & windows
                 services.AddSingleton<Main>();
                 services.AddSingleton<CurrentPlaylist>();

@@ -31,6 +31,8 @@ namespace Tune.Client.Presenters
         [ObservableProperty]
         private bool _isSingle = false;
 
+        public Music? CurrentMusic;
+
         /// <summary>
         /// Update Metadata of the Music Instance for dislpay
         /// Setting the argument null **CANNOT** reset this instance.
@@ -38,6 +40,8 @@ namespace Tune.Client.Presenters
         /// </summary>
         public void Update(Music music)
         {
+            CurrentMusic = music;
+
             if (music == null)
                 return;
 
@@ -58,6 +62,7 @@ namespace Tune.Client.Presenters
             IsTranslated = music.isLyricsAvailable
                            && music.Lyrics != null
                            && music.Lyrics.isTranslated;
+
         }
 
         /// <summary>

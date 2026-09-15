@@ -31,6 +31,8 @@ namespace Tune.Models.Playlist
             return Name == null ? base.ToString() : Name;
         }
 
+        public abstract void AddMuisc(Music.Music music);
+
         public abstract void SavePlaylist();
 
         public override abstract JObject? ToJObject();

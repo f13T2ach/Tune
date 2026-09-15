@@ -144,8 +144,11 @@ namespace Tune.Components
 
         private void SaveToSettings()
         {
-            TuneSettings.Default[SettingsKey] = Value;
-            TuneSettings.Default.Save();
+            if (SettingsKey != null)
+            {
+                TuneSettings.Default[SettingsKey] = Value;
+                TuneSettings.Default.Save();
+            }
         }
 
         // ========== 角度计算 ==========

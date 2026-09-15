@@ -73,23 +73,28 @@ namespace Tune.Models.Playlist
 
         public Music.Music? GetMusicFromIndex(int index)
         {
-            return null;
-        }
-
-        public void AddMusicToList(Music.Music music)
-        {
-
+            return MusicList.ElementAtOrDefault(index);
         }
 
         public void AddListMusicToList(List<Music.Music> list)
         {
-
+            throw new NotImplementedException();
         }
 
         public override void SavePlaylist()
         {
             PlaylistProvider provider = new PlaylistProvider();
             provider.SavePlaylist(this);
+        }
+
+        /// <summary>
+        /// This would **not auto save** playlist after adding music to list.
+        /// </summary>
+        /// <param name="music"></param>
+        public override void AddMuisc(Music.Music music)
+        {
+            MusicList.Add(music);
+            // SavePlaylist();
         }
 
         public override JObject? ToJObject()
