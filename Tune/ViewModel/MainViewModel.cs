@@ -32,7 +32,7 @@ namespace Tune.ViewModel
         public ListController ListController => _listController;
         public MusicPlaybackController Playback => _playback;
         public MusicDisplayPresenter MusicDisplay => _musicDisplay;
-        public MusicLyricPresenter MusicLyric => _musicLyric;   // 若需要公开
+        public MusicLyricPresenter MusicLyric => _musicLyric;
 
         /// <summary>
         /// The music currently loaded into the player.
@@ -145,7 +145,8 @@ namespace Tune.ViewModel
 
         [RelayCommand] public void SetNoLoop() => _listController.OnSetNoLoop();
         [RelayCommand] public void SetLoopStatus() => _listController.OnSetLoopStatus();
-        [RelayCommand] public void SetPlaylist() => _listController.OnSetPlaylist();
+        //[RelayCommand] public void SetPlaylist() => _listController.OnSetPlaylist();
+        [RelayCommand] public void SetPlaylist() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(PlaylistsPage)));
         [RelayCommand] public void NavigateToPlaylist() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(CurrentPlaylist)));
         [RelayCommand] public void NavigateToSoundEffect() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(SoundEffect)));
         #endregion

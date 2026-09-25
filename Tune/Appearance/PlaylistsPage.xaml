@@ -1,0 +1,102 @@
+﻿<UserControl x:Class="Tune.Appearance.PlaylistsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Tune.Appearance"
+      xmlns:lang="clr-namespace:Tune.Assets.Localization"
+      xmlns:vm="clr-namespace:Tune.ViewModel"
+      xmlns:frame="clr-namespace:Tune.Components.Frame"
+             xmlns:bar="clr-namespace:Tune.Components.Bar"
+      xmlns:svc="clr-namespace:Tune.Services"
+      xmlns:converters="clr-namespace:Tune.Helpers.ValueConverters"
+      xmlns:content="clr-namespace:Tune.Components.Content"
+      xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+      mc:Ignorable="d" 
+      d:DesignHeight="800" d:DesignWidth="1600"
+      xmlns:components="clr-namespace:Tune.Components">
+
+
+    <UserControl.Resources>
+        <converters:SecondsToDurationConverter x:Key="SecondsToDurationFormat" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisConverter" />
+    </UserControl.Resources>
+    
+    <Grid >
+        <!--Main Box-->
+        <Grid >
+            <!--Docker-->
+            <Grid>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="200*"/>
+                        <RowDefinition Height="30*"/>
+                    </Grid.RowDefinitions>
+                    <!--Left Up Content-->
+                    <Grid Grid.RowSpan="1" Margin="48,32,40,0">
+                        <!--Album-->
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="4*"/>
+                            </Grid.RowDefinitions>
+                            <!--Title-->
+                            <Grid Grid.Row="0">
+                                <!--Content-->
+                                <Grid VerticalAlignment="Center" HorizontalAlignment="Left">
+                                    <TextBlock Text="歌单" FontWeight="SemiBold" FontSize="50"/>
+                                </Grid>
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal">
+                                    <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                                        <TextBlock Text="Tune Database" TextAlignment="Right" FontSize="16"/>
+                                        <TextBlock Text="Version 1.0.0, Debug" TextAlignment="Right" FontSize="16"/>
+                                        <TextBlock Text="Soka Software" TextAlignment="Right" FontSize="16"/>
+                                    </StackPanel>
+                                    <Image Source="/Assets/Icons/TuneDataBaseIcon.png" Width="50" Margin="8"/>
+                                </StackPanel>
+                                <components:ImageButton Source="/Assets/Components/HomeButton.png" Cursor="Hand" HorizontalAlignment="Right" VerticalAlignment="Top" Command="{Binding NavigateToMainCommand}" Width="28" Margin="0,4,2,0"/>
+                            </Grid>
+                            <!--Blank-->
+                            <!-- Blank -->
+                            <Grid Grid.Row="1">
+                                <!-- Empty hint -->
+                                <!--
+    <StackPanel x:Name="EmptylistDesc"
+                Visibility="{Binding ListController.IsPlaylistEmpty, Converter={StaticResource BoolToVisConverter}}"
+                HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,0"/>-->
+
+                                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+                                    <ItemsControl ItemsSource="{Binding Playlists}">
+                                        <!-- 从左到右、从上往下依次排开 -->
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel Orientation="Horizontal"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <content:PlaylistItem
+            Width="180"
+            Margin="0,0,16,16"
+            Playlist="{Binding}"
+            PlayCommand="{Binding DataContext.PlayPlaylistCommand,
+                                   RelativeSource={RelativeSource AncestorType=ItemsControl}}"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+
+                                <!-- Music list (visible when playlist is not empty) -->
+                            </Grid>
+
+                        </Grid>
+                        
+                    </Grid>
+                    <bar:PlayerControlBar Grid.Row="1"/>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

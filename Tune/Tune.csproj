@@ -22,11 +22,13 @@
     <None Remove="Assets\Components\MusicItemButtons\PlayNext.png" />
     <None Remove="Assets\Components\PauseButton.png" />
     <None Remove="Assets\Components\PlayButton.png" />
+    <None Remove="Assets\Components\PlaylistBegin.png" />
     <None Remove="Assets\Components\Tab\TabClicked.png" />
     <None Remove="Assets\Components\Tab\TabStandby.png" />
     <None Remove="Assets\Components\Timeline.png" />
     <None Remove="Assets\Components\TimelineEnd.png" />
     <None Remove="Assets\Icons\BlankAlbum.png" />
+    <None Remove="Assets\Icons\TuneDataBaseIcon.png" />
     <None Remove="Assets\Rajdhani\Rajdhani-Bold.ttf" />
     <None Remove="Assets\Rajdhani\Rajdhani-Light.ttf" />
     <None Remove="Assets\Rajdhani\Rajdhani-Medium.ttf" />
@@ -60,11 +62,13 @@
     <Resource Include="Assets\Components\MusicItemButtons\PlayNext.png" />
     <Resource Include="Assets\Components\PauseButton.png" />
     <Resource Include="Assets\Components\PlayButton.png" />
+    <Resource Include="Assets\Components\PlaylistBegin.png" />
     <Resource Include="Assets\Components\Tab\TabClicked.png" />
     <Resource Include="Assets\Components\Tab\TabStandby.png" />
     <Resource Include="Assets\Components\Timeline.png" />
     <Resource Include="Assets\Components\TimelineEnd.png" />
     <Resource Include="Assets\Icons\BlankAlbum.png" />
+    <Resource Include="Assets\Icons\TuneDataBaseIcon.png" />
     <Resource Include="Assets\Rajdhani\Rajdhani-Bold.ttf" />
     <Resource Include="Assets\Rajdhani\Rajdhani-Light.ttf" />
     <Resource Include="Assets\Rajdhani\Rajdhani-Medium.ttf" />
@@ -89,6 +93,9 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>LangStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Components\Content\NewPlaylistItem.xaml.cs">
+      <SubType>Code</SubType>
     </Compile>
     <Compile Update="Components\UI\AddMusic.xaml.cs">
       <SubType>Code</SubType>

@@ -53,7 +53,10 @@ namespace Tune
                 services.AddSingleton<Main>();
                 services.AddSingleton<CurrentPlaylist>();
                 services.AddSingleton<SoundEffect>();
+                services.AddSingleton<PlaylistsPage>();
 
+                services.AddSingleton<PlaylistsPageViewModel>();
+                services.AddSingleton<PlayerBarViewModel>();
                 services.AddSingleton<MainViewModel>();
                 services.AddTransient<CurrentPlaylistViewModel>();
                 services.AddTransient<SoundEffectViewModel>();

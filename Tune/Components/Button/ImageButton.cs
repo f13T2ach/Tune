@@ -5,11 +5,11 @@ using System.Windows.Input;
 namespace Tune.Components
 {
     /// <summary>
-    /// 具有命令绑定功能的 Image 控件，左键点击触发 Command。
+    /// 具有命令绑定功能的 Image 控件，左键点击触发 Command 与 Click 事件。
     /// </summary>
     public class ImageButton : Image, ICommandSource
     {
-        // 依赖属性定义
+        // ============ 依赖属性 ============
         public static readonly DependencyProperty CommandProperty =
             DependencyProperty.Register(nameof(Command), typeof(ICommand), typeof(ImageButton),
                 new PropertyMetadata(null));
@@ -26,7 +26,22 @@ namespace Tune.Components
             DependencyProperty.Register(nameof(ClickEffect), typeof(bool), typeof(ImageButton),
                 new PropertyMetadata(false, OnClickEffectChanged));
 
-        // 公共属性
+        // ============ Click 路由事件 ============
+        /// <summary>点击事件（冒泡）。可在 XAML 中通过 Click="Handler" 使用。</summary>
+        public static readonly RoutedEvent ClickEvent =
+            EventManager.RegisterRoutedEvent(
+                nameof(Click),
+                RoutingStrategy.Bubble,
+                typeof(RoutedEventHandler),
+                typeof(ImageButton));
+
+        public event RoutedEventHandler Click
+        {
+            add => AddHandler(ClickEvent, value);
+            remove => RemoveHandler(ClickEvent, value);
+        }
+
+        // ============ 公共属性 ============
         public ICommand Command
         {
             get => (ICommand)GetValue(CommandProperty);
@@ -54,7 +69,7 @@ namespace Tune.Components
             set => SetValue(ClickEffectProperty, value);
         }
 
-        // 内部状态
+        // ============ 内部状态 ============
         private bool _isHovering;
         private bool _isPressed;
         private double? _baseOpacity;
@@ -65,16 +80,12 @@ namespace Tune.Components
                 button.UpdateClickEffect();
         }
 
-        /// <summary>
-        /// 根据悬停 / 按下状态应用或恢复透明度。
-        /// </summary>
         private void UpdateClickEffect()
         {
             bool active = ClickEffect && (_isHovering || _isPressed);
 
             if (active)
             {
-                // 仅在首次应用时记录原始透明度，避免递归生效
                 _baseOpacity ??= Opacity;
                 Opacity = _baseOpacity.Value * 0.75;
             }
@@ -85,6 +96,7 @@ namespace Tune.Components
             }
         }
 
+        // ============ 鼠标事件 ============
         protected override void OnMouseEnter(MouseEventArgs e)
         {
             base.OnMouseEnter(e);
@@ -96,7 +108,6 @@ namespace Tune.Components
         {
             base.OnMouseLeave(e);
             _isHovering = false;
-            // 鼠标离开控件时，无论是否仍按住，都视为释放效果
             _isPressed = false;
             UpdateClickEffect();
         }
@@ -106,16 +117,18 @@ namespace Tune.Components
             _isPressed = true;
             UpdateClickEffect();
 
-            // 捕获鼠标，确保在控件外释放也能收到 MouseUp
             CaptureMouse();
-
             base.OnMouseLeftButtonDown(e);
 
+            // 1) 命令执行（若可执行）
             if (Command != null && Command.CanExecute(CommandParameter))
             {
                 Command.Execute(CommandParameter);
-                e.Handled = true; // 防止事件继续冒泡
+                e.Handled = true;
             }
+
+            // 2) 触发 Click 路由事件（独立于命令，且不依赖 e.Handled）
+            OnClick();
         }
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
@@ -127,6 +140,12 @@ namespace Tune.Components
                 ReleaseMouseCapture();
 
             base.OnMouseLeftButtonUp(e);
+        }
+
+        /// <summary>触发 Click 路由事件，子类可重写以扩展。</summary>
+        protected virtual void OnClick()
+        {
+            RaiseEvent(new RoutedEventArgs(ClickEvent, this));
         }
     }
 }

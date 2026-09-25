@@ -199,7 +199,7 @@
                             <!--Name & Channel-->
                             <Grid Grid.Row="1" Margin="49,19,24,0">
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
-                                    <TextBlock Text="LOAD" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="LOAD" Margin="0,0,0,0" VerticalAlignment="Center" FontWeight="SemiBold"/>
                                     <Grid Width="12"/>
                                     <components:Button Width="540" Height="63" Margin="12,0,0,0" Text="{Binding MusicDisplay.Title}" Command="{Binding OpenFileCommand}" VerticalAlignment="Center"/>
                                 </StackPanel>
@@ -280,7 +280,7 @@
                                         <TextBlock Text="PLAY" Margin="0,0,0,-6" HorizontalAlignment="Right" FontWeight="SemiBold"/>
                                         <TextBlock Text="LIST" Margin="0,0,0,0" HorizontalAlignment="Right" FontWeight="SemiBold"/>
                                     </StackPanel>
-                                    <components:Button Width="220" Command="{Binding SetPlaylistCommand}" Height="63" Margin="12,0,0,0" Text="NONE" VerticalAlignment="Center"/>
+                                    <components:Button Width="220" Command="{Binding SetPlaylistCommand}" Height="63" Margin="12,0,0,0" Text="{Binding ListController.CurrentPlaylistNameDisplay}" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Grid>
                         </Grid>

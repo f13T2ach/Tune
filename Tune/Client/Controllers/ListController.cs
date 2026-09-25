@@ -26,6 +26,9 @@ namespace Tune.Client.Controllers
         private string _currentPlaylistName = string.Empty;
 
         [ObservableProperty]
+        private string _currentPlaylistNameDisplay = Strings.NO_CONTENT;
+
+        [ObservableProperty]
         private string _currentPlaylistDescription = string.Empty;
 
         [ObservableProperty]
@@ -55,7 +58,10 @@ namespace Tune.Client.Controllers
             CurrentPlaylistCount = newValue?.MusicList?.Count ?? 0;
             CurrentPlaylistType = newValue?.Type ?? EPlaylistType.Empty;
             IsPlaylistNull = newValue == null;
-            if(newValue != null)
+            // Update display content
+            CurrentPlaylistNameDisplay = newValue?.Name ?? Strings.NO_CONTENT;
+
+            if (newValue != null)
             {
                 IsPlaylistEmpty = newValue.MusicList.Count == 0;
             }

@@ -1,4 +1,7 @@
 ﻿using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
 using Tune.Models.Playlist;
 using Tune.Models.Results;
 using Tune.Services.Interfaces;
@@ -10,6 +13,8 @@ namespace Tune.Persistence.PlaylistStorage
     {
         private readonly PlaylistProvider _provider;
         private readonly ConcurrentDictionary<string, PlaylistBase> _cache;
+        // Observable mirror of _cache, exposed for UI binding.
+        private readonly ObservableCollection<PlaylistBase> _playlists;
         private bool _isInitialized = false;
         public bool IsLoaded => _isInitialized;
 
@@ -21,6 +26,7 @@ namespace Tune.Persistence.PlaylistStorage
         {
             _provider = provider;
             _cache = new ConcurrentDictionary<string, PlaylistBase>();
+            _playlists = new ObservableCollection<PlaylistBase>();
         }
 
         /// <summary>
@@ -48,13 +54,23 @@ namespace Tune.Persistence.PlaylistStorage
 
                 // Cleanup cache and rebuild the cache
                 _cache.Clear();
+
                 if (loadResult.Content == null)
                     return ResultWithExceptions.FailureResult(new ArgumentNullException("_provider.GetPlaylistBases() is null, find the logs above this line"));
 
-                foreach (var playlist in loadResult.Content)
+                var loadedPlaylists = loadResult.Content.ToList();
+                foreach (var playlist in loadedPlaylists)
                 {
                     _cache.TryAdd(playlist.ID, playlist);
                 }
+
+                // Rebuild the observable collection in a single UI-thread dispatch.
+                RunOnUIThread(() =>
+                {
+                    _playlists.Clear();
+                    foreach (var playlist in loadedPlaylists)
+                        _playlists.Add(playlist);
+                });
 
                 _isInitialized = true;
 
@@ -69,9 +85,9 @@ namespace Tune.Persistence.PlaylistStorage
         /// Get all playlists from memory
         /// </summary>
         /// <returns></returns>
-        public List<PlaylistBase> GetAllPlaylists()
+        public ObservableCollection<PlaylistBase> GetAllPlaylists()
         {
-            return _cache.Values.ToList();
+            return _playlists;
         }
 
         /// <summary>
@@ -98,6 +114,17 @@ namespace Tune.Persistence.PlaylistStorage
                 return saveResult;
 
             _cache.AddOrUpdate(item.ID, item, (key, old) => item);
+
+            // Keep the observable collection in sync so bound UI updates immediately.
+            RunOnUIThread(() =>
+            {
+                var index = IndexOfPlaylistById(item.ID);
+                if (index >= 0)
+                    _playlists[index] = item;
+                else
+                    _playlists.Add(item);
+            });
+
             return ResultWithExceptions.SuccessResult();
         }
 
@@ -114,6 +141,15 @@ namespace Tune.Persistence.PlaylistStorage
                 return deleteResult;
 
             _cache.TryRemove(id, out _);
+
+            // Keep the observable collection in sync so bound UI updates immediately.
+            RunOnUIThread(() =>
+            {
+                var index = IndexOfPlaylistById(id);
+                if (index >= 0)
+                    _playlists.RemoveAt(index);
+            });
+
             return ResultWithExceptions.SuccessResult();
         }
 
@@ -127,6 +163,27 @@ namespace Tune.Persistence.PlaylistStorage
         {
             var all = _cache.Values.ToList();
             return _provider.SavePlaylists(all);
+        }
+
+        // Find the index of a playlist in the observable collection by its ID.
+        private int IndexOfPlaylistById(string id)
+        {
+            for (int i = 0; i < _playlists.Count; i++)
+            {
+                if (_playlists[i].ID == id)
+                    return i;
+            }
+            return -1;
+        }
+
+        // Send an action onto the UI thread when a dispatcher is available.
+        private static void RunOnUIThread(Action action)
+        {
+            var dispatcher = Application.Current?.Dispatcher;
+            if (dispatcher == null || dispatcher.CheckAccess())
+                action();
+            else
+                dispatcher.Invoke(action);
         }
     }
 }

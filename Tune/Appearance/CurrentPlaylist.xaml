@@ -7,6 +7,7 @@
       xmlns:lang="clr-namespace:Tune.Assets.Localization"
       xmlns:vm="clr-namespace:Tune.ViewModel"
       xmlns:frame="clr-namespace:Tune.Components.Frame"
+             xmlns:bar="clr-namespace:Tune.Components.Bar"
       xmlns:svc="clr-namespace:Tune.Services"
       xmlns:converters="clr-namespace:Tune.Helpers.ValueConverters"
       xmlns:content="clr-namespace:Tune.Components.Content"
@@ -139,59 +140,9 @@
                             </Grid>
 
                         </Grid>
-
+                        
                     </Grid>
-
-                    <!--Left Down Content-->
-                    <Grid Grid.Row="1" Background="#404040">
-
-                        <Grid Grid.Row="1" Margin="49,0,24,0">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
-                                <Grid Width="70" Margin="0,0,0,0">
-                                    <components:SwitchMusic Width="60"/>
-                                </Grid>
-                                <Grid Width="12"/>
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="{Binding MusicDisplay.Title}" Margin="0,0,0,-6" FontSize="32" FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding MusicDisplay.Artist}" Margin="0,0,0,0" FontSize="30" />
-                                </StackPanel>
-                            </StackPanel>
-
-                            <components:Timeline HorizontalAlignment="Center" Width="500"
-                                                 IsEnded="True"
-        CurrentSeconds="{Binding PlayerController.CurrentSeconds, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-        TotalSeconds="{Binding MusicDisplay.TotalSeconds, Mode=OneWay}" Height="21" Margin="-15,8,0,0">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="DragCompleted">
-                                        <i:InvokeCommandAction Command="{Binding SeekCommand}" 
-                                    CommandParameter="{Binding PlayerController.CurrentSeconds}" />
-                                    </i:EventTrigger>
-                                    <i:EventTrigger EventName="DragStarted">
-                                        <i:InvokeCommandAction Command="{Binding TimelineStartDraggingCommand}" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </components:Timeline>
-
-                            <!--Channel-->
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                                <Grid Width="12"/>
-
-                                <Grid Width="12"/>
-
-
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="{Binding PlayerController.CurrentSeconds, Converter={StaticResource SecondsToDurationFormat}}" Margin="0,0,0,-6" HorizontalAlignment="Right" FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding MusicLyric.Lyric}" Margin="0,0,0,0" FontSize="30" HorizontalAlignment="Right" />
-                                </StackPanel>
-                                <Grid HorizontalAlignment="Right" Width="90" Margin="0,0,0,5">
-                                    <components:Pause IsPlaying="{Binding PlayerController.IsPlaying, Mode=OneWay}" ToggleCommand="{Binding PlayerController.TogglePlayPauseCommand}"/>
-                                </Grid>
-
-
-
-                            </StackPanel>
-                        </Grid>
-                    </Grid>
+                    <bar:PlayerControlBar Grid.Row="1"/>
                 </Grid>
             </Grid>
         </Grid>

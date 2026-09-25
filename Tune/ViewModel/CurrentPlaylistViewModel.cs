@@ -2,68 +2,48 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 using Tune.Appearance;
 using Tune.Client.Controllers;
-using Tune.Client.Presenters;
 using Tune.Components.UI;
 using Tune.Models.Dialog;
 using Tune.Models.Messages;
 using Tune.Models.Music;
 using Tune.Models.Playlist;
-using Tune.Tests.Helpers.Mock;
 using Tune.Values.Static;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace Tune.ViewModel
 {
     /// <summary>
     /// ViewModel for CurrentPlaylist UserControl.
-    /// Shares PlayerController, ListController and Presenters with MainViewModel.
     /// </summary>
     public partial class CurrentPlaylistViewModel : ObservableObject
     {
-        // ==== Shared ====
-        private readonly PlayerController _playerController;
         private readonly ListController _listController;
         private readonly MusicPlaybackController _playback;
-        private readonly MusicDisplayPresenter _musicDisplay;
-        private readonly MusicLyricPresenter _musicLyric;
 
         /// <summary>
         /// Explicitly bound playlist passed at construction time.
-        /// When null, this view model falls back to ListController.CurrentPlaylist.
+        /// When null, falls back to ListController.CurrentPlaylist.
         /// </summary>
-        private readonly PlaylistBase? _explicitPlaylistBase;
+        private readonly PlaylistBase? _explicitPlaylist;
 
         // ==== Public Properties ====
-        public PlayerController PlayerController => _playerController;
         public ListController ListController => _listController;
         public MusicPlaybackController Playback => _playback;
-        public MusicDisplayPresenter MusicDisplay => _musicDisplay;
-        public MusicLyricPresenter MusicLyric => _musicLyric;
 
         /// <summary>
         /// The playlist displayed by this view model.
         /// Uses the explicitly provided playlist when available,
-        /// otherwise tracks ListController.CurrentPlaylistBase.
+        /// otherwise tracks ListController.CurrentPlaylist.
         /// </summary>
-        private PlaylistBase? SourcePlaylistBase => _explicitPlaylistBase ?? _listController.CurrentPlaylist;
+        private PlaylistBase? SourcePlaylist => _explicitPlaylist ?? _listController.CurrentPlaylist;
 
         /// <summary>
-        /// Observable music list for the current playlist.
-        /// Kept in sync with ListController.CurrentPlaylistBase.MusicList.
+        /// Observable music list for the displayed playlist.
         /// </summary>
         [ObservableProperty]
         private ObservableCollection<Music> _musicList = new();
-
-        // ==== Player Commands ====
-        [RelayCommand]
-        private void Seek(double seconds) => _playerController.Seek(seconds);
-
-        [RelayCommand]
-        private void TimelineStartDragging() => _playerController.BeginDrag();
 
         // ==== MusicItem Commands ====
         [RelayCommand]
@@ -74,7 +54,7 @@ namespace Tune.ViewModel
         }
 
         [RelayCommand]
-        private void AddToPlaylistBase(Music? music)
+        private void AddToPlaylist(Music? music)
         {
             if (music == null) return;
             // TODO: Show playlist selector and add the music to the chosen playlist.
@@ -92,23 +72,19 @@ namespace Tune.ViewModel
         {
             if (music == null) return;
 
-            var playlist = SourcePlaylistBase;
+            var playlist = SourcePlaylist;
             if (playlist == null) return;
 
-            // Remove from observable collection (UI updates automatically)
-            if (MusicList.Remove(music))
-            {
-                // Also remove from the underlying playlist model
-                playlist.MusicList.Remove(music);
-                playlist.SavePlaylist();
+            if (!MusicList.Remove(music)) return;
 
-                // Update ListController state only when this is the active playlist,
-                // so bindings (count, empty flag) refresh consistently.
-                if (ReferenceEquals(playlist, _listController.CurrentPlaylist))
-                {
-                    _listController.CurrentPlaylistCount = MusicList.Count;
-                    _listController.IsPlaylistEmpty = MusicList.Count == 0;
-                }
+            playlist.MusicList.Remove(music);
+            playlist.SavePlaylist();
+
+            // Sync ListController state only when this is the active playlist.
+            if (ReferenceEquals(playlist, _listController.CurrentPlaylist))
+            {
+                _listController.CurrentPlaylistCount = MusicList.Count;
+                _listController.IsPlaylistEmpty = MusicList.Count == 0;
             }
         }
 
@@ -123,11 +99,8 @@ namespace Tune.ViewModel
                 return;
             }
 
-            // TODO: Switch ListController.CurrentPlaylist to SourcePlaylist before playing,
-            // so that global bindings stay aligned with this view model.
+            // TODO: Switch ListController.CurrentPlaylist to SourcePlaylist before playing.
 
-            // Unified entry point: switch the current playing music through
-            // the shared MusicPlaybackController so every page stays in sync.
             var result = _playback.PlayMusic(music);
             if (result.IsSucceeded)
             {
@@ -143,58 +116,46 @@ namespace Tune.ViewModel
         [RelayCommand]
         public void AddMusicClicked()
         {
-            var playlist = SourcePlaylistBase;
-            if (playlist != null)
+            var playlist = SourcePlaylist;
+            if (playlist == null) return;
+
+            var control = new AddMusic(_playback.CurrentMusic);
+            var window = new DialogInstance<object?, Music?>(control);
+            var result = window.ShowDialog(null);
+            if (result == null || result.notExists) return;
+
+            playlist.AddMuisc(result);
+            playlist.SavePlaylist();
+
+            LoadMusicList();
+
+            // Sync ListController state only when this is the active playlist.
+            if (ReferenceEquals(playlist, _listController.CurrentPlaylist))
             {
-                var control = new AddMusic(_playback.CurrentMusic);
-                var window = new DialogInstance<object?, Music?>(control);
-                var result = window.ShowDialog(null);
-                if (result != null && !result.notExists)
-                {
-                    playlist.AddMuisc(result);
-                    playlist.SavePlaylist();
-
-                    // Refresh the observable collection
-                    LoadMusicList();
-
-                    // Keep ListController state in sync so bindings refresh immediately
-                    if (ReferenceEquals(playlist, _listController.CurrentPlaylist))
-                    {
-                        _listController.CurrentPlaylistCount = MusicList.Count;
-                        _listController.IsPlaylistEmpty = MusicList.Count == 0;
-                    }
-                }
-                ;
+                _listController.CurrentPlaylistCount = MusicList.Count;
+                _listController.IsPlaylistEmpty = MusicList.Count == 0;
             }
         }
 
         // ==== Constructor ====
         public CurrentPlaylistViewModel(
-            PlayerController playerController,
             ListController listController,
             MusicPlaybackController playback,
-            MusicDisplayPresenter musicDisplay,
-            MusicLyricPresenter musicLyric,
             PlaylistBase? playlist = null)
         {
-            _playerController = playerController;
             _listController = listController;
             _playback = playback;
-            _musicDisplay = musicDisplay;
-            _musicLyric = musicLyric;
-            _explicitPlaylistBase = playlist;
+            _explicitPlaylist = playlist;
 
-            // Keep MusicList in sync when the current playlist changes
             _listController.PropertyChanged += OnListControllerPropertyChanged;
 
-            // Initial load
             LoadMusicList();
         }
 
         private void OnListControllerPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             // Only track ListController.CurrentPlaylist when no explicit playlist was provided.
-            if (_explicitPlaylistBase == null && e.PropertyName == nameof(ListController.CurrentPlaylist))
+            if (_explicitPlaylist == null && e.PropertyName == nameof(ListController.CurrentPlaylist))
             {
                 LoadMusicList();
             }
@@ -202,15 +163,10 @@ namespace Tune.ViewModel
 
         private void LoadMusicList()
         {
-            var playlist = SourcePlaylistBase;
-            if (playlist?.MusicList != null)
-            {
-                MusicList = new ObservableCollection<Music>(playlist.MusicList);
-            }
-            else
-            {
-                MusicList = new ObservableCollection<Music>();
-            }
+            var playlist = SourcePlaylist;
+            MusicList = playlist?.MusicList != null
+                ? new ObservableCollection<Music>(playlist.MusicList)
+                : new ObservableCollection<Music>();
         }
 
         public void Dispose()
