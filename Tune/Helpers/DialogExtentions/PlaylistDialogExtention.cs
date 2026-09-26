@@ -29,5 +29,15 @@ namespace Tune.Helpers.DialogExtentions
             var window = new DialogInstance<string?, PlaylistBase?>(control);
             return window.ShowDialog(description);
         }
+
+        /*
+        public static PlaylistBase? ShowFavoriteMusicDialog(
+            this FavoriteMusic control,
+            (Music,PlaylistBase?) argument)
+        {
+            control.Argument = argument;
+            var window = new DialogInstance<(Music, PlaylistBase),PlaylistBase?>(control);
+            return window.ShowDialog(argument);
+        }*/
     }
 }

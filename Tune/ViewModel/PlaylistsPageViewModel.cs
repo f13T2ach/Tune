@@ -2,17 +2,15 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
-using System.Windows;
 using Tune.Appearance;
 using Tune.Client.Controllers;
 using Tune.Components.UI;
 using Tune.Helpers;
-using Tune.Models.Dialog;
 using Tune.Models.Messages;
 using Tune.Models.Music;
+using Tune.Models.NewDialog;
 using Tune.Models.Playlist;
 using Tune.Persistence.PlaylistStorage;
-using Tune.Values.Static;
 
 namespace Tune.ViewModel
 {
@@ -50,94 +48,52 @@ namespace Tune.ViewModel
 
         public ObservableCollection<PlaylistBase> Playlists => _playlistService?.GetAllPlaylists() ?? new ObservableCollection<PlaylistBase>();
 
-        // ==== MusicItem Commands ====
+        /// <summary>
+        /// Attempts to play the specified playlist.
+        /// It switches the current playlist, sets the loop mode to list loop,
+        /// selects the first playable track, and starts playback when playback succeeds.
+        /// </summary>
+        /// <param name="playlist">
+        /// The playlist to play. Null, uninitialized, empty, or all-missing playlists will not start playback.
+        /// </param>
+        /// <remarks>
+        /// The current playlist and loop mode are changed before verifying that a playable track exists.
+        /// If invalid playlists should not change playback state, validation should be moved before SetPlaylist.
+        /// </remarks>
         [RelayCommand]
         private void PlayPlaylist(PlaylistBase? playlist)
         {
+            // Ignore a null playlist.
             if (playlist is null) return;
+
+            // Ignore playlists that are empty or not initialized.
             if (playlist.isEmptyOrNotInited) return;
 
+            // Get the playlist's music list.
             var musicList = playlist.MusicList;
-            if (musicList is null || musicList.Count == 0) return;
+            if (musicList is null) return;
 
-            // 第一首可用的音乐（跳过 notExists）
+            // Switch the current playlist and set the loop mode to list loop.
+            _listController.SetPlaylist(playlist);
+            _listController.OnSetTargetLoop(Values.Enums.EListPlayStatus.ListLoop);
+
+            // Do not continue if the playlist has no tracks.
+            if (musicList.Count == 0)
+                return;
+
+            // Find the first track that still exists.
             var first = musicList.FirstOrDefault(m => !m.notExists);
             if (first is null) return;
 
-            // 切换当前歌单
-            _listController.CurrentPlaylist = playlist;
-            _listController.CurrentPlaylistCount = musicList.Count;
-            _listController.IsPlaylistEmpty = false;
-
-            // 播放
+            // Ask the playback service to play/load the selected track.
             var result = _playback.PlayMusic(first);
             if (result.IsSucceeded)
             {
+                // Start/resume playback after a successful PlayMusic request.
                 _playback.Play();
             }
         }
-        /*
-        [RelayCommand]
-        private void PlayNext(Music? music)
-        {
-            if (music == null) return;
-            // TODO: Insert this music as the next track in the play queue.
-        }
 
-        [RelayCommand]
-        private void AddToPlaylist(Music? music)
-        {
-            if (music == null) return;
-            // TODO: Show playlist selector and add the music to the chosen playlist.
-        }
-
-        [RelayCommand]
-        private void More(Music? music)
-        {
-            if (music == null) return;
-            // TODO: Show detailed information about this music.
-        }
-
-        [RelayCommand]
-        private void Delete(Music? music)
-        {
-            if (music == null) return;
-
-            var playlist = SourcePlaylist;
-            if (playlist == null) return;
-
-            if (!MusicList.Remove(music)) return;
-
-            playlist.MusicList.Remove(music);
-            playlist.SavePlaylist();
-
-            // Sync ListController state only when this is the active playlist.
-            if (ReferenceEquals(playlist, _listController.CurrentPlaylist))
-            {
-                _listController.CurrentPlaylistCount = MusicList.Count;
-                _listController.IsPlaylistEmpty = MusicList.Count == 0;
-            }
-        }
-
-        [RelayCommand]
-        private void ClickItem(Music? music)
-        {
-            if (music == null) return;
-
-            if (music.notExists)
-            {
-                MessageBox.Show("Music not exists, unable to play it.", Strings.APPLICATION_NAME, MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-
-            // TODO: Switch ListController.CurrentPlaylist to SourcePlaylist before playing.
-
-            var result = _playback.PlayMusic(music);
-            if (result.IsSucceeded)
-            {
-                _playback.Play();
-            }
-        }*/
 
         // ==== Navigation ====
         [RelayCommand]
@@ -150,9 +106,13 @@ namespace Tune.ViewModel
             var playlist = SourcePlaylist;
             if (playlist == null) return;
 
+            /*
+             * Old dialog
             var control = new AddMusic(_playback.CurrentMusic);
             var window = new DialogInstance<object?, Music?>(control);
-            var result = window.ShowDialog(null);
+            var result = window.ShowDialog(null);*/
+            var dlg = new AddMusic(_playback.CurrentMusic);
+            var result = dlg.ShowDialog() ? dlg.Result : null;
             if (result == null || result.notExists) return;
 
             playlist.AddMuisc(result);

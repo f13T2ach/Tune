@@ -15,6 +15,11 @@ namespace Tune.Engine
 
         public event EventHandler<double>? ProgressUpdated;
 
+        /// <summary>
+        /// Only be triggered when the music has played to its end (not when the user stops the music)
+        /// </summary>
+        public event EventHandler? PlaybackEnded;
+
         // ==== Public Properties ====
 
         public double CurrentSeconds
@@ -193,14 +198,26 @@ namespace Tune.Engine
         }
 
         // ==== Private Helpers ====
-
         private void OnPlaybackStopped(object? sender, StoppedEventArgs e)
         {
+            // End when the music has played to its end
+            bool naturalEnd = e.Exception == null
+                              && _audioReader != null
+                              // tolerate 200ms difference to avoid floating point precision issues
+                              // TODO: this might be reported as a bug (e.g. issue: play next song when i clicked STOP button)
+                              && _audioReader.CurrentTime >= _audioReader.TotalTime - TimeSpan.FromMilliseconds(200);
+
             IsPlaying = false;
             _progressTimer?.Stop();
             OnPropertyChanged(nameof(CurrentSeconds));
-            // Optionally raise event for end-of-track
+
+            if (naturalEnd)
+            {
+                PlaybackEnded?.Invoke(this, EventArgs.Empty);
+            }
         }
+
+
 
         // ==== INotifyPropertyChanged ====
 

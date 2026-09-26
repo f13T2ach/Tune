@@ -6,9 +6,9 @@ using System.Windows;
 using Tune.Appearance;
 using Tune.Client.Controllers;
 using Tune.Components.UI;
-using Tune.Models.Dialog;
 using Tune.Models.Messages;
 using Tune.Models.Music;
+using Tune.Models.NewDialog;
 using Tune.Models.Playlist;
 using Tune.Values.Static;
 
@@ -119,9 +119,10 @@ namespace Tune.ViewModel
             var playlist = SourcePlaylist;
             if (playlist == null) return;
 
-            var control = new AddMusic(_playback.CurrentMusic);
-            var window = new DialogInstance<object?, Music?>(control);
-            var result = window.ShowDialog(null);
+            var dlg = new AddMusic(_playback.CurrentMusic);
+
+            var result = dlg.ShowDialog() ? dlg.Result : null;
+
             if (result == null || result.notExists) return;
 
             playlist.AddMuisc(result);

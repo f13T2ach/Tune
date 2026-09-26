@@ -1,0 +1,37 @@
+﻿<UserControl x:Class="Tune.Components.AutoTextBlock"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Tune.Components"
+             mc:Ignorable="d" 
+             x:Name="Self"
+             ClipToBounds="True">
+    <Grid>
+        <!-- 模式 1：原字号，单行 -->
+        <TextBlock x:Name="PART_Normal"
+                   Text="{Binding Text, ElementName=Self}"
+                   TextAlignment="{Binding TextAlignment, ElementName=Self}"
+                   TextWrapping="NoWrap"
+                   VerticalAlignment="Center"/>
+
+        <!-- 模式 2：字号 / 2，换行 -->
+        <TextBlock x:Name="PART_Half"
+                   Text="{Binding Text, ElementName=Self}"
+                   TextAlignment="{Binding TextAlignment, ElementName=Self}"
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Center"
+                   Visibility="Collapsed"/>
+
+        <!-- 模式 3：原字号，横向滚动 -->
+        <ScrollViewer x:Name="PART_Scroll"
+                      HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Disabled"
+                      Visibility="Collapsed">
+            <TextBlock x:Name="PART_ScrollText"
+                       Text="{Binding Text, ElementName=Self}"
+                       TextWrapping="NoWrap"
+                       VerticalAlignment="Center"/>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

@@ -39,6 +39,11 @@ namespace Tune.Engine
         /// </summary>
         event EventHandler<double>? ProgressUpdated;
 
+        /// <summary>
+        /// 当音乐播放到结尾时触发
+        /// </summary>
+        event EventHandler? PlaybackEnded;
+
 
         /// <summary>
         /// 加载音乐文件

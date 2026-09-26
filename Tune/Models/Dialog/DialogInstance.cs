@@ -45,29 +45,28 @@ namespace Tune.Models.Dialog
         /// <summary>
         /// 构造窗口并注入内容控件
         /// </summary>
-        public DialogInstance(IDialogContent<TArg, TResult> content)
+        public DialogInstance(IDialogContent<TArg, TResult>? content)
         {
             _content = content ?? throw new ArgumentNullException(nameof(content));
 
-            // 设置窗口外观（可覆写）
-            this.WindowStyle = WindowStyle.None;
-            this.AllowsTransparency = true;
-            this.Background = Brushes.Transparent;
-            this.ResizeMode = ResizeMode.NoResize;
-            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            WindowStyle = WindowStyle.None;
+            AllowsTransparency = true;
+            Background = Brushes.Transparent;
+            ResizeMode = ResizeMode.NoResize;
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
-            // 将内容控件设为窗口内容
-            this.Content = (UIElement)content;
+            Content = (UIElement)content;
 
-            // 订阅内容控件的确认/取消事件，自动关闭窗口并传递结果
+            // 先订阅
             content.ConfirmRequested += (s, e) => CloseWithResult(true);
             content.CancelRequested += (s, e) => CloseWithResult(false);
+            Closed += (s, e) => DialogClosed?.Invoke(this, EventArgs.Empty);
 
-            this.Height = content.Height;
-            this.Width = content.Width;
+            Height = content.Height;
+            Width = content.Width;
 
-            // 窗口关闭后触发自定义事件
-            this.Closed += (s, e) => DialogClosed?.Invoke(this, EventArgs.Empty);
+            // 再初始化（此时 RaiseCancel 已经能打到订阅者）
+            (content as IInitializableDialog)?.Initialize();
         }
 
         /// <summary>
@@ -80,10 +79,44 @@ namespace Tune.Models.Dialog
             return this.Result; // 无论是否成功，返回内容控件设置的结果
         }
 
+        public void ForceClose()
+        {
+            this.Close();
+        }
+
+        private bool? _pendingResult;
+
         private void CloseWithResult(bool success)
         {
-            this.DialogResult = success;
-            this.Close();
+            if (IsLoaded || IsVisible)
+            {
+                try
+                {
+                    DialogResult = success;
+                    Close();
+                }
+                catch
+                {
+                    _pendingResult = success;
+                    Loaded += OnFirstLoaded;
+                }
+            }
+            else
+            {
+                // 窗口还没显示：先记住，等 Loaded 再关
+                _pendingResult = success;
+                Loaded += OnFirstLoaded;
+            }
+        }
+
+        private void OnFirstLoaded(object sender, RoutedEventArgs e)
+        {
+            Loaded -= OnFirstLoaded;
+            if (_pendingResult.HasValue)
+            {
+                DialogResult = _pendingResult.Value;
+                Close();
+            }
         }
     }
 }

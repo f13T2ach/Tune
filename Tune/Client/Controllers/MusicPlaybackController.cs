@@ -20,6 +20,8 @@ namespace Tune.Client.Controllers
         private readonly MusicDisplayPresenter _musicDisplay;
         private readonly MusicLyricPresenter _musicLyric;
 
+        private readonly ListController _listController;    // For list play
+
         /// <summary>
         /// The music currently loaded into the player.
         /// Single source of truth shared across all pages.
@@ -28,6 +30,7 @@ namespace Tune.Client.Controllers
         private Music _currentMusic = new Music();
 
         public MusicPlaybackController(
+            ListController listController,
             PlayerController playerController,
             MusicDisplayPresenter musicDisplay,
             MusicLyricPresenter musicLyric)
@@ -35,6 +38,7 @@ namespace Tune.Client.Controllers
             _playerController = playerController;
             _musicDisplay = musicDisplay;
             _musicLyric = musicLyric;
+            _listController = listController;
 
             // Progress-related events are subscribed here so that individual
             // page ViewModels do not have to duplicate this wiring.
@@ -42,6 +46,8 @@ namespace Tune.Client.Controllers
                 _musicLyric.UpdateLyricsBySecond(seconds);
             _playerController.TotalSecondsChanged += (_, _) =>
                 _musicDisplay.SetTotalSeconds(_playerController.TotalSeconds);
+            _playerController.EnginePlaybackToEnd += OnEnginePlaybackToEnd;
+
         }
 
         /// <summary>
@@ -51,6 +57,8 @@ namespace Tune.Client.Controllers
         /// 2. Instance is VALID:
         ///    Load file, load current lyric data, set volume.
         /// Afterwards, reset the playing progress.
+        /// 
+        /// THIS IS THE ONLY NORMAL WAY TO PLAY MUSIC
         /// </summary>
         /// <param name="music"></param>
         public PlayerControllerLoadResult PlayMusic(Music music)
@@ -76,11 +84,60 @@ namespace Tune.Client.Controllers
                 return result;
 
             CurrentMusic = music;
-            _musicLyric.UpdateLyric(music.Lyrics);   // It would handle lyric load failure
+            _musicLyric.UpdateLyric(music.Lyrics);
             _musicDisplay.Update(music);
             _musicLyric.UpdateLyricsBySecond(0);
             _musicDisplay.SetTotalSeconds(_playerController.TotalSeconds);
+
+            // Keep ListController in sync with what is actually playing.
+            _listController.SetCurrentSong(music);
+
             return result;
+        }
+
+        /// <summary>
+        /// On play to end event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void OnEnginePlaybackToEnd(object? sender, EventArgs e)
+        {
+            if (CurrentMusic == null || CurrentMusic.isEmpty)
+                return;
+
+            if (_listController.IsNoLoopStatus())
+                return;
+
+            var next = _listController.GetNextSong();
+            if (next == null)
+                return;
+
+            PlayMusic(next);
+            _playerController.Play();
+        }
+
+        /// <summary>
+        /// Play the next music in the list.
+        /// </summary>
+        public void PlayNextMusic()
+        {
+            var next = _listController.GetNextSong();
+            if (next == null)
+                return;
+            PlayMusic(next);
+            _playerController.Play();
+        }
+
+        /// <summary>
+        /// Play the previous music in the list.
+        /// </summary>
+        public void PlayPreviousMusic()
+        {
+            var previous = _listController.GetLastSong();
+            if (previous == null)
+                return;
+            PlayMusic(previous);
+            _playerController.Play();
         }
 
         /// <summary>

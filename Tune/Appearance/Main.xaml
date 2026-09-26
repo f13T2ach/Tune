@@ -167,16 +167,7 @@
                             </Grid.RowDefinitions>
                             <!--Music Information-->
                             <Grid Grid.Row="0" Margin="49,9,0,0">
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                    <!--Music Switches-->
-                                    <Grid Width="70" Margin="0,6,0,0">
-                                        <components:SwitchMusic Width="70"/>
-                                    </Grid>
-                                    <StackPanel Orientation="Vertical" Margin="16,3,0,0">
-                                        <TextBlock Text="{Binding MusicDisplay.RateText}" FontSize="50" Margin="2,0,0,-4"/>
-                                        <TextBlock Text="Rate(S/B k)" FontWeight="SemiBold" Margin="2,0,0,0"/>
-                                    </StackPanel>
-                                </StackPanel>
+                               
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,6,20,0">
                                     <StackPanel Orientation="Vertical">
                                         <TextBlock Text="{Binding MusicDisplay.TotalSeconds, Converter={StaticResource SecondsToDurationFormat}}" FontSize="50" Margin="2,0,0,-8" HorizontalAlignment="Right"/>
@@ -194,6 +185,16 @@
                                         <TextBlock Text="ARTIST" FontWeight="SemiBold" Margin="0,0,3,0" HorizontalAlignment="Right"/>
                                     </StackPanel>
 
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                    <!--Music Switches-->
+                                    <Grid Width="70" Margin="0,6,0,0">
+                                        <components:SwitchMusic NextCommand="{Binding PlayNextMusicCommand}" LastCommand="{Binding PlayPreviousMusicCommand}" Width="70"/>
+                                    </Grid>
+                                    <StackPanel Orientation="Vertical" Margin="16,3,0,0">
+                                        <TextBlock Text="{Binding MusicDisplay.RateText}" FontSize="50" Margin="2,0,0,-4"/>
+                                        <TextBlock Text="Rate(S/B k)" FontWeight="SemiBold" Margin="2,0,0,0"/>
+                                    </StackPanel>
                                 </StackPanel>
                             </Grid>
                             <!--Name & Channel-->
@@ -248,7 +249,7 @@
                                 <Grid Grid.Row="0">
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <components:Button Margin="10,0,0,0" Text="循环" Command="{Binding SetLoopStatusCommand}" VerticalAlignment="Center"/>
-                                        <components:Button Margin="10,0,0,0" Text="收藏" VerticalAlignment="Center"/>
+                                        <components:Button Margin="10,0,0,0" Text="收藏" Command="{Binding FavoriteCurrentMusicCommand}" VerticalAlignment="Center"/>
                                         <components:Button Margin="10,0,0,0" Text="列表" Command="{Binding NavigateToPlaylistCommand}" VerticalAlignment="Center"/>
                                         <components:Button Margin="10,0,0,0" Text="声效" Command="{Binding NavigateToSoundEffectCommand}" VerticalAlignment="Center"/>
 

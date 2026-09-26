@@ -12,13 +12,14 @@ namespace Tune.Client.Controllers
 
         //private bool _wasPlayingBeforeDrag;
 
-
+        public event EventHandler? EnginePlaybackToEnd;
 
         public PlayerController(IAudioPlayerEngine engine)
         {
             _engine = engine;
             _engine.PropertyChanged += OnEnginePropertyChanged;
             _engine.ProgressUpdated += OnEngineProgressUpdated;
+            _engine.PlaybackEnded += OnEnginePlaybackToEnd;
         }
 
         // ==== Observable Properties ====
@@ -124,6 +125,8 @@ namespace Tune.Client.Controllers
             CurrentSeconds = 0;
         }
 
+
+
         /// <summary>
         /// Change the progress of music
         /// Excecute after the progress has been changed and the timeline has been released.
@@ -194,6 +197,13 @@ namespace Tune.Client.Controllers
         {
             // `_player.CurrentSeconds = value;` is meaningless here.
             OnPropertyChanged(nameof(RemainingSeconds));
+        }
+
+        private void OnEnginePlaybackToEnd(object? sender, EventArgs e)
+        {
+            // Forward to UI (e.g. switch to the next song, change the button back to the playing state, etc.)
+            EnginePlaybackToEnd?.Invoke(this, EventArgs.Empty);
+
         }
 
 

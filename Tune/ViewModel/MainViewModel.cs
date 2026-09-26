@@ -4,8 +4,10 @@ using CommunityToolkit.Mvvm.Messaging;
 using Tune.Appearance;
 using Tune.Client.Controllers;
 using Tune.Client.Presenters;
+using Tune.Components.UI;
 using Tune.Models.Messages;
 using Tune.Models.Music;
+using Tune.Models.NewDialog;
 using Tune.Services.FileDialog;
 using Tune.Services.Interfaces;
 
@@ -136,12 +138,24 @@ namespace Tune.ViewModel
             _playerController.Play();
         }
 
+        [RelayCommand]
+        private void FavoriteCurrentMusic()
+        {
+            if (CurrentMusic == null || CurrentMusic.isEmpty) return;
+
+            var dlg = new FavoriteMusic
+            {
+                Argument = (CurrentMusic, _listController.CurrentPlaylist)
+            };
+
+            var result = dlg.ShowDialog() ? dlg.Result : null;
+        }
+
         /// <summary>
         /// Unload the current playing music(STOP MUSIC)
         /// Behaviour: load a empty Music();
         /// </summary>
-        [RelayCommand]
-        public void UnloadCurrentMusic() => _playback.Unload();
+        [RelayCommand] public void UnloadCurrentMusic() => _playback.Unload();
 
         [RelayCommand] public void SetNoLoop() => _listController.OnSetNoLoop();
         [RelayCommand] public void SetLoopStatus() => _listController.OnSetLoopStatus();
@@ -149,6 +163,10 @@ namespace Tune.ViewModel
         [RelayCommand] public void SetPlaylist() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(PlaylistsPage)));
         [RelayCommand] public void NavigateToPlaylist() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(CurrentPlaylist)));
         [RelayCommand] public void NavigateToSoundEffect() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(SoundEffect)));
+
+        [RelayCommand] public void PlayNextMusic() => _playback.PlayNextMusic();
+        [RelayCommand] public void PlayPreviousMusic() => _playback.PlayPreviousMusic();
+
         #endregion
 
         /// <summary>

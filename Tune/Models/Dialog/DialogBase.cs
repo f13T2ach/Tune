@@ -47,5 +47,10 @@ namespace Tune.Models.Dialog
         {
             CancelRequested?.Invoke(this, EventArgs.Empty);
         }
+
+        public virtual void Initialize()
+        {
+
+        }
     }
 }

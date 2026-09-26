@@ -1,6 +1,6 @@
 ﻿namespace Tune.Models.Dialog
 {
-    public interface IDialogContent<TArg, TResult>
+    public interface IDialogContent<TArg, TResult> : IInitializableDialog
     {
         /// <summary>对话框参数</summary>
         TArg Argument { get; set; }

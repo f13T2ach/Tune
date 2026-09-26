@@ -1,6 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using Tune.Models.Lyric;
-using Tune.Models.Music;
+﻿using Tune.Models.Music;
 
 namespace Tune.Tests.Helpers.Mock
 {

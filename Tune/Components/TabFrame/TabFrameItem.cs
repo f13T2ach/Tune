@@ -1,7 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace Tune.Components.TabFrame {
+namespace Tune.Components.TabFrame
+{
     /// <summary>
     /// Header = ?, Content = ?
     /// </summary>

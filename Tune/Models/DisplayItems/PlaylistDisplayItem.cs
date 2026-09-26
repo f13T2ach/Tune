@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Tune.Assets.Localization;
+﻿using Tune.Assets.Localization;
 using Tune.Models.Playlist;
 
 namespace Tune.Models.DisplayItems

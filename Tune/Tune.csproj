@@ -100,6 +100,9 @@
     <Compile Update="Components\UI\AddMusic.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Components\UI\FavoriteMusic.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Local\TuneSettings.Designer.cs">
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>

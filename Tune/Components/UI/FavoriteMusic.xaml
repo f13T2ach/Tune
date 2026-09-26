@@ -1,0 +1,58 @@
+﻿<newdialog:DialogContentBase x:Class="Tune.Components.UI.FavoriteMusic"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Tune.Components.UI"
+             xmlns:newdialog="clr-namespace:Tune.Models.NewDialog"
+             xmlns:components="clr-namespace:Tune.Components"
+             xmlns:input="clr-namespace:Tune.Components.InputBox"
+             xmlns:frame="clr-namespace:Tune.Components.Frame"
+             xmlns:lang="clr-namespace:Tune.Assets.Localization"
+             mc:Ignorable="d" 
+             d:DesignHeight="220" d:DesignWidth="800"
+             >
+    <Grid Background="Black">
+        <frame:WindowFrame Title="FAVORITE MUSIC">
+            <!-- TAG: NAME_REPEAT_PROBLEM -->
+        </frame:WindowFrame>
+        <Grid Margin="20,42,20,20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- 标题行 -->
+            <Grid Grid.Row="0" Margin="0,0,0,7">
+                <StackPanel Orientation="Vertical">
+                    <TextBlock
+                        x:Name="Title"
+                               Text="收藏歌曲到歌单中" 
+                               FontSize="28"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- 输入区域 -->
+            <Grid Grid.Row="1" Margin="0,0,0,10">
+                <!--无法读取text属性-->
+                <TextBlock x:Name="DescriptionTextBlock" 
+                           VerticalAlignment="Center"
+           Text="..." 
+           FontSize="28"/>
+            </Grid>
+
+            <!-- 按钮区域 -->
+            <Grid Grid.Row="2">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <components:Button Text="{x:Static lang:LangStrings.Cancel}" FontSize="30" x:Name="CancelButton" Width="135" Margin="10,0,0,0"/>
+                    <components:Button Text="{x:Static lang:LangStrings.Confirm}" FontSize="30" x:Name="ConfirmButton" Width="135" Margin="10,0,0,0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                    <components:Button FontSize="30" Text="收藏至其他歌单" Margin="0,0,10,0" Click="OnSelectOtherPlaylistClick"/>
+                    <!--<components:Button FontSize="30" Text="导入其他" Margin="0,0,10,0"/>-->
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</newdialog:DialogContentBase>

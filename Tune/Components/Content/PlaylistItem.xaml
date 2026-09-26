@@ -12,13 +12,14 @@
         <Grid Width="221" Height="321">
             <!-- 上部封面 + 播放按钮 -->
             <Grid VerticalAlignment="Top">
-                <Image Source="/Assets/Icons/BlankAlbum.png" Width="221"/>
+                <Image Source="/Assets/Icons/BlankAlbum.png" Width="221" Cursor="Hand"/>
                 <components:ImageButton x:Name="PlayButton"
                                         Source="/Assets/Components/PlaylistBegin.png"
                                         Width="45"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Bottom"
                                         Margin="15"
+                                        Cursor="Hand"
                                         Command="{Binding PlayCommand, ElementName=Root}"
                                         CommandParameter="{Binding Playlist, ElementName=Root}"/>
             </Grid>

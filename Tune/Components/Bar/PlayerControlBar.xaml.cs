@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using System.Windows.Controls;
 using Tune.ViewModel;
