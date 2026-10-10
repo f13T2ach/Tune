@@ -14,6 +14,6 @@
             <TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" FontSize="30" Text="均衡器"/>
         </StackPanel>
         -->
-        <components:RotatingBox Width="200" Height="200"/>
+        <Image Source="/Assets/TuneWallpaper.png"/>
     </Grid>
 </UserControl>

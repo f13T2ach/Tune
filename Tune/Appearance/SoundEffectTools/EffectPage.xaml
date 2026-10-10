@@ -1,10 +1,11 @@
-﻿<UserControl x:Class="Tune.Appearance.SoundEffectTools.EffectPage"
+<UserControl x:Class="Tune.Appearance.SoundEffectTools.EffectPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Tune.Appearance.SoundEffectTools"
              xmlns:tab="clr-namespace:Tune.Components.TabFrame"
+             xmlns:ui="clr-namespace:Tune.Appearance.EffectToolsUI"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="1600">
     
@@ -17,13 +18,22 @@
                 </DataTemplate>
             </tab:TabFrame.TabTemplate>
 
+            <!-- The chain page stacks rack effects, which the equalizer is not:
+                 it is a fixed processor, so its parameters have their own page. -->
             <tab:TabFrameItem Header="效果链">
-                <TextBlock Text="正在准备效果链" Margin="16"/>
+                <ui:EffectChain/>
+            </tab:TabFrameItem>
+
+            <tab:TabFrameItem Header="简单架">
+                <ui:ParameterPanel/>
             </tab:TabFrameItem>
 
             <tab:TabFrameItem Header="混响">
-                <TextBlock Text="正在准备混响" Margin="16"/>
+                <Grid>
+                    
+                </Grid>
             </tab:TabFrameItem>
+            
 
         </tab:TabFrame>
     </Grid>

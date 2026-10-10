@@ -44,7 +44,10 @@
                             <Grid Grid.Row="0">
                                 <!--Content-->
                                 <Grid VerticalAlignment="Center" HorizontalAlignment="Left">
-                                    <TextBlock Text="歌单" FontWeight="SemiBold" FontSize="50"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        
+                                        <TextBlock Text="歌单" FontWeight="SemiBold" FontSize="50"/>
+                                    </StackPanel>
                                 </Grid>
                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal">
                                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
@@ -53,6 +56,7 @@
                                         <TextBlock Text="Soka Software" TextAlignment="Right" FontSize="16"/>
                                     </StackPanel>
                                     <Image Source="/Assets/Icons/TuneDataBaseIcon.png" Width="50" Margin="8"/>
+                                    <components:ExitButton Height="50" ExitCommand="{Binding NavigateToMainCommand}"/>
                                 </StackPanel>
                                 <components:ImageButton Source="/Assets/Components/HomeButton.png" Cursor="Hand" HorizontalAlignment="Right" VerticalAlignment="Top" Command="{Binding NavigateToMainCommand}" Width="28" Margin="0,4,2,0"/>
                             </Grid>

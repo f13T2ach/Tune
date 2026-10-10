@@ -18,7 +18,7 @@
             <!-- Now Playing Info -->
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
                 <Grid Width="70" Margin="0,0,0,0">
-                    <local:SwitchMusic Width="60"/>
+                    <local:SwitchMusic Cursor="Hand"  NextCommand="{Binding PlayNextMusicCommand}" LastCommand="{Binding PlayPreviousMusicCommand}" Width="60"/>
                 </Grid>
                 <Grid Width="12"/>
                 <StackPanel Orientation="Vertical">

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Tune.Appearance.SoundEffect"
+<UserControl x:Class="Tune.Appearance.SoundEffect"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -24,7 +24,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- ===== 自定义顶部工具栏（第0行） ===== -->
+        <!-- ===== Custom top toolbar (row 0) ===== -->
         <Border Grid.Row="0" 
             Background="#404040" 
             Padding="8,4">
@@ -72,10 +72,10 @@
                             HorizontalAlignment="Right" 
                             VerticalAlignment="Center">
 
-                    <!-- 新建 -->
+                    <!-- Current music -->
                     <TextBlock Text="{Binding MusicDisplay.Title}" VerticalAlignment="Center" FontSize="28"/>
 
-                        <!-- 自定义分隔符（竖线） -->
+                        <!-- Separator line -->
                     <Rectangle Width="1" 
                                 Height="40" 
                                 Fill="#888888" 
@@ -109,7 +109,7 @@ TotalSeconds="{Binding MusicDisplay.TotalSeconds, Mode=OneWay}" Height="21">
                                 VerticalAlignment="Center" />
 
                     <!-- SoundEffect ON/OFF -->
-                    <components:Button Text="ON" Margin="2,0" />
+                    <components:Button Text="{Binding EffectToggleText}" Command="{Binding ToggleEffectCommand}" Margin="2,0" />
                     <!-- Close -->
                     <components:Button Text=" - " Command="{Binding NavigateToMainCommand}" Margin="2,0" />
                 </StackPanel>

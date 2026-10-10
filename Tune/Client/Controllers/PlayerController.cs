@@ -1,7 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Tune.Engine;
-using Tune.Helpers.FormatConverters;
 using Tune.Models.Results;
 
 namespace Tune.Client.Controllers
@@ -32,9 +31,6 @@ namespace Tune.Client.Controllers
         [ObservableProperty]
         private double _totalSeconds;
 
-        [ObservableProperty]
-        private double _volume;
-
         [RelayCommand]
         private void TogglePlayPause()
         {
@@ -56,11 +52,11 @@ namespace Tune.Client.Controllers
 
         // ==== Control Methods ====
         /// <summary>
-        /// Load Controller to play
+        /// Load Controller to play.
+        /// The output level lives in the effect chain, so loading no longer sets a volume.
         /// </summary>
         /// <param name="filePath">Music Path</param>
-        /// <param name="volume">Volume(ENGINE)</param>
-        public PlayerControllerLoadResult Load(string filePath, double volume)
+        public PlayerControllerLoadResult Load(string filePath)
         {
             _engine.Unload();
             try
@@ -69,17 +65,9 @@ namespace Tune.Client.Controllers
             }
             catch (Exception ex)
             {
-                SyncVolume(volume);
                 return new PlayerControllerLoadResult(false, ex);
             }
-            SyncVolume(volume);
             return new PlayerControllerLoadResult(true);
-        }
-
-        private void SyncVolume(double voleg)
-        {
-            _engine.Volume = (float)voleg;
-            Volume = UIVolumeToDoubleVolume.ReverseConvert(voleg);
         }
 
         /// <summary>
@@ -169,9 +157,6 @@ namespace Tune.Client.Controllers
                     CurrentSeconds = _engine.CurrentSeconds;
                     OnPropertyChanged(nameof(RemainingSeconds));
                     break;
-                case nameof(AudioPlayerEngine.Volume):
-                    Volume = UIVolumeToDoubleVolume.ReverseConvert(_engine.Volume);
-                    break;
                 case nameof(AudioPlayerEngine.TotalSeconds):
                     TotalSeconds = _engine.TotalSeconds;
                     OnPropertyChanged(nameof(RemainingSeconds));
@@ -186,11 +171,6 @@ namespace Tune.Client.Controllers
             CurrentSeconds = seconds;
             OnPropertyChanged(nameof(RemainingSeconds));
             ProgressUpdated?.Invoke(this, seconds);
-        }
-
-        partial void OnVolumeChanged(double value)
-        {
-            _engine.Volume = (float)UIVolumeToDoubleVolume.Convert(value);
         }
 
         partial void OnCurrentSecondsChanged(double value)

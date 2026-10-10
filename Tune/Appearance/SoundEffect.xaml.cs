@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using System.Windows.Controls;
 using Tune.Appearance.SoundEffectTools;
@@ -14,6 +14,7 @@ namespace Tune.Appearance
         private readonly string _name = LangStrings.SoundEffectTools;
         private bool _isDisposed;
 
+        // Remember te current page type to restore it when reloading the control
         // Remember te current page type to restore it when reloading the control
         private Type _currentPageType = typeof(SoundEffectMain);
 
@@ -97,6 +98,10 @@ namespace Tune.Appearance
             {
                 if (_isolatedProvider.GetRequiredService(pageType) is UserControl page)
                 {
+                    // Tool pages are built by the isolated provider and own no view model,
+                    // so they share this one to reach the same effect processor.
+                    page.DataContext ??= DataContext;
+
                     if (PageContainer.Content is IDisposable oldPage)
                         oldPage.Dispose();
 

@@ -7,9 +7,10 @@
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="1600">
     <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,0">
+        <StackPanel Visibility="Hidden" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,0">
             <TextBlock Text="SOUND EFFCTS TOOLS" HorizontalAlignment="Center" FontWeight="SemiBold"/>
             <TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" FontSize="30" Text="按上方选项进行调节，按左上角小标题回到此页"/>
         </StackPanel>
+        <Image Source="/Assets/TuneWallpaper.png"/>
     </Grid>
 </UserControl>

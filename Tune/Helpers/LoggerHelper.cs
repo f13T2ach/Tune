@@ -30,6 +30,16 @@ namespace Tune.Helpers
                 LoggerInstance.Instance.Error(logMessage);
         }
 
+        public static void LogInfo(string message, string? methodName = "")
+        {
+            string logMessage = $"{methodName}-> {message}";
+            
+            if (!string.IsNullOrEmpty(methodName))
+                LoggerInstance.Instance.Info(logMessage, methodName);
+            else
+                LoggerInstance.Instance.Info(logMessage);
+        }
+
         /// <summary>
         /// Helper method to log errors consistently with full exception details (including stack trace and inner exceptions).
         /// </summary>

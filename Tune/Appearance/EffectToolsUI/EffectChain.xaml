@@ -1,0 +1,219 @@
+<UserControl x:Class="Tune.Appearance.EffectToolsUI.EffectChain"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Tune.Appearance.EffectToolsUI"
+             xmlns:components="clr-namespace:Tune.Components"
+             xmlns:converters="clr-namespace:Tune.Helpers.ValueConverters"
+             xmlns:effects="clr-namespace:Tune.Engine.Effects"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1600">
+
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVis" />
+
+        <!-- Small square button used by the chain nodes -->
+        <Style x:Key="NodeButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="26" />
+            <Setter Property="Margin" Value="3,0,0,0" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="#33FFFFFF" />
+            <Setter Property="BorderBrush" Value="#88FFFFFF" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <!-- One row of the generic parameter editor.
+             The Show flags of the parameter decide which control is visible. -->
+        <DataTemplate DataType="{x:Type effects:EffectParameterSlot}">
+            <Grid Margin="0,3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="90" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="{Binding Name}" Foreground="White" VerticalAlignment="Center" />
+
+                <Slider Grid.Column="1" Margin="4,0" VerticalAlignment="Center"
+                        Minimum="{Binding Minimum}" Maximum="{Binding Maximum}"
+                        SmallChange="{Binding SmallChange}" LargeChange="{Binding LargeChange}"
+                        IsMoveToPointEnabled="True"
+                        Value="{Binding Value, Mode=TwoWay}"
+                        Visibility="{Binding ShowSlider, Converter={StaticResource BoolToVis}}" />
+
+                <CheckBox Grid.Column="1" Margin="4,0" VerticalAlignment="Center"
+                          IsChecked="{Binding BoolValue, Mode=TwoWay}"
+                          Visibility="{Binding ShowToggle, Converter={StaticResource BoolToVis}}" />
+
+                <ComboBox Grid.Column="1" Margin="4,0" VerticalAlignment="Center"
+                          ItemsSource="{Binding Choices}"
+                          SelectedIndex="{Binding ChoiceIndex, Mode=TwoWay}"
+                          Visibility="{Binding ShowChoice, Converter={StaticResource BoolToVis}}" />
+
+                <ProgressBar Grid.Column="1" Height="14" Margin="4,0" VerticalAlignment="Center"
+                             Minimum="{Binding Minimum}" Maximum="{Binding Maximum}"
+                             Value="{Binding Value, Mode=OneWay}"
+                             Visibility="{Binding ShowMeter, Converter={StaticResource BoolToVis}}" />
+
+                <TextBlock Grid.Column="2" Text="{Binding DisplayValue}" Foreground="#AAAAAA"
+                           VerticalAlignment="Center" TextAlignment="Right" />
+            </Grid>
+        </DataTemplate>
+
+        <!-- One node of the rack. The equalizer is never one of them: it is a
+             fixed processor, not something the user stacks. -->
+        <DataTemplate DataType="{x:Type effects:EffectSlot}">
+            <Border BorderBrush="White" BorderThickness="2" Background="#22000000" Padding="8" Margin="0,3">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Name}" Foreground="White" FontSize="20" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding Subtitle}" Foreground="#AAAAAA" FontSize="14" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <CheckBox IsChecked="{Binding Bypass, Mode=TwoWay}" VerticalAlignment="Center"
+                                  ToolTip="Bypass this effect" />
+                        <Button Content="▲" Style="{StaticResource NodeButtonStyle}"
+                                Command="{Binding MoveUpCommand}" ToolTip="Move up" />
+                        <Button Content="▼" Style="{StaticResource NodeButtonStyle}"
+                                Command="{Binding MoveDownCommand}" ToolTip="Move down" />
+                        <Button Content="✕" Style="{StaticResource NodeButtonStyle}"
+                                Command="{Binding RemoveCommand}" ToolTip="Remove" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid Margin="15">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*" />
+            <ColumnDefinition Width="5*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Chain view: the signal runs from Audio at the top down to Output -->
+        <Grid Margin="10">
+            <Border Background="White" Opacity="0.13" />
+            <Grid Margin="28">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0">
+                    <TextBlock Text="Audio" FontWeight="SemiBold" Foreground="White"
+                               HorizontalAlignment="Center" VerticalAlignment="Top" />
+                    <Image Source="/Assets/Components/Arrow/SignalInDirection.png"
+                           HorizontalAlignment="Center" VerticalAlignment="Bottom" />
+                </StackPanel>
+
+                <Grid Grid.Row="1" Margin="0,10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <ListBox Grid.Row="0"
+                             ItemsSource="{Binding Effect.Slots}"
+                             SelectedItem="{Binding Effect.SelectedSlot, Mode=TwoWay}"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             HorizontalContentAlignment="Stretch"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Opacity" Value="0.6" />
+                                <Setter Property="Padding" Value="0" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Border Background="Transparent" Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Opacity" Value="0.85" />
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Opacity" Value="1" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                    </ListBox>
+
+                    <!-- Add an effect from the catalog, as the NAudio demo does -->
+                    <Grid Grid.Row="1" Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <ComboBox Grid.Column="0"
+                                  ItemsSource="{Binding Effect.AvailableEffects}"
+                                  SelectedIndex="{Binding Effect.SelectedEffectIndex, Mode=TwoWay}" />
+
+                        <Button Grid.Column="1" Content="+" Width="34" Margin="6,0,0,0"
+                                Style="{StaticResource NodeButtonStyle}"
+                                Command="{Binding Effect.AddEffectCommand}"
+                                ToolTip="Add the selected effect to the chain" />
+                    </Grid>
+                </Grid>
+
+                <StackPanel Grid.Row="2">
+                    <Image Source="/Assets/Components/Arrow/SignalInDirection.png"
+                           HorizontalAlignment="Center" VerticalAlignment="Top" />
+                    <TextBlock Text="Output" FontWeight="SemiBold" Foreground="White"
+                               HorizontalAlignment="Center" VerticalAlignment="Bottom" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+        <!-- Right side: the parameters of the node selected on the left -->
+        <Grid Grid.Column="1">
+            <Grid Margin="30">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Effect.SelectedSlot.Name, FallbackValue=未选择效果, TargetNullValue=未选择效果}"
+                                   FontSize="52" FontWeight="Bold" Foreground="White" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <TextBlock Text="Bypass" Foreground="#AAAAAA" Margin="0,0,8,0" VerticalAlignment="Center" />
+                        <CheckBox IsChecked="{Binding Effect.SelectedSlot.Bypass, Mode=TwoWay}"
+                                  VerticalAlignment="Center" />
+                    </StackPanel>
+                </Grid>
+
+                <Grid Grid.Row="1" Margin="0,16,0,0">
+                    <Border Background="White" Opacity="0.13" />
+                    <Grid>
+                        <TextBlock Text="参数面板" Foreground="White"
+                                   HorizontalAlignment="Left" VerticalAlignment="Top" Margin="16" />
+                        
+
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="16,52,16,16">
+                            <ItemsControl ItemsSource="{Binding Effect.SelectedSlot.Parameters}" />
+                        </ScrollViewer>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

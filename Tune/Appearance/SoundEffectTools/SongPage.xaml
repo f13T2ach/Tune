@@ -7,9 +7,10 @@
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="1600">
     <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,0">
+        <StackPanel Visibility="Hidden" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,0">
             <TextBlock Text="SONG" HorizontalAlignment="Center" FontWeight="SemiBold"/>
             <TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" FontSize="30" Text="歌曲"/>
         </StackPanel>
+        <Image Source="/Assets/TuneWallpaper.png"/>
     </Grid>
 </UserControl>

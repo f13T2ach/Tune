@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace Tune.Engine
 {
@@ -14,12 +14,6 @@ namespace Tune.Engine
         /// 音频总长度（秒）
         /// </summary>
         double TotalSeconds { get; }
-
-
-        /// <summary>
-        /// 音量 0~1
-        /// </summary>
-        float Volume { get; set; }
 
 
         /// <summary>

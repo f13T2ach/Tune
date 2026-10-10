@@ -6,4 +6,5 @@
     <File Path="Tune.md" />
   </Folder>
   <Project Path="Tune/Tune.csproj" />
+  <Project Path="Tune.Tests/Tune.Tests.csproj" />
 </Solution>

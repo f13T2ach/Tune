@@ -9,9 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Components\Arrow\More.png" />
+    <None Remove="Assets\Components\Arrow\SignalInDirection.png" />
     <None Remove="Assets\Components\Contents\SoundEffectToolsHelp.png" />
     <None Remove="Assets\Components\HomeButton.png" />
     <None Remove="Assets\Components\KnobBorder.png" />
+    <None Remove="Assets\Components\Leave.png" />
+    <None Remove="Assets\Components\LeaveRev.png" />
     <None Remove="Assets\Components\Loop\List.png" />
     <None Remove="Assets\Components\Loop\NoLoop.png" />
     <None Remove="Assets\Components\Loop\Random.png" />
@@ -23,6 +27,8 @@
     <None Remove="Assets\Components\PauseButton.png" />
     <None Remove="Assets\Components\PlayButton.png" />
     <None Remove="Assets\Components\PlaylistBegin.png" />
+    <None Remove="Assets\Components\Status\Enabled.png" />
+    <None Remove="Assets\Components\Status\NotEnabled.png" />
     <None Remove="Assets\Components\Tab\TabClicked.png" />
     <None Remove="Assets\Components\Tab\TabStandby.png" />
     <None Remove="Assets\Components\Timeline.png" />
@@ -35,6 +41,19 @@
     <None Remove="Assets\Rajdhani\Rajdhani-Regular.ttf" />
     <None Remove="Assets\Rajdhani\Rajdhani-SemiBold.ttf" />
     <None Remove="Assets\Tune.png" />
+    <None Remove="Assets\TuneWallpaper.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Components\Arrow\More.png" />
+    <Resource Include="Assets\Components\Arrow\SignalInDirection.png" />
+    <Resource Include="Assets\Components\Status\Enabled.png">
+      <CopyToOutputDirectory></CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Components\Status\NotEnabled.png">
+      <CopyToOutputDirectory></CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\TuneWallpaper.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -52,6 +71,8 @@
     <Resource Include="Assets\Components\Contents\SoundEffectToolsHelp.png" />
     <Resource Include="Assets\Components\HomeButton.png" />
     <Resource Include="Assets\Components\KnobBorder.png" />
+    <Resource Include="Assets\Components\Leave.png" />
+    <Resource Include="Assets\Components\LeaveRev.png" />
     <Resource Include="Assets\Components\Loop\List.png" />
     <Resource Include="Assets\Components\Loop\NoLoop.png" />
     <Resource Include="Assets\Components\Loop\Random.png" />

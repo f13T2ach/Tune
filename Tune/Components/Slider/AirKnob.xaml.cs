@@ -1,9 +1,10 @@
-﻿using System.Diagnostics;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Tune.Local;
+using Tune.Engine.Effects;
 
 namespace Tune.Components
 {
@@ -27,38 +28,46 @@ namespace Tune.Components
         private readonly Stopwatch _animationWatch = new();
         private bool _isAnimating;
         private bool _animationStarted;
-        private bool _isLoading;
+
+        // ========== 数据源状态 ==========
+        // 视觉值只由控件自己驱动（拖动或动画），只有稳定下来后才写回参数，
+        // 因此动画不再与数据绑定互相覆盖。
+        private IAudioEffectParameter? _attachedParameter;
+        private bool _isSyncingFromParameter;
 
         // ========== 依赖属性 ==========
-        public static readonly DependencyProperty SettingsKeyProperty =
-            DependencyProperty.Register(nameof(SettingsKey), typeof(string), typeof(AirKnob),
-                new PropertyMetadata(null));
+        public static readonly DependencyProperty ParameterProperty =
+            DependencyProperty.Register(nameof(Parameter), typeof(IAudioEffectParameter), typeof(AirKnob),
+                new PropertyMetadata(null, OnParameterChanged));
 
-        public string SettingsKey
+        /// <summary>
+        /// 旋钮所代表的数据。
+        /// 绑定后量程与初始值都取自该参数，开发者只需在 XAML 里指定一次映射关系。
+        /// </summary>
+        public IAudioEffectParameter? Parameter
         {
-            get => (string)GetValue(SettingsKeyProperty);
-            set => SetValue(SettingsKeyProperty, value);
+            get => (IAudioEffectParameter?)GetValue(ParameterProperty);
+            set => SetValue(ParameterProperty, value);
         }
 
         public AirKnob()
         {
             InitializeComponent();
             Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
             SizeChanged += (s, e) => UpdateFan();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(SettingsKey))
-            {
-                _isLoading = true;
-                if (TuneSettings.Default[SettingsKey] is double d)
-                    Value = d;
-                else if (TuneSettings.Default[SettingsKey] is int i)
-                    Value = i;
-                _isLoading = false;
-            }
+            AttachParameter(Parameter);
+            SyncFromParameter();
             UpdateFan();
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            DetachParameter();
         }
 
         // ========== 依赖属性定义 ==========
@@ -128,25 +137,83 @@ namespace Tune.Components
             {
                 knob.UpdateFan();
                 knob.ValueTextBlock.Text = knob.Value.ToString("0");
-                knob.TrySaveToSettings();
+                knob.CommitValue();
             }
         }
 
-        // ========== 保存逻辑 ==========
-        private void TrySaveToSettings()
+        private static void OnParameterChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (string.IsNullOrEmpty(SettingsKey)) return;
-            if (_isLoading || _isDragging || _isAnimating) return;
-            SaveToSettings();
+            if (d is not AirKnob knob) return;
+
+            knob.AttachParameter(e.NewValue as IAudioEffectParameter);
+
+            if (knob.IsLoaded)
+                knob.SyncFromParameter();
         }
 
-        private void SaveToSettings()
+        // ========== 参数同步 ==========
+        private void AttachParameter(IAudioEffectParameter? parameter)
         {
-            if (SettingsKey != null)
-            {
-                TuneSettings.Default[SettingsKey] = Value;
-                TuneSettings.Default.Save();
-            }
+            if (ReferenceEquals(_attachedParameter, parameter)) return;
+
+            DetachParameter();
+            _attachedParameter = parameter;
+
+            if (parameter != null)
+                parameter.PropertyChanged += OnParameterPropertyChanged;
+        }
+
+        private void DetachParameter()
+        {
+            if (_attachedParameter != null)
+                _attachedParameter.PropertyChanged -= OnParameterPropertyChanged;
+
+            _attachedParameter = null;
+        }
+
+        private void OnParameterPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != nameof(IAudioEffectParameter.Value)) return;
+            if (sender is not IAudioEffectParameter parameter) return;
+
+            // 拖动与动画期间视觉值归控件所有，外部写入不打断动画。
+            if (_isDragging || _isAnimating || _isSyncingFromParameter) return;
+
+            _isSyncingFromParameter = true;
+            Value = parameter.Value;
+            _isSyncingFromParameter = false;
+        }
+
+        /// <summary>
+        /// 用参数的量程与当前值刷新旋钮。
+        /// 从量程下端扫到目标值，这样启动动画对每个旋钮都统一生效。
+        /// </summary>
+        private void SyncFromParameter()
+        {
+            IAudioEffectParameter? parameter = Parameter;
+            if (parameter == null) return;
+
+            MinValue = parameter.MinValue;
+            MaxValue = parameter.MaxValue;
+
+            _isSyncingFromParameter = true;
+            Value = MinValue;
+            _isSyncingFromParameter = false;
+
+            AnimateValueTo(parameter.Value);
+        }
+
+        /// <summary>
+        /// 把稳定的视觉值写回参数。
+        /// 拖动中、动画中、以及参数回灌时都不写。
+        /// </summary>
+        private void CommitValue()
+        {
+            if (_isDragging || _isAnimating || _isSyncingFromParameter) return;
+            if (Parameter == null) return;
+            if (Math.Abs(Parameter.Value - Value) < 0.001) return;
+
+            Parameter.Value = Value;
         }
 
         // ========== 角度计算 ==========
@@ -199,7 +266,7 @@ namespace Tune.Components
             return true;
         }
 
-        private (PathGeometry fill, PathGeometry stroke, Point endPoint) BuildGeometry()
+        private (PathGeometry? fill, PathGeometry stroke, Point endPoint) BuildGeometry()
         {
             double angle = ComputeAngle();
             double size = Math.Min(ActualWidth, ActualHeight);
@@ -213,7 +280,7 @@ namespace Tune.Components
             return BuildPositiveAngleGeometry(center, radius, innerRadius, angle);
         }
 
-        private (PathGeometry fill, PathGeometry stroke, Point endPoint) BuildZeroAngleGeometry(Point center, double innerRadius)
+        private (PathGeometry? fill, PathGeometry stroke, Point endPoint) BuildZeroAngleGeometry(Point center, double innerRadius)
         {
             Point startInner = new(center.X + innerRadius, center.Y);
             var lineFig = new PathFigure { StartPoint = center };
@@ -223,7 +290,7 @@ namespace Tune.Components
             return (null, stroke, startInner);
         }
 
-        private (PathGeometry fill, PathGeometry stroke, Point endPoint) BuildPositiveAngleGeometry(
+        private (PathGeometry? fill, PathGeometry stroke, Point endPoint) BuildPositiveAngleGeometry(
             Point center, double radius, double innerRadius, double angleDeg)
         {
             double rad = angleDeg * Math.PI / 180.0;
@@ -268,7 +335,7 @@ namespace Tune.Components
             return (fillGeometry, strokeGeometry, endOuter);
         }
 
-        private void ApplyGeometry((PathGeometry fill, PathGeometry stroke, Point endPoint) geo)
+        private void ApplyGeometry((PathGeometry? fill, PathGeometry stroke, Point endPoint) geo)
         {
             FanFillPath.Data = geo.fill;
             FanStrokePath.Data = geo.stroke;
@@ -334,19 +401,21 @@ namespace Tune.Components
                 _isAnimating = false;
                 _animationWatch.Stop();
                 CompositionTarget.Rendering -= AnimationRendering;
-                // 最后 Value 变更会触发 TrySaveToSettings（因 _isAnimating 已 false）
+
+                // 动画收尾后才把最终值写回参数。
+                CommitValue();
             }
         }
 
         private void StopAnimationAndJumpToEnd()
         {
-            if (_isAnimating)
-            {
-                _isAnimating = false;
-                _animationWatch.Stop();
-                CompositionTarget.Rendering -= AnimationRendering;
-                Value = _animEndValue; // 触发保存逻辑
-            }
+            if (!_isAnimating) return;
+
+            _isAnimating = false;
+            _animationWatch.Stop();
+            CompositionTarget.Rendering -= AnimationRendering;
+            Value = _animEndValue;
+            CommitValue();
         }
 
         // ========== 鼠标交互 ==========
@@ -406,9 +475,10 @@ namespace Tune.Components
 
             if (_isDragging)
             {
-                SaveToSettings(); // 拖动结束保存
+                // 先退出拖动状态，写回才不会被拦下。
                 _isDragging = false;
                 ReleaseMouseCapture();
+                CommitValue();
             }
         }
 

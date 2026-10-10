@@ -7,6 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="1600">
     <Grid>
+        <!--
         <Border Grid.Row="0"
          Margin="40"
         BorderBrush="White"
@@ -14,5 +15,7 @@
         Padding="8,4">
             <Image Source="/Assets/Components/Contents/SoundEffectToolsHelp.png" Margin="10"/>
         </Border>
+        -->
+        <Image Source="/Assets/TuneWallpaper.png"/>
     </Grid>
 </UserControl>

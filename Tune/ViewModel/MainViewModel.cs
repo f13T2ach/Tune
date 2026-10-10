@@ -1,10 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Tune.Appearance;
 using Tune.Client.Controllers;
 using Tune.Client.Presenters;
 using Tune.Components.UI;
+using Tune.Engine.Effects;
 using Tune.Models.Messages;
 using Tune.Models.Music;
 using Tune.Models.NewDialog;
@@ -23,6 +24,7 @@ namespace Tune.ViewModel
         private readonly MusicPlaybackController _playback;
         private readonly MusicLyricPresenter _musicLyric;
         private readonly MusicDisplayPresenter _musicDisplay;
+        private readonly IAudioEffectChain _effectChain;
 
         // ==== System Services & Resources ====
         private readonly ITimeService _timeService;   // DI
@@ -35,18 +37,17 @@ namespace Tune.ViewModel
         public MusicPlaybackController Playback => _playback;
         public MusicDisplayPresenter MusicDisplay => _musicDisplay;
         public MusicLyricPresenter MusicLyric => _musicLyric;
+        public Music CurrentMusic => _playback.CurrentMusic;
 
         /// <summary>
-        /// The music currently loaded into the player.
-        /// Forwarded from the shared MusicPlaybackController so that existing
-        /// XAML bindings (e.g. MusicDisplay) keep working without modification.
+        /// The sound effect processor. Every knob on this page is bound to one of its
+        /// parameters, so the UI never touches the engine directly.
         /// </summary>
-        public Music CurrentMusic => _playback.CurrentMusic;
+        public IAudioEffectChain Effect => _effectChain;
 
         // ==== System Services ====
         public DateTime CurrentTime => _timeService.CurrentTime;
         public string CurrentDeviceName => _audioDeviceService.DeviceName;
-
 
         public MainViewModel(
         IFileDialogService fileDialogService,
@@ -56,7 +57,8 @@ namespace Tune.ViewModel
         ListController listController,
         MusicPlaybackController playback,
         MusicDisplayPresenter musicDisplay,
-        MusicLyricPresenter musicLyric)
+        MusicLyricPresenter musicLyric,
+        IAudioEffectChain effectChain)
         {
             _fileDialogService = fileDialogService;
             _timeService = timeService;
@@ -66,6 +68,7 @@ namespace Tune.ViewModel
             _playback = playback;
             _musicDisplay = musicDisplay;
             _musicLyric = musicLyric;
+            _effectChain = effectChain;
 
             // Events registration
             _audioDeviceService.DeviceChanged += OnAudioDeviceChanged;
@@ -135,6 +138,7 @@ namespace Tune.ViewModel
             {
                 return;
             }
+            // _listController.OnSetTargetLoop(Values.Enums.EListPlayStatus.NoLoop);
             _playerController.Play();
         }
 
@@ -163,7 +167,6 @@ namespace Tune.ViewModel
         [RelayCommand] public void SetPlaylist() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(PlaylistsPage)));
         [RelayCommand] public void NavigateToPlaylist() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(CurrentPlaylist)));
         [RelayCommand] public void NavigateToSoundEffect() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(SoundEffect)));
-
         [RelayCommand] public void PlayNextMusic() => _playback.PlayNextMusic();
         [RelayCommand] public void PlayPreviousMusic() => _playback.PlayPreviousMusic();
 

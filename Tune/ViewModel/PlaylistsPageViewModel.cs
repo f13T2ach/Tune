@@ -14,9 +14,6 @@ using Tune.Persistence.PlaylistStorage;
 
 namespace Tune.ViewModel
 {
-    /// <summary>
-    /// ViewModel for PlaylistsPage UserControl.
-    /// </summary>
     public partial class PlaylistsPageViewModel : ObservableObject
     {
         private readonly ListController _listController;

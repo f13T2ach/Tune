@@ -15,15 +15,18 @@ namespace Tune.ViewModel
         public PlayerController PlayerController { get; }
         public MusicDisplayPresenter MusicDisplay { get; }
         public MusicLyricPresenter MusicLyric { get; }
+        public MusicPlaybackController PlaybackController { get; }
 
         public PlayerBarViewModel(
             PlayerController playerController,
             MusicDisplayPresenter musicDisplay,
-            MusicLyricPresenter musicLyric)
+            MusicLyricPresenter musicLyric,
+            MusicPlaybackController playback)
         {
             PlayerController = playerController;
             MusicDisplay = musicDisplay;
             MusicLyric = musicLyric;
+            PlaybackController = playback;
         }
 
         [RelayCommand]
@@ -31,5 +34,8 @@ namespace Tune.ViewModel
 
         [RelayCommand]
         private void TimelineStartDragging() => PlayerController.BeginDrag();
+
+        [RelayCommand] private void PlayNextMusic() => PlaybackController.PlayNextMusic();
+        [RelayCommand] private void PlayPreviousMusic() => PlaybackController.PlayPreviousMusic();
     }
 }

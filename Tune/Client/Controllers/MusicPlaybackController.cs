@@ -1,7 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Tune.Client.Presenters;
-using Tune.Helpers.FormatConverters;
-using Tune.Local;
 using Tune.Models.Music;
 using Tune.Models.Results;
 
@@ -55,7 +53,7 @@ namespace Tune.Client.Controllers
         /// 1. Instance is EMPTY:
         ///    Unload the player, reset current lyric data.
         /// 2. Instance is VALID:
-        ///    Load file, load current lyric data, set volume.
+        ///    Load file, load current lyric data.
         /// Afterwards, reset the playing progress.
         /// 
         /// THIS IS THE ONLY NORMAL WAY TO PLAY MUSIC
@@ -69,10 +67,7 @@ namespace Tune.Client.Controllers
             PlayerControllerLoadResult result;
             if (!music.isEmpty)
             {
-                double volume =
-                    UIVolumeToDoubleVolume.Convert(
-                        TuneSettings.Default.PlayerVolume);
-                result = _playerController.Load(music.MusicPath, volume);
+                result = _playerController.Load(music.MusicPath);
             }
             else
             {

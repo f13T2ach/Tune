@@ -1,7 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows.Controls;
-using Tune.Local;
 using Tune.ViewModel;
 
 namespace Tune.Appearance
@@ -20,15 +18,6 @@ namespace Tune.Appearance
                 DataContext =
                                 App.Services.GetRequiredService<MainViewModel>();
             }
-
-            Loaded += Main_Loaded;
-        }
-
-
-        private void Main_Loaded(object sender, RoutedEventArgs e)
-        {
-            // Init data on startup
-            VolumeKnob.AnimateValueTo(TuneSettings.Default.PlayerVolume);
         }
     }
 }

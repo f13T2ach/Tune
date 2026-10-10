@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
 using System.Windows;
 using Tune.Appearance;
@@ -6,6 +6,7 @@ using Tune.Client.Controllers;
 using Tune.Client.Logger;
 using Tune.Client.Presenters;
 using Tune.Engine;
+using Tune.Engine.Effects;
 using Tune.Helpers;
 using Tune.Persistence.PlaylistStorage;
 using Tune.Services;
@@ -27,7 +28,7 @@ namespace Tune
 
         protected override async void OnStartup(StartupEventArgs e)
         {
-            Thread.CurrentThread.CurrentUICulture = new CultureInfo("zh-CN");
+            //Thread.CurrentThread.CurrentUICulture = new CultureInfo("zh-CN");
             base.OnStartup(e);
 
             try
@@ -42,7 +43,11 @@ namespace Tune
                 services.AddSingleton<ITimeService, TimeService>();
                 services.AddSingleton<IAudioDeviceService, AudioDeviceService>();
 
-                services.AddSingleton<PlayerController>();          // 注意：PlayerController 依赖 IAudioPlayerEngine，DI 会自动注入
+                // Sound effect processor: owns the volume and every effect parameter
+                services.AddSingleton<IAudioEffectParameterStore, TuneSettingsParameterStore>();
+                services.AddSingleton<IAudioEffectChain, AudioEffectChain>();
+
+                services.AddSingleton<PlayerController>();
                 services.AddSingleton<ListController>();
                 services.AddSingleton<MusicDisplayPresenter>();
                 services.AddSingleton<MusicLyricPresenter>();

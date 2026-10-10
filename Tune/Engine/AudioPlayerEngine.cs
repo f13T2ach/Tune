@@ -1,12 +1,16 @@
-﻿using NAudio.Wave;
+using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Threading;
+using Tune.Engine.Effects;
 
 namespace Tune.Engine
 {
     public class AudioPlayerEngine : IAudioPlayerEngine, IDisposable
     {
+        private readonly IAudioEffectChain _effectChain;
+
         private WaveOut? _waveOut;
         private AudioFileReader? _audioReader;
         private DispatcherTimer? _progressTimer;
@@ -38,6 +42,11 @@ namespace Tune.Engine
                 if (wasPlaying) Pause();
 
                 _audioReader.CurrentTime = targetTime;
+
+                // A filter must not carry its state across a jump, otherwise the
+                // equalizer rings for a moment at the new position.
+                _effectChain.Reset();
+
                 Debug.WriteLine(_waveOut?.GetPosition());
 
                 if (wasPlaying) Play(); // Resume playback
@@ -47,19 +56,6 @@ namespace Tune.Engine
         }
 
         public double TotalSeconds => _audioReader?.TotalTime.TotalSeconds ?? 0;
-
-        public float Volume
-        {
-            get => _audioReader?.Volume ?? 0f;
-            set
-            {
-                if (_audioReader != null)
-                {
-                    _audioReader.Volume = Math.Clamp(value, 0f, 1f);
-                    OnPropertyChanged(nameof(Volume));
-                }
-            }
-        }
 
         public bool IsPlaying
         {
@@ -78,8 +74,14 @@ namespace Tune.Engine
 
         // ==== Constructor ====
 
-        public AudioPlayerEngine()
+        /// <summary>
+        /// Initializes the engine with the effect chain every file is played through.
+        /// </summary>
+        /// <param name="effectChain">The chain that owns the volume and the effect stages.</param>
+        public AudioPlayerEngine(IAudioEffectChain effectChain)
         {
+            _effectChain = effectChain;
+
             _progressTimer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(50)
@@ -105,7 +107,9 @@ namespace Tune.Engine
             {
                 _audioReader = new AudioFileReader(filePath);
                 _waveOut = new WaveOut();
-                _waveOut.Init(_audioReader);
+
+                // Play through the effect chain instead of handing the raw reader to the device.
+                _waveOut.Init(new SampleToWaveProvider(_effectChain.CreateProcessor(_audioReader)));
                 _waveOut.PlaybackStopped += OnPlaybackStopped;
 
                 OnPropertyChanged(nameof(CurrentSeconds));

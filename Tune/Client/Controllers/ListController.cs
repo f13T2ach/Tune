@@ -198,7 +198,13 @@ namespace Tune.Client.Controllers
         public Music? GetNextSong()
         {
             if (CurrentPlaylist?.MusicList == null || CurrentPlaylist.MusicList.Count == 0)
+            { 
+                if(ListPlayStatus != EListPlayStatus.NoLoop && _playHistory != null)
+                {
+                    return _playHistory[^1]; // Return the last played song if the playlist is empty but loop mode allows it.
+                }
                 return null;
+            }
 
             int count = CurrentPlaylist.MusicList.Count;
 
