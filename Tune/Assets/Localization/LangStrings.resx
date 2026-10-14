@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -194,5 +194,242 @@
   </data>
   <data name="Unknown" xml:space="preserve">
     <value>Unknown</value>
+  </data>
+  <data name="Bypass" xml:space="preserve">
+    <value>Bypass</value>
+  </data>
+  <data name="Button" xml:space="preserve">
+    <value>Button</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="EffectChain" xml:space="preserve">
+    <value>Effect chain</value>
+  </data>
+  <data name="Equalizer" xml:space="preserve">
+    <value>Equalizer</value>
+  </data>
+  <data name="Favorite" xml:space="preserve">
+    <value>FAV</value>
+  </data>
+  <data name="FavoriteMusicTitle" xml:space="preserve">
+    <value>Favorite songs into a playlist</value>
+  </data>
+  <data name="FavoriteToOtherPlaylist" xml:space="preserve">
+    <value>Favorite into another playlist</value>
+  </data>
+  <data name="Gain" xml:space="preserve">
+    <value>Gain</value>
+  </data>
+  <data name="List" xml:space="preserve">
+    <value>LIST</value>
+  </data>
+  <data name="Loop" xml:space="preserve">
+    <value>LOOP</value>
+  </data>
+  <data name="NewFromCover" xml:space="preserve">
+    <value>New from cover</value>
+  </data>
+  <data name="PlaylistEmptyCoverName" xml:space="preserve">
+    <value>Empty</value>
+  </data>
+  <data name="HistoryPlaylistName" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="NoEffectSelected" xml:space="preserve">
+    <value>No effect selected</value>
+  </data>
+  <data name="NoParametersAvailable" xml:space="preserve">
+    <value>No args</value>
+  </data>
+  <data name="ParameterPanel" xml:space="preserve">
+    <value>Parameters</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>Play</value>
+  </data>
+  <data name="Playlists" xml:space="preserve">
+    <value>Playlists</value>
+  </data>
+  <data name="PresetNone" xml:space="preserve">
+    <value>Preset: NONE</value>
+  </data>
+  <data name="Rename" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="Reverb" xml:space="preserve">
+    <value>Reverb</value>
+  </data>
+  <data name="SelectPlaylistToFavorite" xml:space="preserve">
+    <value>Select a playlist to favorite into</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>SET</value>
+  </data>
+  <data name="SongsUnit" xml:space="preserve">
+    <value>songs</value>
+  </data>
+  <data name="SoundEffect" xml:space="preserve">
+    <value>EFFECT</value>
+  </data>
+  <data name="SoundEffectPageHint" xml:space="preserve">
+    <value>Adjust with the options above, use the small header at the top left to come back here</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="FailedToCreatePlaylist" xml:space="preserve">
+    <value>Failed to create this playlist: {0}</value>
+  </data>
+  <data name="FailedToSaveMusic" xml:space="preserve">
+    <value>Failed to save this music: {0}</value>
+  </data>
+  <data name="MusicNotExists" xml:space="preserve">
+    <value>Music not exists, unable to play it.</value>
+  </data>
+  <data name="MusicNotExistsOrUnknown" xml:space="preserve">
+    <value>Music not exists or unknown problem</value>
+  </data>
+  <data name="PlaylistNotSelected" xml:space="preserve">
+    <value>No playlist was selected</value>
+  </data>
+  <data name="ServiceNotLoaded" xml:space="preserve">
+    <value>Not loaded service or service not exists.</value>
+  </data>
+  <data name="ServiceNotLoadedCreate" xml:space="preserve">
+    <value>Not loaded service or service not exists! Unable to create playlist</value>
+  </data>
+  <data name="StartupFailed" xml:space="preserve">
+    <value>Tune encountered an error while starting up, log file has been already saved at {0}</value>
+  </data>
+  <data name="AddEffectTooltip" xml:space="preserve">
+    <value>Add the selected effect to the chain</value>
+  </data>
+  <data name="BypassTooltip" xml:space="preserve">
+    <value>Bypass this effect</value>
+  </data>
+  <data name="MoveDownTooltip" xml:space="preserve">
+    <value>Move down</value>
+  </data>
+  <data name="MoveUpTooltip" xml:space="preserve">
+    <value>Move up</value>
+  </data>
+  <data name="RemoveTooltip" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="CategoryAbout" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="CategoryGeneral" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="LanguageRestartHint" xml:space="preserve">
+    <value>Restart Tune to apply a language change</value>
+  </data>
+  <data name="LanguageSystem" xml:space="preserve">
+    <value>Follow system</value>
+  </data>
+  <data name="Runtime" xml:space="preserve">
+    <value>Runtime</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Saved</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="Developer" xml:space="preserve">
+    <value>Developer</value>
+  </data>
+  <data name="DeveloperName" xml:space="preserve">
+    <value>SokaSoftware</value>
+  </data>
+  <data name="AudioApi" xml:space="preserve">
+    <value>Audio API</value>
+  </data>
+  <data name="AudioApiRestartHint" xml:space="preserve">
+    <value>Restart Tune to apply an audio API change</value>
+  </data>
+  <data name="CategoryAudio" xml:space="preserve">
+    <value>Audio</value>
+  </data>
+  <data name="BrowsePlaylist" xml:space="preserve">
+    <value>Browse your playlist</value>
+  </data>
+  <data name="SelectCurrentMusicFromFileSystem" xml:space="preserve">
+    <value>Select music from system to play</value>
+  </data>
+  <data name="TenBandEqualizer" xml:space="preserve">
+    <value>10bEQ</value>
+  </data>
+  <data name="GraphicEqualizer" xml:space="preserve">
+    <value>GraphEQ</value>
+  </data>
+  <data name="EqCenterFrequency" xml:space="preserve">
+    <value>Center frequency</value>
+  </data>
+  <data name="EqConfirmLoad" xml:space="preserve">
+    <value>It is not saved yet. Load it anyway?</value>
+  </data>
+  <data name="EqConfirmNew" xml:space="preserve">
+    <value>It is not saved yet. Create a new one?</value>
+  </data>
+  <data name="EqConfirmRemove" xml:space="preserve">
+    <value>Remove this equalizer?</value>
+  </data>
+  <data name="EqConfirmSave" xml:space="preserve">
+    <value>Save the current equalizer?</value>
+  </data>
+  <data name="EqGain" xml:space="preserve">
+    <value>Gain</value>
+  </data>
+  <data name="EqInfoText" xml:space="preserve">
+    <value>Click a readout to edit its gain. Pick an equalizer from the list; once loaded it can be removed.</value>
+  </data>
+  <data name="EqLoad" xml:space="preserve">
+    <value>LOAD EQ</value>
+  </data>
+  <data name="EqNameHint" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="EqNewPreset" xml:space="preserve">
+    <value>New equalizer</value>
+  </data>
+  <data name="EqRemove" xml:space="preserve">
+    <value>REMOVE EQ</value>
+  </data>
+  <data name="CategoryEffect" xml:space="preserve">
+    <value>Effects</value>
+  </data>
+  <data name="EqBandMaximum" xml:space="preserve">
+    <value>Band maximum (dB)</value>
+  </data>
+  <data name="EqBandMinimum" xml:space="preserve">
+    <value>Band minimum (dB)</value>
+  </data>
+  <data name="EqBandStep" xml:space="preserve">
+    <value>Band adjust step</value>
+  </data>
+  <data name="EqEmpty" xml:space="preserve">
+    <value>Empty</value>
+  </data>
+  <data name="SchemeGraphic" xml:space="preserve">
+    <value>Graph preset: </value>
+  </data>
+  <data name="SchemeTenBand" xml:space="preserve">
+    <value>10B preset: </value>
+  </data>
+  <data name="EqSave" xml:space="preserve">
+    <value>SAVE</value>
+  </data>
+  <data name="EqNew" xml:space="preserve">
+    <value>NEW EQ</value>
   </data>
 </root>

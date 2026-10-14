@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Tune.Appearance.EffectToolsUI"
              xmlns:components="clr-namespace:Tune.Components"
+             xmlns:lang="clr-namespace:Tune.Assets.Localization"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1600">
     <Grid Margin="40,30,40,30">
@@ -12,7 +13,7 @@
 
         <Grid>
             <!-- Panel title -->
-            <TextBlock Text="参数面板" Foreground="White"
+            <TextBlock Text="{x:Static lang:LangStrings.ParameterPanel}" Foreground="White"
                        HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20"/>
 
             <!-- The equalizer is a fixed processor of the chain, so its parameters live
@@ -23,7 +24,7 @@
                 <ContentControl.ContentTemplate>
                     <DataTemplate>
                         <StackPanel>
-                            <TextBlock Text="均衡器" Foreground="White" FontSize="28"
+                            <TextBlock Text="{x:Static lang:LangStrings.Equalizer}" Foreground="White" FontSize="28"
                                        FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
                             <ItemsControl ItemsSource="{Binding Parameters}">
                                 <ItemsControl.ItemsPanel>

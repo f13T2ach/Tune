@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using Tune.Assets.Localization;
 using Tune.Helpers.JSONConverters;
 using Tune.Persistence.PlaylistStorage;
@@ -89,10 +89,21 @@ namespace Tune.Models.Playlist
 
         /// <summary>
         /// This would **not auto save** playlist after adding music to list.
+        /// The same file is never listed twice: songs are told apart by their path, so adding
+        /// one that is already there leaves the list as it was.
         /// </summary>
         /// <param name="music"></param>
         public override void AddMuisc(Music.Music music)
         {
+            if (music == null)
+                return;
+
+            Music.Music? alreadyInList = MusicList.FirstOrDefault(item =>
+                string.Equals(item.MusicPath, music.MusicPath, StringComparison.OrdinalIgnoreCase));
+
+            if (alreadyInList != null)
+                return;
+
             MusicList.Add(music);
             // SavePlaylist();
         }

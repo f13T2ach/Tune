@@ -5,6 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Tune.Appearance.EffectToolsUI"
              xmlns:components="clr-namespace:Tune.Components"
+             xmlns:lang="clr-namespace:Tune.Assets.Localization"
+             xmlns:content="clr-namespace:Tune.Components.Content"
              xmlns:converters="clr-namespace:Tune.Helpers.ValueConverters"
              xmlns:effects="clr-namespace:Tune.Engine.Effects"
              mc:Ignorable="d" 
@@ -13,28 +15,22 @@
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVis" />
 
-        <!-- Small square button used by the chain nodes -->
-        <Style x:Key="NodeButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="26" />
-            <Setter Property="Margin" Value="3,0,0,0" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="Background" Value="#33FFFFFF" />
-            <Setter Property="BorderBrush" Value="#88FFFFFF" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="Cursor" Value="Hand" />
-        </Style>
-
         <!-- One row of the generic parameter editor.
              The Show flags of the parameter decide which control is visible. -->
         <DataTemplate DataType="{x:Type effects:EffectParameterSlot}">
             <Grid Margin="0,3">
+                <!-- Auto columns share their width across every row, so all names and
+                     all values keep one font size and still fit. Only the bar takes
+                     what is left. -->
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="Auto" MaxWidth="320" SharedSizeGroup="ParameterName" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="Auto" MaxWidth="200" SharedSizeGroup="ParameterValue" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Text="{Binding Name}" Foreground="White" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="0" Text="{Binding Name}" Foreground="White"
+                           TextTrimming="CharacterEllipsis" ToolTip="{Binding Name}"
+                           VerticalAlignment="Center" />
 
                 <Slider Grid.Column="1" Margin="4,0" VerticalAlignment="Center"
                         Minimum="{Binding Minimum}" Maximum="{Binding Maximum}"
@@ -58,37 +54,15 @@
                              Visibility="{Binding ShowMeter, Converter={StaticResource BoolToVis}}" />
 
                 <TextBlock Grid.Column="2" Text="{Binding DisplayValue}" Foreground="#AAAAAA"
-                           VerticalAlignment="Center" TextAlignment="Right" />
+                           TextAlignment="Right" TextTrimming="CharacterEllipsis"
+                           ToolTip="{Binding DisplayValue}" VerticalAlignment="Center" />
             </Grid>
         </DataTemplate>
 
         <!-- One node of the rack. The equalizer is never one of them: it is a
              fixed processor, not something the user stacks. -->
         <DataTemplate DataType="{x:Type effects:EffectSlot}">
-            <Border BorderBrush="White" BorderThickness="2" Background="#22000000" Padding="8" Margin="0,3">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                        <TextBlock Text="{Binding Name}" Foreground="White" FontSize="20" FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding Subtitle}" Foreground="#AAAAAA" FontSize="14" />
-                    </StackPanel>
-
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                        <CheckBox IsChecked="{Binding Bypass, Mode=TwoWay}" VerticalAlignment="Center"
-                                  ToolTip="Bypass this effect" />
-                        <Button Content="▲" Style="{StaticResource NodeButtonStyle}"
-                                Command="{Binding MoveUpCommand}" ToolTip="Move up" />
-                        <Button Content="▼" Style="{StaticResource NodeButtonStyle}"
-                                Command="{Binding MoveDownCommand}" ToolTip="Move down" />
-                        <Button Content="✕" Style="{StaticResource NodeButtonStyle}"
-                                Command="{Binding RemoveCommand}" ToolTip="Remove" />
-                    </StackPanel>
-                </Grid>
-            </Border>
+            <content:EffectItem />
         </DataTemplate>
     </UserControl.Resources>
 
@@ -128,6 +102,9 @@
                              BorderThickness="0"
                              HorizontalContentAlignment="Stretch"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.Resources>
+                            <Style TargetType="ScrollBar" BasedOn="{StaticResource CleanScrollBar}" />
+                        </ListBox.Resources>
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="ListBoxItem">
                                 <Setter Property="Opacity" Value="0.6" />
@@ -164,10 +141,9 @@
                                   ItemsSource="{Binding Effect.AvailableEffects}"
                                   SelectedIndex="{Binding Effect.SelectedEffectIndex, Mode=TwoWay}" />
 
-                        <Button Grid.Column="1" Content="+" Width="34" Margin="6,0,0,0"
-                                Style="{StaticResource NodeButtonStyle}"
+                        <components:Button Grid.Column="1" Text="+" Width="50" Margin="6,0,0,0"
                                 Command="{Binding Effect.AddEffectCommand}"
-                                ToolTip="Add the selected effect to the chain" />
+                                ToolTip="{x:Static lang:LangStrings.AddEffectTooltip}" />
                     </Grid>
                 </Grid>
 
@@ -190,26 +166,42 @@
 
                 <Grid Grid.Row="0">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="{Binding Effect.SelectedSlot.Name, FallbackValue=未选择效果, TargetNullValue=未选择效果}"
-                                   FontSize="52" FontWeight="Bold" Foreground="White" />
+                        <!-- A nested markup extension is not allowed inside {Binding},
+                             so the placeholder goes in through property elements. -->
+                        <TextBlock FontSize="52" FontWeight="Bold" Foreground="White">
+                            <TextBlock.Text>
+                                <Binding Path="Effect.SelectedSlot.Name">
+                                    <Binding.FallbackValue>
+                                        <x:Static Member="lang:LangStrings.NoEffectSelected" />
+                                    </Binding.FallbackValue>
+                                    <Binding.TargetNullValue>
+                                        <x:Static Member="lang:LangStrings.NoEffectSelected" />
+                                    </Binding.TargetNullValue>
+                                </Binding>
+                            </TextBlock.Text>
+                        </TextBlock>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                        <TextBlock Text="Bypass" Foreground="#AAAAAA" Margin="0,0,8,0" VerticalAlignment="Center" />
-                        <CheckBox IsChecked="{Binding Effect.SelectedSlot.Bypass, Mode=TwoWay}"
-                                  VerticalAlignment="Center" />
+                        <TextBlock Text="{x:Static lang:LangStrings.Bypass}" Opacity="0.8" Margin="0,0,8,0" VerticalAlignment="Center" />
+                        <components:CheckBox IsChecked="{Binding Effect.SelectedSlot.Bypass, Mode=TwoWay}"
+                                  VerticalAlignment="Center" Width="40" />
                     </StackPanel>
                 </Grid>
 
                 <Grid Grid.Row="1" Margin="0,16,0,0">
                     <Border Background="White" Opacity="0.13" />
                     <Grid>
-                        <TextBlock Text="参数面板" Foreground="White"
+                        <TextBlock Text="{x:Static lang:LangStrings.ParameterPanel}" Foreground="White"
                                    HorizontalAlignment="Left" VerticalAlignment="Top" Margin="16" />
                         
 
                         <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="16,52,16,16">
-                            <ItemsControl ItemsSource="{Binding Effect.SelectedSlot.Parameters}" />
+                            <ScrollViewer.Resources>
+                                <Style TargetType="ScrollBar" BasedOn="{StaticResource CleanScrollBar}" />
+                            </ScrollViewer.Resources>
+                            <ItemsControl Margin="10" Grid.IsSharedSizeScope="True"
+                                          ItemsSource="{Binding Effect.SelectedSlot.Parameters}" />
                         </ScrollViewer>
                     </Grid>
                 </Grid>

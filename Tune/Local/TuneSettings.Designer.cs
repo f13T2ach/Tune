@@ -94,5 +94,65 @@ namespace Tune.Local {
                 this["Width"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("auto")]
+        public string Language {
+            get {
+                return ((string)(this["Language"]));
+            }
+            set {
+                this["Language"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("wasapi")]
+        public string AudioApi {
+            get {
+                return ((string)(this["AudioApi"]));
+            }
+            set {
+                this["AudioApi"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-12")]
+        public double EffectEqBandMinimum {
+            get {
+                return ((double)(this["EffectEqBandMinimum"]));
+            }
+            set {
+                this["EffectEqBandMinimum"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("12")]
+        public double EffectEqBandMaximum {
+            get {
+                return ((double)(this["EffectEqBandMaximum"]));
+            }
+            set {
+                this["EffectEqBandMaximum"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public double EffectEqBandStep {
+            get {
+                return ((double)(this["EffectEqBandStep"]));
+            }
+            set {
+                this["EffectEqBandStep"] = value;
+            }
+        }
     }
 }

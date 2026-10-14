@@ -1,0 +1,58 @@
+<UserControl x:Class="Tune.Components.Slider.EqFader"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:input="clr-namespace:Tune.Components.InputBox"
+             x:Name="Root"
+             mc:Ignorable="d"
+             d:DesignHeight="494" d:DesignWidth="53">
+
+    <UserControl.Resources>
+        <!-- Gain above the centre pulls green, gain below it pulls red -->
+        <SolidColorBrush x:Key="PositiveFillBrush" Color="#00FF22" Opacity="0.8"/>
+        <SolidColorBrush x:Key="NegativeFillBrush" Color="#FF0000" Opacity="0.8"/>
+    </UserControl.Resources>
+
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- Fixed, so a chart can line its own scale up with the track -->
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="60"/>
+        </Grid.RowDefinitions>
+
+        <!-- Gain readout; clicking it turns the label into an input box -->
+        <Grid Grid.Row="0" Margin="0,0,0,6">
+            <TextBlock x:Name="PART_ValueText"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Cursor="Hand"
+                       MouseLeftButtonDown="OnValueTextClicked"/>
+            <input:SimpleInputBox x:Name="PART_ValueInput" Visibility="Collapsed"
+                                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                                  LostFocus="OnValueInputLostFocus"
+                                  KeyDown="OnValueInputKeyDown"/>
+        </Grid>
+
+        <!-- The fader itself: track, centre marker, fill and the bar the user drags -->
+        <Grid x:Name="PART_TrackArea" Grid.Row="1" Background="Transparent" Cursor="Hand"
+              SizeChanged="OnTrackAreaSizeChanged"
+              MouseLeftButtonDown="OnTrackAreaMouseDown"
+              MouseMove="OnTrackAreaMouseMove"
+              MouseLeftButtonUp="OnTrackAreaMouseUp">
+            <Border Width="28" HorizontalAlignment="Center"
+                    BorderBrush="White" BorderThickness="2" Background="Transparent"/>
+            <Rectangle x:Name="PART_CenterBar" Width="24" Height="8" Fill="White" Opacity="0.8"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Rectangle x:Name="PART_FillBar" Width="24" HorizontalAlignment="Center"
+                       VerticalAlignment="Top" Fill="{StaticResource PositiveFillBrush}"/>
+            <Rectangle x:Name="PART_ThumbBar" Height="8" Fill="White"
+                       HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
+        </Grid>
+
+        <!-- Centre frequency of the band -->
+        <TextBlock x:Name="PART_FrequencyText" Grid.Row="2" Margin="0,6,0,0"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    </Grid>
+</UserControl>

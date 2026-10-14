@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Tune.Models.Playlist;
@@ -53,6 +53,35 @@ namespace Tune.Components.Content
         {
             get => (ICommand?)GetValue(PlayCommandProperty);
             set => SetValue(PlayCommandProperty, value);
+        }
+
+        // ============ OpenCommand 依赖属性 ============
+        public static readonly DependencyProperty OpenCommandProperty =
+            DependencyProperty.Register(
+                nameof(OpenCommand),
+                typeof(ICommand),
+                typeof(PlaylistItem),
+                new PropertyMetadata(null));
+
+        /// <summary>
+        /// Command run when the cover itself is clicked, which opens the playlist without
+        /// starting it. The play button sits above the cover, so it keeps its own action.
+        /// </summary>
+        public ICommand? OpenCommand
+        {
+            get => (ICommand?)GetValue(OpenCommandProperty);
+            set => SetValue(OpenCommandProperty, value);
+        }
+
+        private void Cover_Click(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+
+            if (Playlist is null) return;
+            if (OpenCommand is null) return;
+
+            if (OpenCommand.CanExecute(Playlist))
+                OpenCommand.Execute(Playlist);
         }
 
         // ============ 备选：仅当 ImageButton 不支持 Command 时使用 ============

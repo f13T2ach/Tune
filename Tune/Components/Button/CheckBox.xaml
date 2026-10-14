@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="Tune.Components.CheckBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Tune.Components"
+             x:Name="Root"
+             Width="54" Height="53"
+             Background="Transparent"
+             Focusable="True"
+             IsTabStop="True">
+
+    <UserControl.Style>
+        <Style TargetType="{x:Type local:CheckBox}">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.4"/>
+                    <Setter Property="Cursor" Value="Arrow"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Style>
+
+    <Viewbox>
+    <Grid Background="Transparent">
+        <!-- 51 + 1.5*2 = 54 ; 50 + 1.5*2 = 53（描边居中，向外扩 1.5） -->
+        <Ellipse x:Name="Ring"
+                 Width="51" Height="50"
+                 Margin="1.5"
+                 Stroke="#FFFFFFFF"
+                 StrokeThickness="3"
+                 Fill="#00FFFFFF"/>
+    </Grid>
+    </Viewbox>
+</UserControl>

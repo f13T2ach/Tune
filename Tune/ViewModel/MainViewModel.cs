@@ -165,8 +165,29 @@ namespace Tune.ViewModel
         [RelayCommand] public void SetLoopStatus() => _listController.OnSetLoopStatus();
         //[RelayCommand] public void SetPlaylist() => _listController.OnSetPlaylist();
         [RelayCommand] public void SetPlaylist() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(PlaylistsPage)));
-        [RelayCommand] public void NavigateToPlaylist() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(CurrentPlaylist)));
+        [RelayCommand]
+        public void NavigateToPlaylist()
+        {
+            // Opened from the main page, so the back button belongs there.
+            CurrentPlaylistViewModel.ReturnPageType = typeof(Main);
+            WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(CurrentPlaylist)));
+        }
+
+        [RelayCommand]
+        public void NavigateToHistory()
+        {
+            Tune.Models.Playlist.PlaylistBase? history = ListController.GetOrCreateHistory();
+            if (history is null) return;
+
+            // Opened from the main page, so the back button belongs there, and the history
+            // playlist becomes the current one so the list page shows it.
+            CurrentPlaylistViewModel.ReturnPageType = typeof(Main);
+            _listController.SetPlaylist(history);
+
+            WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(CurrentPlaylist)));
+        }
         [RelayCommand] public void NavigateToSoundEffect() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(SoundEffect)));
+        [RelayCommand] public void NavigateToSettings() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(SettingsPage)));
         [RelayCommand] public void PlayNextMusic() => _playback.PlayNextMusic();
         [RelayCommand] public void PlayPreviousMusic() => _playback.PlayPreviousMusic();
 

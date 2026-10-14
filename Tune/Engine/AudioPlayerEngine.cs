@@ -11,7 +11,10 @@ namespace Tune.Engine
     {
         private readonly IAudioEffectChain _effectChain;
 
-        private WaveOut? _waveOut;
+        /// <summary>Stored AudioApi value that selects the WaveOut device.</summary>
+        internal const string WaveOutApiName = "waveout";
+
+        private IWavePlayer? _output;
         private AudioFileReader? _audioReader;
         private DispatcherTimer? _progressTimer;
         private bool _isPlaying;
@@ -47,7 +50,7 @@ namespace Tune.Engine
                 // equalizer rings for a moment at the new position.
                 _effectChain.Reset();
 
-                Debug.WriteLine(_waveOut?.GetPosition());
+                Debug.WriteLine(_audioReader?.CurrentTime);
 
                 if (wasPlaying) Play(); // Resume playback
 
@@ -106,11 +109,11 @@ namespace Tune.Engine
             try
             {
                 _audioReader = new AudioFileReader(filePath);
-                _waveOut = new WaveOut();
+                _output = CreateOutputDevice();
 
                 // Play through the effect chain instead of handing the raw reader to the device.
-                _waveOut.Init(new SampleToWaveProvider(_effectChain.CreateProcessor(_audioReader)));
-                _waveOut.PlaybackStopped += OnPlaybackStopped;
+                _output.Init(new SampleToWaveProvider(_effectChain.CreateProcessor(_audioReader)));
+                _output.PlaybackStopped += OnPlaybackStopped;
 
                 OnPropertyChanged(nameof(CurrentSeconds));
                 OnPropertyChanged(nameof(TotalSeconds));
@@ -127,30 +130,30 @@ namespace Tune.Engine
 
         public void Play()
         {
-            if (_waveOut == null || _audioReader == null) return;
+            if (_output == null || _audioReader == null) return;
 
             // If at end, restart from beginning
             if (CurrentSeconds >= TotalSeconds - 0.1)
                 CurrentSeconds = 0;
 
-            _waveOut.Play();
+            _output.Play();
             IsPlaying = true;
             _progressTimer?.Start();
         }
 
         public void Pause()
         {
-            if (_waveOut == null) return;
-            _waveOut.Pause();
+            if (_output == null) return;
+            _output.Pause();
             IsPlaying = false;
             _progressTimer?.Stop();
         }
 
         public void Stop()
         {
-            if (_waveOut == null || _audioReader == null) return;
+            if (_output == null || _audioReader == null) return;
 
-            _waveOut.Stop();
+            _output.Stop();
             _audioReader.CurrentTime = TimeSpan.Zero;
 
             IsPlaying = false;
@@ -160,12 +163,12 @@ namespace Tune.Engine
 
         public void Unload()
         {
-            if (_waveOut != null)
+            if (_output != null)
             {
-                _waveOut.PlaybackStopped -= OnPlaybackStopped;
-                _waveOut.Stop();
-                _waveOut.Dispose();
-                _waveOut = null;
+                _output.PlaybackStopped -= OnPlaybackStopped;
+                _output.Stop();
+                _output.Dispose();
+                _output = null;
             }
 
             if (_audioReader != null)
@@ -195,13 +198,33 @@ namespace Tune.Engine
             _progressTimer = null;
 
             // Ensure cleanup (Unload sets them to null, but safe guard)
-            _waveOut?.Dispose();
+            _output?.Dispose();
             _audioReader?.Dispose();
-            _waveOut = null;
+            _output = null;
             _audioReader = null;
         }
 
         // ==== Private Helpers ====
+
+        /// <summary>
+        /// Creates the output device the stored API asks for. The choice is read while
+        /// loading a file, so changing it only takes effect after a restart.
+        /// </summary>
+        internal static IWavePlayer CreateOutputDevice()
+        {
+            if (UseWaveOut(Tune.Local.TuneSettings.Default.AudioApi))
+                return new WaveOut();
+
+            // WasapiOut is marked obsolete in favour of WasapiPlayerBuilder, but the builder
+            // only builds asynchronously while this runs during a synchronous file load.
+#pragma warning disable CS0618
+            return new WasapiOut();
+#pragma warning restore CS0618
+        }
+
+        /// <summary>True when the stored API name asks for the WaveOut device.</summary>
+        internal static bool UseWaveOut(string? apiName) =>
+            string.Equals(apiName, WaveOutApiName, StringComparison.OrdinalIgnoreCase);
         private void OnPlaybackStopped(object? sender, StoppedEventArgs e)
         {
             // End when the music has played to its end

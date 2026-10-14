@@ -1,0 +1,173 @@
+<UserControl x:Class="Tune.Appearance.EffectToolsUI.TenBandEqualizerPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:lang="clr-namespace:Tune.Assets.Localization"
+             xmlns:components="clr-namespace:Tune.Components"
+             xmlns:slider="clr-namespace:Tune.Components.Slider"
+             xmlns:input="clr-namespace:Tune.Components.InputBox"
+             xmlns:converters="clr-namespace:Tune.Helpers.ValueConverters"
+             mc:Ignorable="d"
+             d:DesignHeight="800" d:DesignWidth="1600">
+
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
+
+    <Grid Margin="40,24,40,24">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="465"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ================= Left: the preset this page edits ================= -->
+        <Border Grid.Column="0" Background="White" Opacity="0.13"/>
+        <Grid Grid.Column="0" Margin="20,18,20,18">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Name, with the edit button that turns it into an input box -->
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock x:Name="NameText" Grid.Column="0" Text="{Binding PresetName}"
+                           FontSize="42" FontWeight="SemiBold" VerticalAlignment="Center"
+                           Visibility="{Binding IsNotEditingName, Converter={StaticResource BoolToVis}}"/>
+
+                <input:SimpleInputBox x:Name="NameInput" Grid.Column="0" FontSize="42"
+                                      Hint="{x:Static lang:LangStrings.EqNameHint}"
+                                      Text="{Binding NameDraft, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      Visibility="{Binding IsEditingName, Converter={StaticResource BoolToVis}}"/>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"
+                            Margin="10,0,0,0">
+                    <components:ImageButton x:Name="EditNameButton" Source="/Assets/Components/EditButton.png"
+                                            Width="34" Cursor="Hand"
+                                            Visibility="{Binding IsNotEditingName, Converter={StaticResource BoolToVis}}"
+                                            Command="{Binding BeginEditNameCommand}"/>
+                    <components:Button Text="{x:Static lang:LangStrings.Confirm}" Width="90"
+                                       Visibility="{Binding IsEditingName, Converter={StaticResource BoolToVis}}"
+                                       Command="{Binding ConfirmNameEditCommand}"/>
+                    <components:Button Text="{x:Static lang:LangStrings.Cancel}" Width="90"
+                                       Margin="8,0,0,0"
+                                       Visibility="{Binding IsEditingName, Converter={StaticResource BoolToVis}}"
+                                       Command="{Binding CancelNameEditCommand}"/>
+                </StackPanel>
+            </Grid>
+
+            <StackPanel Orientation="Vertical" Grid.Row="1" Margin="0,16,0,0">
+                
+                <!-- Hint -->
+                <Grid>
+                    <Border Grid.Row="1" Background="Black" Opacity="0.5" BorderBrush="#707070" BorderThickness="1"/>
+                    <Grid Margin="14,10,14,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Grid.Column="0" Source="/Assets/Components/InfoSymbol.png" Width="26"
+               VerticalAlignment="Top" Margin="0,4,10,0"/>
+                        <TextBlock Grid.Column="1" Text="{x:Static lang:LangStrings.EqInfoText}"
+                   TextWrapping="Wrap"/>
+                    </Grid>
+                </Grid>
+                <TextBlock Text="复原" Visibility="Collapsed" FontWeight="SemiBold"/>
+            </StackPanel>
+            
+
+            <!-- Stored presets, with the empty entry that switches the equalizer off -->
+            <ComboBox Grid.Row="2" VerticalAlignment="Bottom" Margin="0,18,0,0"
+                      ItemsSource="{Binding PresetNames}"
+                      SelectedItem="{Binding SelectedPresetName, Mode=TwoWay}"/>
+
+            <!-- Actions -->
+            <Grid Grid.Row="3" Margin="10">
+                <Border Grid.Row="1" Background="Black" Opacity="0.5" BorderBrush="#707070" BorderThickness="1"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+                    <components:Button Text="{x:Static lang:LangStrings.Save}" Width="104"
+                                   IsDisabled="{Binding IsSaveDisabled}"
+                                   Command="{Binding SavePresetCommand}"/>
+                    <components:Button Text="{x:Static lang:LangStrings.EqRemove}" Width="104"
+                                   Margin="10,0,0,0"
+                                   IsDisabled="{Binding IsRemoveDisabled}"
+                                   Command="{Binding RemovePresetCommand}"/>
+                    <components:Button Text="{x:Static lang:LangStrings.New}" Width="104"
+                                   Margin="10,0,0,0"
+                                   Command="{Binding NewPresetCommand}"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+        <!-- ================= Right: the ten bands ================= -->
+        <Grid Grid.Column="1" Margin="30">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <!-- The same fixed label rows the fader uses, so the scale lines up -->
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="60"/>
+            </Grid.RowDefinitions>
+
+            <!-- Left edge of the chart: the decibel scale -->
+            <StackPanel  Orientation="Horizontal" Grid.Column="0" Grid.RowSpan="3">
+                <Grid Margin="0,10,10,10">
+                    <TextBlock Text="{Binding MaxGainText}"  HorizontalAlignment="Right"
+               VerticalAlignment="Top"/>
+                    <TextBlock Text="{Binding MiddleGainText}"  HorizontalAlignment="Right"
+               VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding MinGainText}"  HorizontalAlignment="Right"
+               VerticalAlignment="Bottom"/>
+                </Grid>
+                <Image Source="/Assets/Components/EQ/FaderAxisL.png"/>
+
+
+            </StackPanel>
+
+            <Grid Grid.Column="1" Grid.RowSpan="3">
+                <ItemsControl ItemsSource="{Binding Bands}" Margin="6,0,6,0">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="1"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <slider:EqFader Width="96" Margin="4,0,4,0"
+                                            HorizontalAlignment="Center"
+                                            Value="{Binding Gain, Mode=TwoWay}"
+                                            Frequency="{Binding Frequency}"
+                                            Minimum="{Binding DataContext.MinGain,
+                                                       RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            Maximum="{Binding DataContext.MaxGain,
+                                                       RelativeSource={RelativeSource AncestorType=ItemsControl}}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+
+            <!-- Right edge of the chart: what the two axes mean -->
+            <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.RowSpan="3">
+                <Image Source="/Assets/Components/EQ/FaderAxisR.png"/>
+                <Grid>
+                    <TextBlock Text="{x:Static lang:LangStrings.EqGain}" 
+                           HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
+                    <TextBlock Text="{x:Static lang:LangStrings.EqCenterFrequency}" 
+                               MaxWidth="100" TextWrapping="Wrap"
+                           HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,10"/>
+                </Grid>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

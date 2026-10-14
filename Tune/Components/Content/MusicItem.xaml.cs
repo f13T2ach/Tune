@@ -1,7 +1,8 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Tune.Assets.Localization;
 using Tune.Models.Music;
 using Tune.Values.Static;
 
@@ -123,7 +124,7 @@ namespace Tune.Components.Content
             }
             else
             {
-                MusicNameText.Text = Strings.UNKNOWN;
+                MusicNameText.Text = LangStrings.Unknown;
                 ArtistNameText.Text = Strings.EMPTY;
             }
         }

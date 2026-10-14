@@ -1,8 +1,10 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NAudio.Effects;
 using NAudio.Wave;
+using Tune.Helpers.FormatConverters;
 
 namespace Tune.Engine.Effects
 {
@@ -35,6 +37,7 @@ namespace Tune.Engine.Effects
         {
             Volume = new AudioEffectParameter(store, "PlayerVolume", "VOL", 0, 100, 50);
             Equalizer = new EqualizerUnit(store);
+            TenBand = new TenBandEqualizerUnit();
             Slots = new ObservableCollection<EffectSlot>();
             AvailableEffects = EffectCatalog.Entries.Select(entry => entry.Name).ToList();
 
@@ -47,6 +50,9 @@ namespace Tune.Engine.Effects
 
         /// <inheritdoc />
         public EqualizerUnit Equalizer { get; }
+
+        /// <inheritdoc />
+        public TenBandEqualizerUnit TenBand { get; }
 
         /// <inheritdoc />
         public ObservableCollection<EffectSlot> Slots { get; }
@@ -63,6 +69,7 @@ namespace Tune.Engine.Effects
             _format = source.WaveFormat;
 
             Equalizer.Configure(_format);
+            TenBand.Configure(_format);
             _fader.Configure(_format);
 
             foreach (EffectSlot slot in Slots)
@@ -76,11 +83,8 @@ namespace Tune.Engine.Effects
         /// <inheritdoc />
         public void Reset()
         {
-            if (Equalizer.IsSupported)
-            {
-                foreach (AudioEffect effect in Equalizer.Effects)
-                    effect.Reset();
-            }
+            Equalizer.Reset();
+            TenBand.Reset();
 
             foreach (EffectSlot slot in Slots)
             {
@@ -160,6 +164,9 @@ namespace Tune.Engine.Effects
             if (Equalizer.IsSupported)
                 effects.AddRange(Equalizer.Effects);
 
+            if (TenBand.IsSupported)
+                effects.AddRange(TenBand.Effects);
+
             foreach (EffectSlot slot in Slots)
             {
                 if (slot.IsSupported && slot.Effect is AudioEffect effect)
@@ -183,9 +190,112 @@ namespace Tune.Engine.Effects
         private void ApplyBypass()
         {
             Equalizer.IsEnabled = IsEnabled;
+            TenBand.IsEnabled = IsEnabled;
 
             foreach (EffectSlot slot in Slots)
                 slot.ApplyBypass(suppressed: !IsEnabled);
+        }
+    }
+
+    /// <summary>
+    /// The output level of the chain.
+    /// It is deliberately not an effect: it always runs last and is never bypassed,
+    /// so switching the effects off keeps the volume control working.
+    /// </summary>
+    internal sealed class VolumeFader
+    {
+        private readonly IAudioEffectParameter _volume;
+
+        /// <summary>
+        /// Initializes the fader and applies the stored volume.
+        /// </summary>
+        /// <param name="volume">The volume parameter on the 0..100 UI scale.</param>
+        public VolumeFader(IAudioEffectParameter volume)
+        {
+            _volume = volume;
+            Gain = new GainEffect();
+
+            volume.PropertyChanged += OnVolumeChanged;
+
+            Apply();
+        }
+
+        /// <summary>
+        /// Gets the effect that applies the level.
+        /// </summary>
+        public GainEffect Gain { get; }
+
+        /// <summary>
+        /// Tells the fader which format the audio has.
+        /// The framework refuses to process an effect that was never configured.
+        /// </summary>
+        /// <param name="format">The format of the loaded file.</param>
+        public void Configure(WaveFormat format)
+        {
+            Gain.Configure(format);
+        }
+
+        private void OnVolumeChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(IAudioEffectParameter.Value))
+                Apply();
+        }
+
+        private void Apply()
+        {
+            Gain.LinearGain = (float)UIVolumeToDoubleVolume.Convert(_volume.Value);
+        }
+    }
+
+    /// <summary>
+    /// Sample source that pushes every read block through the effects of the chain,
+    /// in order. One instance belongs to one loaded file.
+    /// </summary>
+    internal sealed class EffectChainSampleProvider : ISampleProvider
+    {
+        private readonly ISampleProvider _source;
+        private volatile AudioEffect[] _effects;
+
+        /// <summary>
+        /// Initializes the node for one loaded file.
+        /// </summary>
+        /// <param name="source">The sample source to read from.</param>
+        /// <param name="effects">The effects to apply, already in processing order.</param>
+        public EffectChainSampleProvider(ISampleProvider source, AudioEffect[] effects)
+        {
+            _source = source;
+            _effects = effects;
+        }
+
+        /// <inheritdoc />
+        public WaveFormat WaveFormat => _source.WaveFormat;
+
+        /// <summary>
+        /// Swaps the effect list in one assignment, so the reader always sees a
+        /// complete chain and the rack can be edited while audio plays.
+        /// </summary>
+        /// <param name="effects">The effects to apply, in processing order.</param>
+        public void SetEffects(AudioEffect[] effects)
+        {
+            _effects = effects;
+        }
+
+        /// <inheritdoc />
+        public int Read(Span<float> buffer)
+        {
+            int read = _source.Read(buffer);
+
+            if (read <= 0)
+                return read;
+
+            Span<float> block = buffer[..read];
+            AudioEffect[] effects = _effects;
+
+            // Indexed loop on purpose: this runs on the audio thread and must not allocate.
+            for (int i = 0; i < effects.Length; i++)
+                effects[i].Process(block);
+
+            return read;
         }
     }
 }

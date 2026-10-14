@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
@@ -11,6 +11,7 @@ using Tune.Models.Music;
 using Tune.Models.NewDialog;
 using Tune.Models.Playlist;
 using Tune.Persistence.PlaylistStorage;
+using Tune.Helpers.DialogExtentions;
 
 namespace Tune.ViewModel
 {
@@ -43,7 +44,10 @@ namespace Tune.ViewModel
         [ObservableProperty]
         private ObservableCollection<Music> _musicList = new();
 
-        public ObservableCollection<PlaylistBase> Playlists => _playlistService?.GetAllPlaylists() ?? new ObservableCollection<PlaylistBase>();
+        /// <summary>
+        /// The playlists shown by the page, with the empty cover that creates one kept last.
+        /// </summary>
+        public ObservableCollection<PlaylistBase> Playlists { get; } = new();
 
         /// <summary>
         /// Attempts to play the specified playlist.
@@ -63,8 +67,14 @@ namespace Tune.ViewModel
             // Ignore a null playlist.
             if (playlist is null) return;
 
-            // Ignore playlists that are empty or not initialized.
-            if (playlist.isEmptyOrNotInited) return;
+            // The empty cover is the way to stop: nothing plays, and the player falls back to
+            // the history playlist so the user is not left with no playlist at all.
+            if (playlist.isEmptyOrNotInited)
+            {
+                _listController.ClearPlaylist();
+                _playback?.Unload();
+                return;
+            }
 
             // Get the playlist's music list.
             var musicList = playlist.MusicList;
@@ -91,6 +101,61 @@ namespace Tune.ViewModel
             }
         }
 
+
+        /// <summary>
+        /// Opens a playlist in the list page. That page follows the current playlist, so
+        /// it shows the one that was clicked, and its back button leaves the player alone.
+        /// </summary>
+        /// <param name="playlist">The playlist to open.</param>
+        [RelayCommand]
+        private void OpenPlaylist(PlaylistBase? playlist)
+        {
+            if (playlist is null) return;
+
+            // The empty cover is the way to a new playlist, not a playlist to look at.
+            if (playlist.isEmptyOrNotInited)
+            {
+                CreatePlaylist();
+                return;
+            }
+
+            _listController.SetPlaylist(playlist);
+            WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(CurrentPlaylist)));
+
+            // That navigation builds the list page. Tell it where its back button belongs,
+            // so leaving it comes back here instead of going to the main page.
+            CurrentPlaylistViewModel.ReturnPageType = typeof(PlaylistsPage);
+        }
+
+        /// <summary>
+        /// Creates a playlist through the same dialog the rest of the application uses, and
+        /// opens it once it exists. This is what the empty cover at the end of the list
+        /// runs.
+        /// </summary>
+        [RelayCommand]
+        private void CreatePlaylist()
+        {
+            var created = CreatePlaylistDialog();
+            if (created is null) return;
+
+            // The new playlist has to be in the list that the page shows, and the empty
+            // cover has to stay last.
+            RefreshPlaylists();
+            OpenPlaylist(created);
+        }
+
+        /// <summary>
+        /// Runs the new playlist dialog. A test replaces it, so the routing to it can be
+        /// checked without opening a modal dialog.
+        /// </summary>
+        internal Func<PlaylistBase?> CreatePlaylistDialog { get; set; } = ShowCreatePlaylistDialog;
+
+        private static PlaylistBase? ShowCreatePlaylistDialog()
+        {
+            var creator = new CreatePlaylist();
+
+            return creator.ShowCreatePlaylistDialog(Tune.Assets.Localization.LangStrings.CreateNewPlaylisyTitle);
+        }
 
         // ==== Navigation ====
         [RelayCommand]
@@ -138,8 +203,41 @@ namespace Tune.ViewModel
             _listController.PropertyChanged += OnListControllerPropertyChanged;
             _playlistService = LoadableServicesHelper.GetPlaylistService();
 
+            RefreshPlaylists();
             LoadMusicList();
         }
+
+        /// <summary>
+        /// Rebuilds the shown playlists and appends the empty cover, which is why it is
+        /// always the last item no matter how many playlists there are.
+        /// </summary>
+        private void RefreshPlaylists()
+        {
+            Playlists.Clear();
+
+            if (_playlistService != null)
+            {
+                foreach (PlaylistBase playlist in _playlistService.GetAllPlaylists())
+                {
+                    // The history playlist has its own button and is never listed here.
+                    if (ListController.IsHistory(playlist)) continue;
+
+                    Playlists.Add(playlist);
+                }
+            }
+
+            Playlists.Add(CreateEmptyCover());
+        }
+
+        /// <summary>
+        /// The cover at the end of the list. It is an empty playlist on purpose: opening it
+        /// starts a new playlist, and playing it leaves the player with no playlist at all.
+        /// </summary>
+        private static PlaylistBase CreateEmptyCover() => new CollectionPlaylist
+        {
+            Name = Tune.Assets.Localization.LangStrings.PlaylistEmptyCoverName,
+            Description = Tune.Assets.Localization.LangStrings.NewFromCover
+        };
 
         private void OnListControllerPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {

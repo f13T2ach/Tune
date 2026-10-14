@@ -1,0 +1,46 @@
+<UserControl x:Class="Tune.Components.Content.EffectItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Tune.Components.Content"
+             xmlns:components="clr-namespace:Tune.Components"
+             xmlns:lang="clr-namespace:Tune.Assets.Localization"
+
+             mc:Ignorable="d"
+             d:DesignHeight="64" d:DesignWidth="520">
+
+
+
+    <!-- One node of the effect rack. The data context is the slot it shows. -->
+    <Border BorderBrush="White" BorderThickness="1.5" Background="#22000000" Padding="8" Margin="0,3">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                <TextBlock Text="{Binding Name}" Foreground="White" FontSize="28" FontWeight="SemiBold" />
+                <TextBlock Text="{Binding Subtitle}" Opacity="0.8" FontSize="18" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+
+                <components:Button Text="U" Margin="2" Width="35"
+                        Command="{Binding MoveUpCommand}" ToolTip="{x:Static lang:LangStrings.MoveUpTooltip}" />
+                <components:Button Text="D" Margin="2" Width="35"
+                        Command="{Binding MoveDownCommand}" ToolTip="{x:Static lang:LangStrings.MoveDownTooltip}" />
+                <components:Button Text="-" Margin="2" Width="35"
+                        Command="{Binding RemoveCommand}" ToolTip="{x:Static lang:LangStrings.RemoveTooltip}" />
+                <Rectangle Width="1" 
+   Height="40" 
+   Fill="#888888" 
+   Margin="8,0" 
+   VerticalAlignment="Center" />
+                <components:CheckBox Width="30" IsChecked="{Binding Bypass, Mode=TwoWay}" VerticalAlignment="Center"
+                     ToolTip="{x:Static lang:LangStrings.BypassTooltip}" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

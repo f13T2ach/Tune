@@ -6,11 +6,13 @@
              xmlns:local="clr-namespace:Tune.Appearance.SoundEffectTools"
              xmlns:tab="clr-namespace:Tune.Components.TabFrame"
              xmlns:ui="clr-namespace:Tune.Appearance.EffectToolsUI"
+             xmlns:lang="clr-namespace:Tune.Assets.Localization"
+             xmlns:state="clr-namespace:Tune.Helpers.UiState"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="1600">
     
     <Grid>
-        <tab:TabFrame SelectedIndex="0">
+        <tab:TabFrame SelectedIndex="0" state:TabFramePersistence.PersistKey="Effect">
 
             <tab:TabFrame.TabTemplate>
                 <DataTemplate>
@@ -20,15 +22,15 @@
 
             <!-- The chain page stacks rack effects, which the equalizer is not:
                  it is a fixed processor, so its parameters have their own page. -->
-            <tab:TabFrameItem Header="效果链">
+            <tab:TabFrameItem Header="{x:Static lang:LangStrings.EffectChain}">
                 <ui:EffectChain/>
             </tab:TabFrameItem>
 
-            <tab:TabFrameItem Header="简单架">
+            <tab:TabFrameItem Header="{x:Static lang:LangStrings.Gain}">
                 <ui:ParameterPanel/>
             </tab:TabFrameItem>
 
-            <tab:TabFrameItem Header="混响">
+            <tab:TabFrameItem Header="{x:Static lang:LangStrings.Reverb}">
                 <Grid>
                     
                 </Grid>

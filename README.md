@@ -18,8 +18,8 @@
 > 而是把播放器做成一台可以随手操作的调音台：虚拟旋钮、可拖拽时间轴、双语歌词、
 > 歌单数据库，以及正在建设中的均衡器、效果链与声学分析工具。
 >
-> 项目目前处于 **a1 早期预览** 阶段：核心播放链路与歌单系统已经可用，
-> 声效工具区完成界面骨架，逻辑仍在开发中。
+> 项目目前处于 **早期预览** 阶段：播放与歌单系统可用，
+> 声效功能正在完善...
 
 ---
 
@@ -46,74 +46,29 @@
 
 ## 项目简介
 
-Tune 的目标是把"播放音乐"变成一件可以**调**的事：
-
-- 用真实的旋钮控件（`AirKnob`）而不是滑块来调音量与效果参数；
-- 在主界面同屏显示歌曲信息、采样率/码率、双行（原文 + 译文）歌词与时间轴；
-- 以"歌单库（Tune Database）"的方式管理本地曲库，数据以可读的 JSON 落盘；
-- 用可拆卸的"声效工具"页承载均衡器、效果器、声学分析与曲目详情。
-
-项目全部使用 C# 与 XAML 编写，UI 采用固定 1600 × 792 设计画布 + `Viewbox` 等比缩放，
-窗口宽高比锁定为 **1.945**，因此从 800 × 400 到 4K 都能保持一致的版式。
+... [STAY BLANK]
 
 ---
 
 ## 功能与进度
 
-状态说明：✅ 已实现并可用 · 🚧 界面已就绪、逻辑开发中 · 📋 规划中
+状态说明：✅ 已实现并可用 · 🚧 开发中 · 📋 规划中
 
-### 播放与曲目
-
-| 功能 | 状态 | 说明 |
+| 模块 | 状态 | 进度 |
 |---|---|---|
-| 本地音频播放 | ✅ | `NAudio` `WaveOut` + `AudioFileReader` |
-| 多格式支持 | ✅ | 打开对话框筛选 `*.mp3;*.wav;*.flac;*.m4a`；WAV 由 NAudio 内置解码，MP3 / FLAC / M4A(AAC) 等经 Windows Media Foundation 解码 |
-| 播放 / 暂停 / 停止 | ✅ | 引擎层 `Play` / `Pause` / `Stop` / `Unload`，自然播放结束才触发"播放到结尾"事件 |
-| 进度拖拽跳转 | ✅ | 拖动时暂停、释放后修正位置并续播；进度以 50 ms 定时刷新 |
-| 音量控制 | ✅ | 旋钮 0–100 ↔ 引擎 0.0–1.0，拖动结束自动持久化 |
-| 元数据读取 | ✅ | `TagLib#` 读标题/艺术家/专辑；缺失码率时用 NAudio 兜底，另取采样率与声道数 |
-| 歌词显示 | ✅ | 自动加载同名 `.lrc`；按时间二分查找当前行 |
-| 双语歌词 | ✅ | 同一时间戳含多行时自动识别原文与译文并分行显示 |
-
-### 歌单与播放模式
-
-| 功能 | 状态 | 说明 |
-|---|---|---|
-| 歌单创建 / 选择 | ✅ | `CreatePlaylist` / `SelectPlaylist` 对话框（含"无"选项） |
-| 收藏当前曲目 | 🚧 | `FavoriteMusic` 对话框：改选"其他歌单"时会正确把曲目加入歌单，但直接确认已预选的歌单时漏调 `AddMuisc`，曲目不会入库（疑似缺陷） |
-| 添加 / 删除曲目 | ✅ | `AddMusic` 对话框可从"正在播放"或本地文件选取 |
-| 歌单持久化 | ✅ | 每个歌单一个 `playlists/<ID>.json`，`MusicList` 仅保存曲目路径 |
-| 播放模式 | ✅ | 不循环 / 列表循环 / 单曲循环 / 随机播放，图标随模式切换 |
-| 上一首 / 下一首 | ✅ | 基于播放历史栈，连续重复曲目不重复入栈 |
-| 重命名 / 更新 / 删除歌单 | 🚧 | 歌单页（`CurrentPlaylist`）的「播放 / 重命名 / 更新 / 删除」按钮已排布，尚未接线 |
-| 曲目条目操作 | 🚧 | 「下一首播放 / 加入歌单 / 更多信息」为 `TODO`（删除已实现） |
-| 目录歌单（导入文件夹） | 📋 | `EPlaylistType.Directory` 已定义，导入按钮为 `TODO` |
-
-### 声效工具
-
-| 功能 | 状态 | 说明 |
-|---|---|---|
-| 工具页导航 | ✅ | 帮助 / 均衡器 / 效果器 / 分析 / 歌曲，带独立 ServiceProvider 与页面复用 |
-| 均衡器、效果器、分析、歌曲、帮助页 | 🚧 | 当前为壁纸占位页 |
-| 效果链（`EffectChain`） | 🚧 | 静态原型：左信号出入、右"未选择效果 + 参数面板" |
-| 8 段图形均衡器与 EQ 导入导出 | 📋 | 见 [Tune.md](Tune.md) |
-| 声学 / 乐理解析（BPM、调性、副歌） | 📋 | — |
-| Demucs ONNX 分轨与重混 | 📋 | 方案见 [Demucs_RemixEngine_ImportSolution.md](Demucs_RemixEngine_ImportSolution.md) |
+| 播放 | ✅ | 打开文件播放，播放 / 暂停 / 停止 / 上一首 / 下一首，进度拖拽，音量旋钮，四种播放模式 |
+| 曲目信息 | ✅ | TagLib# 读标签，缺失项用 NAudio 兜底，另取采样率与声道数 |
+| 歌词 | ✅ | 同名 `.lrc` 自动加载，双语分行，按时间定位当前行 |
+| 歌单 | ✅ | 新建 / 选择 / 收藏 / 添加 / 删除，JSON 持久化，播放历史 |
+| 界面 | ✅ | 主界面、歌单库、当前歌单、声效工具、设置页，1600 × 792 画布等比缩放 |
+| 均衡器 | ✅ | 十段 EQ，预设保存与载入，界面状态自动记忆 |
+| 效果器 | ✅ | 效果链与参数面板，可增删效果并调整参数 |
+| 本地化 | ✅ | English 与 zh-CN，跟随系统，可在设置页覆盖 |
+| 音频接口 | ✅ | WasapiOut 与 WaveOut 可切换 |
+| 声学分析 | 📋 | BPM、调性、副歌识别 |
+| 分轨与重混 | 📋 | Demucs ONNX，方案见 [Demucs_RemixEngine_ImportSolution.md](Demucs_RemixEngine_ImportSolution.md) |
 | 插件系统 | 📋 | — |
 
-### 基础设施
-
-| 功能 | 状态 | 说明 |
-|---|---|---|
-| 依赖注入 | ✅ | `Microsoft.Extensions.DependencyInjection`，服务/控制器/Presenter/页面统一注册 |
-| 启动期异步服务加载 | ✅ | `LoadableServicesManager` 并行加载并统计进度，单个失败不影响其他服务 |
-| 页面导航 | ✅ | `WeakReferenceMessenger` + `NavigationMessage`，弱引用避免内存泄漏 |
-| 自定义对话框宿主 | ✅ | `DialogContentBase` / `DialogHost` / `DialogService`，支持 `OnShown` 生命周期 |
-| 音频设备热切换 | ✅ | `MMDeviceEnumerator` 通知客户端，实时更新页脚设备名 |
-| 日志 | ✅ | 每次运行一个 `logs/log_<时间戳>.txt`，保留 5 天、最多 100 个文件 |
-| 全局异常兜底 | ✅ | 启动失败弹窗提示日志路径并安全退出 |
-| 本地化 | ✅ | `.resx` + `WPFLocalizeExtension`，内置 English 与 zh-CN |
-| 统一提示（Toast） | 🚧 | 目前仍使用 `MessageBox`，见 [Problems.md](Problems.md) |
 
 ---
 
@@ -225,7 +180,7 @@ Tune 不使用注册表或安装目录写入业务数据，而是在**进程的�
 - 用户设置（`PlayerVolume`，默认 `50`）通过 `Local/TuneSettings.settings` 写入用户级
   `user.config`，按 Windows 用户账户隔离，不会污染仓库。
 
-> 歌词文件规则：与音频文件同目录、同文件名、扩展名为 `.lrc`（大小写不敏感）。
+> 歌词文件规则：与音频文件同目录、同文件名、扩展名为 `.lrc`。
 
 ---
 
@@ -343,8 +298,7 @@ Tune 采用**分层 + 依赖注入**的结构，View 与业务逻辑之间通过
 | [WPFLocalizeExtension](https://www.nuget.org/packages/WPFLocalizeExtension) | 3.10.0 | WPF 本地化（`.resx` 绑定） | Ms-PL |
 | [XAMLMarkupExtensions](https://www.nuget.org/packages/XAMLMarkupExtensions) | 2.1.3（传递依赖） | `WPFLocalizeExtension` 的标记扩展基础库 | Ms-PL |
 
-Tune 会严格遵守上述开源许可协议。若需分发，请注意 **TagLib# 为 LGPL-2.1-only**：
-本项目以未修改的 NuGet 程序集形式引用它，请勿静态链接或修改其源码后闭源分发。
+Tune 会严格遵守上述开源许可协议。注意 GPL 协议限制，Tune 在后期会不再依赖 GPL 协议的项目。
 
 ---
 
@@ -356,8 +310,6 @@ Tune 会严格遵守上述开源许可协议。若需分发，请注意 **TagLib
   - `LangStrings.Designer.cs` —— 强类型访问器（`LangStrings.xxx`）。
 - XAML 中通过 `xmlns:lang="clr-namespace:Tune.Assets.Localization"` 与
   `{x:Static lang:LangStrings.XXX}` 引用。
-- **新增语言的步骤**：复制 `LangStrings.resx` 为 `LangStrings.<culture>.resx`，
-  翻译其中的 `<data>` 条目，界面语言跟随系统区域设置生效。
 - 当前 `App.OnStartup` 中手动切换 `CurrentUICulture` 的代码处于注释状态，
   界面语言跟随系统；同时仍有部分文案直接硬编码在 XAML 中（如主界面的
   "循环 / 收藏 / 列表 / 声效 / 设置"），迁移到资源文件是欢迎的贡献方向。
@@ -376,8 +328,8 @@ Tune 会严格遵守上述开源许可协议。若需分发，请注意 **TagLib
 
 提交前请确认：
 
-- 代码风格与现有代码保持一致（文件头 `#region`/`====` 分区注释、XML 文档注释、可空引用类型标注）；
-- 不引入新的编译警告（当前 `Release` 构建为 0 错误、6 个已知警告）；
+- 代码风格与现有代码保持一致；
+- 不引入新的编译警告；
 - 不破坏既有功能，并为新增逻辑补充必要的单元测试；
 - 大范围重构请先在 Issue 中讨论。
 
@@ -391,20 +343,14 @@ Tune 会严格遵守上述开源许可协议。若需分发，请注意 **TagLib
 | 接入新的持久化数据 | 参考 `Persistence/PlaylistStorage/`，实现 `IAsyncLoadable` 并注册到 `LoadableServicesManager` |
 | 新增可绑定设置 | 在 `Local/TuneSettings.settings` 增加 `User` 作用域项，用 `LocalProperties` 或 `TuneSettings.Default` 读写 |
 
-> 目前仓库中**尚无单元测试工程**，`Tune.slnx` 仅包含主工程。
-> 搭建测试项目（如 xUnit + 针对 `ListController`、歌词解析、歌单序列化的测试）是很好的第一个贡献。
-
 ---
 
 ## 已知问题
 
-- **声效工具页尚未实现**：均衡器、效果器、分析、歌曲页目前为壁纸占位，效果链为静态原型。
+- **部分界面仍是占位**：分析页与歌曲页为壁纸占位，曲线均衡器尚未开始。
 - **提示方式突兀**：多处仍使用 `MessageBox`，计划替换为应用内提示（见 [Problems.md](Problems.md) 的 `SHOW_TOAST`）。
 - **`WindowFrame` 作用域内命名冲突**：在 `WindowFrame` 内嵌套多个具名元素会触发 XAML 编译错误（见 `NAME_REPEAT_PROBLEM`）。
-- **数据目录跟随工作目录**：从不同目录启动会得到不同的歌单/日志目录，正式分发前建议改为固定的用户数据目录（如 `%APPDATA%/Tune`）。
 - **待接线按钮**：主界面的"设置"，歌单页的"播放 / 重命名 / 更新 / 删除"，曲目项的"下一首播放 / 加入歌单 / 更多信息"。
-- **收藏功能不完整**：`FavoriteMusic` 在"已预选歌单 + 直接确认"路径上漏调 `PlaylistBase.AddMuisc`，
-  曲目不会被真正加入歌单；只有改选"其他歌单"的路径是完整的（见 `Components/UI/FavoriteMusic.xaml.cs`）。
 - **许可证年份与作者未填写**：`LICENSE.txt` 中的 `[year] [fullname]` 仍为占位符。
 
 ---

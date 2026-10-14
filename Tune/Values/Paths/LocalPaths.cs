@@ -1,4 +1,4 @@
-﻿namespace Tune.Values.Paths
+namespace Tune.Values.Paths
 {
     /// <summary>
     /// If the suffixes is "NL", means it doesn't have "\\" at start.
@@ -12,9 +12,11 @@
 
         public static string LOCAL_LOG_N = "logs";
 
+        public static string LOCAL_DATA_N = "data";
+
         public static List<string> PATHS_TO_INIT = new List<string>
         {
-            LOCAL_PLAYLIST_N, LOCAL_LOG_N
+            LOCAL_PLAYLIST_N, LOCAL_LOG_N, LOCAL_DATA_N
         };
     }
 }

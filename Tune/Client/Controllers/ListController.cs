@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using System.Globalization;
 using Tune.Assets.Localization;
 using Tune.Components.UI;
 using Tune.Helpers.DialogExtentions;
@@ -44,6 +45,9 @@ namespace Tune.Client.Controllers
         private EPlaylistType _currentPlaylistType;
 
         [ObservableProperty]
+        private string _currentPlaylistCreateDateDisplay = Strings.NO_CONTENT;
+
+        [ObservableProperty]
         private string? _listIconSource;
 
         public ListController()
@@ -66,6 +70,7 @@ namespace Tune.Client.Controllers
             IsPlaylistNull = newValue == null;
             // Update display content
             CurrentPlaylistNameDisplay = newValue?.Name ?? Strings.NO_CONTENT;
+            CurrentPlaylistCreateDateDisplay = FormatCreateDate(newValue);
 
             if (newValue != null)
             {
@@ -75,6 +80,19 @@ namespace Tune.Client.Controllers
             {
                 IsPlaylistEmpty = false;
             }
+        }
+
+        /// <summary>
+        /// Formats the creation date of a playlist in the culture the app is running in.
+        /// Formatting happens here instead of in a binding, because a WPF binding would
+        /// always use the language of the element rather than the culture the user chose.
+        /// </summary>
+        internal static string FormatCreateDate(PlaylistBase? playlist)
+        {
+            if (playlist == null || playlist.CreateDateTime == DateTime.MinValue)
+                return Strings.NO_CONTENT;
+
+            return playlist.CreateDateTime.ToString("d", CultureInfo.CurrentCulture);
         }
 
         // ==== Playlist Switching Logic ====
@@ -91,6 +109,62 @@ namespace Tune.Client.Controllers
             _currentIndex = -1;
             _playHistory.Clear();
         }
+
+        /// <summary>
+        /// Identity of the hidden playlist that keeps what has been played. It is reached
+        /// through its own button rather than the playlists page, so the page filters it out.
+        /// </summary>
+        public const string HistoryPlaylistID = "__tune_history__";
+
+        /// <summary>Tells whether a playlist is the hidden history one.</summary>
+        /// <param name="playlist">The playlist to look at.</param>
+        public static bool IsHistory(PlaylistBase? playlist) =>
+            playlist != null && string.Equals(playlist.ID, HistoryPlaylistID, StringComparison.Ordinal);
+
+        /// <summary>
+        /// Leaves the player with nothing playing. The history playlist becomes the current
+        /// one, so the user lands somewhere useful instead of nowhere, and the loop mode goes
+        /// back to no loop rather than staying on with nothing to loop.
+        /// </summary>
+        public void ClearPlaylist()
+        {
+            SetPlaylist(GetOrCreateHistory());
+            OnSetNoLoop();
+        }
+
+        /// <summary>
+        /// Gets the hidden playlist that keeps what has been played, creating and storing it
+        /// the first time it is asked for.
+        /// </summary>
+        /// <returns>The history playlist, or null when no playlist service is loaded.</returns>
+        public static PlaylistBase? GetOrCreateHistory()
+        {
+            // One shared instance, because the playlist service hands out a fresh object per
+            // call: two copies of the same playlist would each be saved in turn, and the
+            // stale one would wipe what the other recorded.
+            if (_history != null) return _history;
+
+            var service = Tune.Helpers.LoadableServicesHelper.GetPlaylistService();
+            if (service == null) return null;
+
+            PlaylistBase? existing = service.GetAllPlaylists().FirstOrDefault(IsHistory);
+            if (existing != null)
+            {
+                _history = existing;
+
+                return _history;
+            }
+
+            _history = new CollectionPlaylist(
+                HistoryPlaylistID, Tune.Assets.Localization.LangStrings.HistoryPlaylistName);
+
+            _history.SavePlaylist();
+
+            return _history;
+        }
+
+        /// <summary>The single shared copy of the history playlist, once it has been asked for.</summary>
+        private static PlaylistBase? _history;
 
         /// <summary>
         /// Show the playlist selector dialog and apply the user's choice.
@@ -199,7 +273,8 @@ namespace Tune.Client.Controllers
         {
             if (CurrentPlaylist?.MusicList == null || CurrentPlaylist.MusicList.Count == 0)
             { 
-                if(ListPlayStatus != EListPlayStatus.NoLoop && _playHistory != null)
+                // The history starts empty, so its end can only be read when it has one.
+                if (ListPlayStatus != EListPlayStatus.NoLoop && _playHistory.Count > 0)
                 {
                     return _playHistory[^1]; // Return the last played song if the playlist is empty but loop mode allows it.
                 }
@@ -296,6 +371,23 @@ namespace Tune.Client.Controllers
                 return;
 
             _playHistory.Add(music);
+
+            // The hidden history playlist is what the history button shows, so it is kept in
+            // step with the play stack and stored rather than kept in memory.
+            PlaylistBase? history = GetOrCreateHistory();
+            if (history == null) return;
+
+            // One entry per song, newest first, so the history reads the way it is played and
+            // a repeated song moves back to the top instead of being listed twice. Songs are
+            // matched by path, because every playback hands over a fresh object.
+            Music? alreadyPlayed = history.MusicList.FirstOrDefault(item =>
+                string.Equals(item.MusicPath, music.MusicPath, StringComparison.OrdinalIgnoreCase));
+
+            if (alreadyPlayed != null)
+                history.MusicList.Remove(alreadyPlayed);
+
+            history.MusicList.Insert(0, music);
+            history.SavePlaylist();
         }
 
 

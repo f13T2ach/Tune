@@ -1,4 +1,5 @@
-﻿using System.Windows;
+using System.Windows;
+using Tune.Assets.Localization;
 using Tune.Generic.DialogGenerics;
 using Tune.Helpers;
 using Tune.Models.Playlist;
@@ -59,7 +60,7 @@ namespace Tune.Components.UI
             if (service == null || !service.IsLoaded)
             {
                 // TODO SHOW_TOAST
-                MessageBox.Show("Not loaded service or service not exists! Unable to create playlist", Strings.APPLICATION_NAME, MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(LangStrings.ServiceNotLoadedCreate, Strings.APPLICATION_NAME, MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
@@ -67,7 +68,7 @@ namespace Tune.Components.UI
             if (!result.Success)
             {
                 // TODO SHOW_TOAST
-                MessageBox.Show($"Failed to create this playlist: {result.ErrorMessage}", Strings.APPLICATION_NAME, MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(string.Format(LangStrings.FailedToCreatePlaylist, result.ErrorMessage), Strings.APPLICATION_NAME, MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using Tune.Appearance;
+using Tune.Helpers.Windows;
 using Tune.Models.Messages;
 
 namespace Tune
@@ -11,7 +12,7 @@ namespace Tune
         public MainWindow()
         {
             InitializeComponent();
-
+            WindowBlurHelper.ApplyBlur(this, useAcrylic: true);
             WeakReferenceMessenger.Default.Register<NavigationMessage>(this, OnNavigationMessage);
             NavigateTo(typeof(Main));
         }

@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using Tune.Assets.Localization;
 using Tune.Generic.DialogGenerics;
@@ -65,7 +65,7 @@ namespace Tune.Components.UI
             if (_service == null)
             {
                 // TODO SHOW_TOAST
-                MessageBox.Show("Not loaded service or service not exists.", Strings.APPLICATION_NAME, MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(LangStrings.ServiceNotLoaded, Strings.APPLICATION_NAME, MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 

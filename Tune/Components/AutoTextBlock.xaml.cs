@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -88,19 +88,22 @@ namespace Tune.Components
         {
             if (PART_Normal == null || _updating || !IsLoaded) return;
 
-            var text = Text;
-            if (string.IsNullOrEmpty(text)) return;
-
+            string text = Text;
             double availW = ActualWidth;
-            double availH = ActualHeight;
-            if (availW <= 0 || availH <= 0) return;
 
             _updating = true;
             try
             {
+                double fs = PART_Normal.FontSize;
+
+                if (string.IsNullOrEmpty(text) || availW <= 0)
+                {
+                    SetMode(DisplayMode.Normal, fs);
+                    return;
+                }
+
                 // 关键：从内部 TextBlock 上读取“当前生效值”，
                 // 它可能是隐式样式里的，也可能是被转发过来的本地值
-                double fs = PART_Normal.FontSize;
                 var typeface = new Typeface(
                     PART_Normal.FontFamily,
                     PART_Normal.FontStyle,
@@ -109,26 +112,29 @@ namespace Tune.Components
                 var fg = PART_Normal.Foreground;
                 double dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
 
-                // 模式 1：原字号、单行是否放得下
-                var ft1 = new FormattedText(text, CultureInfo.CurrentUICulture,
+                // 只比较宽度。比较高度会形成自反馈：换行和滚动条都会改变本控件
+                // 的高度，而行高又由内容决定，于是模式不停来回切换。
+                // 迟滞 1px 让已经生效的模式在边界上保持稳定。
+                const double slack = 1.0;
+
+                var full = new FormattedText(text, CultureInfo.CurrentUICulture,
                     FlowDirection.LeftToRight, typeface, fs, fg, dpi);
-                if (ft1.Width <= availW + 0.5 && ft1.Height <= availH + 0.5)
+                double fullSlack = _currentMode == DisplayMode.Normal ? slack : 0.0;
+                if (full.Width <= availW + fullSlack)
                 {
                     SetMode(DisplayMode.Normal, fs);
                     return;
                 }
 
-                // 模式 2：字号 / 2、换行后是否放得下
-                var ft2 = new FormattedText(text, CultureInfo.CurrentUICulture,
+                var half = new FormattedText(text, CultureInfo.CurrentUICulture,
                     FlowDirection.LeftToRight, typeface, fs / 2.0, fg, dpi);
-                ft2.MaxTextWidth = Math.Max(1, availW);
-                if (ft2.Height <= availH + 0.5)
+                double halfSlack = _currentMode == DisplayMode.Half ? slack : 0.0;
+                if (half.Width <= availW + halfSlack)
                 {
                     SetMode(DisplayMode.Half, fs);
                     return;
                 }
 
-                // 模式 3：滚动
                 SetMode(DisplayMode.Scroll, fs);
             }
             finally

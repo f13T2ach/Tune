@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# Tune runtime data, created next to whichever directory the app runs from
+playlists/
+data/
+
+# DSH harness diagnostics, not part of the project
+dsh-acl-recovery/

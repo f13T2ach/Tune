@@ -69,6 +69,29 @@ namespace Tune.Tests.Engine.Effects
             Assert.Contains(slot.Parameters[0].Name, slot.Subtitle);
         }
 
+        /// <summary>
+        /// Verifies that every parameter of every catalog effect can be handed to the
+        /// ComboBox. A collapsed editor still evaluates its binding and WPF rejects a
+        /// SelectedIndex below -1, which is how a hidden choice editor used to break
+        /// on plain numeric parameters.
+        /// </summary>
+        [Fact]
+        public void ChoiceIndex_ForEveryCatalogEffect_StaysWithinWhatAComboBoxAccepts()
+        {
+            foreach (EffectCatalog.Entry entry in EffectCatalog.Entries)
+            {
+                var slot = new EffectSlot(entry.Name, entry.Create(), _ => { }, _ => { }, _ => { });
+
+                Assert.All(slot.Parameters, parameter =>
+                {
+                    Assert.NotNull(parameter.Choices);
+                    Assert.True(
+                        parameter.ChoiceIndex >= -1,
+                        $"'{entry.Name}' / '{parameter.Name}' returned ChoiceIndex {parameter.ChoiceIndex}.");
+                });
+            }
+        }
+
         #endregion
 
         /// <summary>Creates a slot over a fresh gain effect with no chain behind it.</summary>

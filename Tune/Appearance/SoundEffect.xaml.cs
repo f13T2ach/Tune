@@ -15,8 +15,34 @@ namespace Tune.Appearance
         private bool _isDisposed;
 
         // Remember te current page type to restore it when reloading the control
-        // Remember te current page type to restore it when reloading the control
-        private Type _currentPageType = typeof(SoundEffectMain);
+        private Type _currentPageType = RestorePageType();
+
+        /// <summary>Interface state key the selected tool page is remembered under.</summary>
+        private const string PageKey = "soundeffect.page";
+
+        /// <summary>
+        /// Reads back the page the toolbar was left on. The name is resolved against this
+        /// assembly and then every loaded one, so it does not depend on which assembly the
+        /// type lookup is considered to come from.
+        /// </summary>
+        private static Type RestorePageType()
+        {
+            string name = Tune.Helpers.UiState.UiStateStore.Get(PageKey);
+            if (string.IsNullOrEmpty(name)) return typeof(SoundEffectMain);
+
+            Type? restored = typeof(SoundEffect).Assembly.GetType(name);
+
+            if (restored == null)
+            {
+                foreach (System.Reflection.Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    restored = assembly.GetType(name);
+                    if (restored != null) break;
+                }
+            }
+
+            return restored ?? typeof(SoundEffectMain);
+        }
 
         public SoundEffect()
         {
@@ -75,6 +101,7 @@ namespace Tune.Appearance
                 if (pageType != null)
                 {
                     _currentPageType = pageType;   // rec
+                    Tune.Helpers.UiState.UiStateStore.Set(PageKey, pageType.FullName);
                     NavigateTo(pageType);
                     TitleButton.Text = btn.Text;
                 }
@@ -86,6 +113,7 @@ namespace Tune.Appearance
             if (_isDisposed || !IsLoaded) return;
 
             _currentPageType = typeof(SoundEffectMain);   // rec
+            Tune.Helpers.UiState.UiStateStore.Set(PageKey, _currentPageType.FullName);
             NavigateTo(_currentPageType);
             TitleButton.Text = _name;
         }

@@ -1,6 +1,7 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Tune.Values.Static;
 
 namespace Tune.Components.Frame
 {
@@ -10,7 +11,7 @@ namespace Tune.Components.Frame
     public partial class WindowFrame : UserControl
     {
         public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register(nameof(Title), typeof(string), typeof(WindowFrame), new PropertyMetadata("窗口"));
+            DependencyProperty.Register(nameof(Title), typeof(string), typeof(WindowFrame), new PropertyMetadata(Strings.WINDOW));
 
         public static new readonly DependencyProperty BorderBrushProperty =
             DependencyProperty.Register(nameof(BorderBrush), typeof(Brush), typeof(WindowFrame), new PropertyMetadata(Brushes.White));

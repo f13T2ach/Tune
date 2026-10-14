@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -23,6 +23,10 @@ namespace Tune.Components
             DependencyProperty.Register("CommandParameter", typeof(object), typeof(Button),
                 new PropertyMetadata(null));
 
+        public static readonly DependencyProperty IsDisabledProperty =
+            DependencyProperty.Register("IsDisabled", typeof(bool), typeof(Button),
+                new PropertyMetadata(false, OnIsDisabledChanged));
+
         // 颜色定义
         private readonly Brush DefaultBg = new SolidColorBrush(Colors.Black);
         private readonly Brush DefaultBorder = new SolidColorBrush(Colors.White);
@@ -30,6 +34,7 @@ namespace Tune.Components
         private readonly Brush HoverBorder = new SolidColorBrush(Color.FromRgb(224, 224, 224));
         private readonly Brush PressBg = new SolidColorBrush(Color.FromRgb(26, 26, 26));
         private readonly Brush PressBorder = new SolidColorBrush(Color.FromRgb(170, 170, 170));
+        private readonly Brush DisabledBorder = new SolidColorBrush(Color.FromRgb(90, 90, 90));
 
         // 状态标志
         private bool _isPressed = false;
@@ -96,6 +101,39 @@ namespace Tune.Components
             set { SetValue(CommandParameterProperty, value); }
         }
 
+        /// <summary>
+        /// When true the button looks unavailable and ignores both the mouse and its command.
+        /// </summary>
+        public bool IsDisabled
+        {
+            get { return (bool)GetValue(IsDisabledProperty); }
+            set { SetValue(IsDisabledProperty, value); }
+        }
+
+        private static void OnIsDisabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as Button)?.ApplyDisabledState();
+        }
+
+        /// <summary>Applies the look that matches the current availability.</summary>
+        private void ApplyDisabledState()
+        {
+            if (IsDisabled)
+            {
+                _isPressed = false;
+                Mouse.Capture(null);
+                MainBorder.Background = DefaultBg;
+                MainBorder.BorderBrush = DisabledBorder;
+                MainBorder.RenderTransform = null;
+                ButtonText.Opacity = 0.4;
+            }
+            else
+            {
+                ButtonText.Opacity = 1;
+                SetDefaultState();
+            }
+        }
+
         private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = d as Button;
@@ -108,6 +146,8 @@ namespace Tune.Components
         // 鼠标进入
         private void MainBorder_MouseEnter(object sender, MouseEventArgs e)
         {
+            if (IsDisabled) return;
+
             if (!_isPressed)
             {
                 SetHoverState();
@@ -117,6 +157,8 @@ namespace Tune.Components
         // 鼠标离开
         private void MainBorder_MouseLeave(object sender, MouseEventArgs e)
         {
+            if (IsDisabled) return;
+
             if (!_isPressed)
             {
                 SetDefaultState();
@@ -133,6 +175,12 @@ namespace Tune.Components
         // 鼠标左键按下
         private void MainBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (IsDisabled)
+            {
+                e.Handled = true;
+                return;
+            }
+
             _isPressed = true;
             SetPressState();
             Mouse.Capture(MainBorder); // 捕获鼠标确保能收到 MouseUp
@@ -142,6 +190,12 @@ namespace Tune.Components
         // 鼠标左键释放
         private void MainBorder_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            if (IsDisabled)
+            {
+                e.Handled = true;
+                return;
+            }
+
             //System.Diagnostics.Debug.WriteLine("MouseLeftButtonUp 触发"); // 加这行
             if (_isPressed)
             {
@@ -189,6 +243,8 @@ namespace Tune.Components
         // 执行点击
         private void ExecuteClick()
         {
+            if (IsDisabled) return;
+
             if (Command != null && Command.CanExecute(CommandParameter))
             {
                 Command.Execute(CommandParameter);

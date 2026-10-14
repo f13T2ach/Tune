@@ -254,6 +254,73 @@ namespace Tune.Tests.Engine.Effects
             return parameters;
         }
 
+        #region ==== Ten Band Equalizer ====
+
+        /// <summary>
+        /// Verifies that a band of the ten band equalizer really shapes the audio:
+        /// the fifth band sits at 1 kHz, where +12 dB is a linear gain of about four.
+        /// </summary>
+        [Fact]
+        public void Read_WithTenBandBoost_LiftsThatBand()
+        {
+            AudioEffectChain chain = CreateChain();
+
+            // Unity level, so the measurement shows the equalizer alone.
+            chain.Volume.Value = 100;
+            chain.TenBand.Bands[5].Gain = 12;
+
+            Assert.InRange(MeasureGain(chain, 1000), 3.5, 4.1);
+        }
+
+        /// <summary>Verifies that a band far below the boosted one is left where it was.</summary>
+        [Fact]
+        public void Read_WithTenBandBoost_LeavesAFarBandAlone()
+        {
+            AudioEffectChain chain = CreateChain();
+            chain.Volume.Value = 100;
+            chain.TenBand.Bands[5].Gain = 12;
+
+            Assert.InRange(MeasureGain(chain, 63), 0.9, 1.1);
+        }
+
+        /// <summary>Verifies that a flat ten band equalizer colours nothing on its own.</summary>
+        [Fact]
+        public void Read_WithTenBandFlat_LeavesTheSignalAlone()
+        {
+            AudioEffectChain chain = CreateChain();
+            chain.Volume.Value = 100;
+
+            Assert.InRange(MeasureGain(chain, 1000), 0.9, 1.1);
+        }
+
+        /// <summary>Verifies that the ten band equalizer follows the master switch.</summary>
+        [Fact]
+        public void Read_WithTenBandBoostAndChainDisabled_LeavesTheSignalAlone()
+        {
+            AudioEffectChain chain = CreateChain();
+            chain.Volume.Value = 100;
+            chain.TenBand.Bands[5].Gain = 12;
+            chain.IsEnabled = false;
+
+            Assert.InRange(MeasureGain(chain, 1000), 0.9, 1.1);
+        }
+
+        /// <summary>Verifies that a whole preset reaches the audio through ApplyGains.</summary>
+        [Fact]
+        public void Read_AfterApplyingPresetGains_LiftsThatBand()
+        {
+            AudioEffectChain chain = CreateChain();
+            chain.Volume.Value = 100;
+
+            var gains = new double[10];
+            gains[9] = 12;   // the 16 kHz band
+            chain.TenBand.ApplyGains(gains);
+
+            Assert.InRange(MeasureGain(chain, 16000), 3.5, 4.1);
+        }
+
+        #endregion
+
         /// <summary>Builds a constant mono block, used to read a settled gain.</summary>
         private static float[] CreateConstantBlock()
         {

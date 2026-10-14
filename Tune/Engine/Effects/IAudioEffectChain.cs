@@ -24,6 +24,13 @@ namespace Tune.Engine.Effects
         EqualizerUnit Equalizer { get; }
 
         /// <summary>
+        /// Gets the ten band graphic equalizer, which the equalizer page drives from
+        /// its presets. It is a fixed processor too, and stays flat until a preset is
+        /// loaded, so it colours nothing on its own.
+        /// </summary>
+        TenBandEqualizerUnit TenBand { get; }
+
+        /// <summary>
         /// Gets the rack, in the order the audio flows through it.
         /// </summary>
         ObservableCollection<EffectSlot> Slots { get; }

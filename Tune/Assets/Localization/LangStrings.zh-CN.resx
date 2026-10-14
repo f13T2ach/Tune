@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -194,5 +194,242 @@
   </data>
   <data name="Unknown" xml:space="preserve">
     <value>未知</value>
+  </data>
+  <data name="Bypass" xml:space="preserve">
+    <value>绕过</value>
+  </data>
+  <data name="Button" xml:space="preserve">
+    <value>按钮</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="EffectChain" xml:space="preserve">
+    <value>效果链</value>
+  </data>
+  <data name="Equalizer" xml:space="preserve">
+    <value>均衡器</value>
+  </data>
+  <data name="Favorite" xml:space="preserve">
+    <value>收藏</value>
+  </data>
+  <data name="FavoriteMusicTitle" xml:space="preserve">
+    <value>收藏歌曲到歌单中</value>
+  </data>
+  <data name="FavoriteToOtherPlaylist" xml:space="preserve">
+    <value>收藏至其他歌单</value>
+  </data>
+  <data name="Gain" xml:space="preserve">
+    <value>增益</value>
+  </data>
+  <data name="List" xml:space="preserve">
+    <value>列表</value>
+  </data>
+  <data name="Loop" xml:space="preserve">
+    <value>循环</value>
+  </data>
+  <data name="NewFromCover" xml:space="preserve">
+    <value>按封面以新建歌单</value>
+  </data>
+  <data name="PlaylistEmptyCoverName" xml:space="preserve">
+    <value>空</value>
+  </data>
+  <data name="HistoryPlaylistName" xml:space="preserve">
+    <value>历史</value>
+  </data>
+  <data name="NoEffectSelected" xml:space="preserve">
+    <value>未选择效果</value>
+  </data>
+  <data name="NoParametersAvailable" xml:space="preserve">
+    <value>无参数可用</value>
+  </data>
+  <data name="ParameterPanel" xml:space="preserve">
+    <value>参数面板</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="Playlists" xml:space="preserve">
+    <value>歌单</value>
+  </data>
+  <data name="PresetNone" xml:space="preserve">
+    <value>方案:NONE</value>
+  </data>
+  <data name="Rename" xml:space="preserve">
+    <value>重命名</value>
+  </data>
+  <data name="Reverb" xml:space="preserve">
+    <value>混响</value>
+  </data>
+  <data name="SelectPlaylistToFavorite" xml:space="preserve">
+    <value>选择歌单来收藏</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="SongsUnit" xml:space="preserve">
+    <value>首歌曲</value>
+  </data>
+  <data name="SoundEffect" xml:space="preserve">
+    <value>声效</value>
+  </data>
+  <data name="SoundEffectPageHint" xml:space="preserve">
+    <value>按上方选项进行调节，按左上角小标题回到此页</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="FailedToCreatePlaylist" xml:space="preserve">
+    <value>创建歌单失败：{0}</value>
+  </data>
+  <data name="FailedToSaveMusic" xml:space="preserve">
+    <value>保存音乐失败：{0}</value>
+  </data>
+  <data name="MusicNotExists" xml:space="preserve">
+    <value>音乐不存在，无法播放</value>
+  </data>
+  <data name="MusicNotExistsOrUnknown" xml:space="preserve">
+    <value>音乐不存在或存在未知问题</value>
+  </data>
+  <data name="PlaylistNotSelected" xml:space="preserve">
+    <value>未选择歌单</value>
+  </data>
+  <data name="ServiceNotLoaded" xml:space="preserve">
+    <value>服务未加载或不存在</value>
+  </data>
+  <data name="ServiceNotLoadedCreate" xml:space="preserve">
+    <value>服务未加载或不存在！无法创建歌单</value>
+  </data>
+  <data name="StartupFailed" xml:space="preserve">
+    <value>Tune 启动时发生错误，日志已保存至 {0}</value>
+  </data>
+  <data name="AddEffectTooltip" xml:space="preserve">
+    <value>把选中的效果加入效果链</value>
+  </data>
+  <data name="BypassTooltip" xml:space="preserve">
+    <value>绕过此效果</value>
+  </data>
+  <data name="MoveDownTooltip" xml:space="preserve">
+    <value>下移</value>
+  </data>
+  <data name="MoveUpTooltip" xml:space="preserve">
+    <value>上移</value>
+  </data>
+  <data name="RemoveTooltip" xml:space="preserve">
+    <value>移除</value>
+  </data>
+  <data name="CategoryAbout" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="CategoryGeneral" xml:space="preserve">
+    <value>通用</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>语言</value>
+  </data>
+  <data name="LanguageRestartHint" xml:space="preserve">
+    <value>语言更改需重启 Tune 生效</value>
+  </data>
+  <data name="LanguageSystem" xml:space="preserve">
+    <value>跟随系统</value>
+  </data>
+  <data name="Runtime" xml:space="preserve">
+    <value>运行环境</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>已保存</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>版本</value>
+  </data>
+  <data name="Developer" xml:space="preserve">
+    <value>开发者</value>
+  </data>
+  <data name="DeveloperName" xml:space="preserve">
+    <value>SokaSoftware</value>
+  </data>
+  <data name="AudioApi" xml:space="preserve">
+    <value>音频接口</value>
+  </data>
+  <data name="AudioApiRestartHint" xml:space="preserve">
+    <value>音频接口更改需重启 Tune 生效</value>
+  </data>
+  <data name="CategoryAudio" xml:space="preserve">
+    <value>音频</value>
+  </data>
+  <data name="BrowsePlaylist" xml:space="preserve">
+    <value>查看歌单</value>
+  </data>
+  <data name="SelectCurrentMusicFromFileSystem" xml:space="preserve">
+    <value>选择要播放的歌曲</value>
+  </data>
+  <data name="TenBandEqualizer" xml:space="preserve">
+    <value>10段均衡器</value>
+  </data>
+  <data name="GraphicEqualizer" xml:space="preserve">
+    <value>曲线均衡器</value>
+  </data>
+  <data name="EqCenterFrequency" xml:space="preserve">
+    <value>中心频率</value>
+  </data>
+  <data name="EqConfirmLoad" xml:space="preserve">
+    <value>还没有保存，要载入吗？</value>
+  </data>
+  <data name="EqConfirmNew" xml:space="preserve">
+    <value>还没有保存，要创建新项目吗？</value>
+  </data>
+  <data name="EqConfirmRemove" xml:space="preserve">
+    <value>是否移除该均衡器？</value>
+  </data>
+  <data name="EqConfirmSave" xml:space="preserve">
+    <value>是否保存当前均衡器？</value>
+  </data>
+  <data name="EqGain" xml:space="preserve">
+    <value>增益</value>
+  </data>
+  <data name="EqInfoText" xml:space="preserve">
+    <value>点击示数可修改频段增益。从下拉菜单中选择均衡器，载入后可移除</value>
+  </data>
+  <data name="EqLoad" xml:space="preserve">
+    <value>LOAD EQ</value>
+  </data>
+  <data name="EqNameHint" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="EqNewPreset" xml:space="preserve">
+    <value>新均衡器</value>
+  </data>
+  <data name="EqRemove" xml:space="preserve">
+    <value>移除</value>
+  </data>
+  <data name="CategoryEffect" xml:space="preserve">
+    <value>效果</value>
+  </data>
+  <data name="EqBandMaximum" xml:space="preserve">
+    <value>频段最大值 (dB)</value>
+  </data>
+  <data name="EqBandMinimum" xml:space="preserve">
+    <value>频段最小值 (dB)</value>
+  </data>
+  <data name="EqBandStep" xml:space="preserve">
+    <value>频段调节步长</value>
+  </data>
+  <data name="EqEmpty" xml:space="preserve">
+    <value>空</value>
+  </data>
+  <data name="SchemeGraphic" xml:space="preserve">
+    <value>曲线方案：</value>
+  </data>
+  <data name="SchemeTenBand" xml:space="preserve">
+    <value>十段方案：</value>
+  </data>
+  <data name="EqSave" xml:space="preserve">
+    <value>SAVE</value>
+  </data>
+  <data name="EqNew" xml:space="preserve">
+    <value>NEW EQ</value>
   </data>
 </root>

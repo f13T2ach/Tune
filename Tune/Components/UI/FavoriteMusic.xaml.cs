@@ -1,4 +1,5 @@
-﻿using System.Windows;
+using System.Windows;
+using Tune.Assets.Localization;
 using Tune.Helpers;
 using Tune.Helpers.DialogExtentions;
 using Tune.Models.Music;
@@ -72,7 +73,7 @@ namespace Tune.Components.UI
             if (_service == null)
             {
                 MessageBox.Show(
-                    "Not loaded service or service not exists.",
+                    LangStrings.ServiceNotLoaded,
                     Strings.APPLICATION_NAME,
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
@@ -96,21 +97,26 @@ namespace Tune.Components.UI
             if (Argument.Item2 == null)
             {
                 MessageBox.Show(
-                    "Unreachable but triggered: Given playlist is null & confirm",
+                    LangStrings.PlaylistNotSelected,
                     Strings.APPLICATION_NAME,
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
                 return;
             }
 
-            Result = Argument.Item2;
+            PlaylistBase playlist = Argument.Item2!;
 
-            var saveResult = _service.SavePlaylist(Result);
+            // The music has to be in the playlist before it is saved, or the save writes the
+            // playlist back unchanged and the favorite never reaches the library.
+            playlist.AddMuisc(Argument.Item1);
+            Result = playlist;
+
+            var saveResult = _service.SavePlaylist(playlist);
             if (!saveResult.Success)
             {
                 // TODO SHOW_TOAST
                 MessageBox.Show(
-                    $"Failed to save this music: {saveResult.ErrorMessage}",
+                    string.Format(LangStrings.FailedToSaveMusic, saveResult.ErrorMessage),
                     Strings.APPLICATION_NAME,
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
@@ -137,7 +143,7 @@ namespace Tune.Components.UI
         public PlaylistBase? SelectOtherPlaylist()
         {
             var setter = new SelectPlaylist();
-            var newPlaylist = setter.ShowSelectPlaylistDialog("选择歌单来收藏");
+            var newPlaylist = setter.ShowSelectPlaylistDialog(LangStrings.SelectPlaylistToFavorite);
             if (newPlaylist != null && _service != null)
             {
                 newPlaylist.AddMuisc(Argument.Item1);

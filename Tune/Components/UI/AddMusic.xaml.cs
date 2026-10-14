@@ -1,4 +1,5 @@
-﻿using System.Windows;
+using System.Windows;
+using Tune.Assets.Localization;
 using Tune.Models.Music;
 using Tune.Models.NewDialog;
 using Tune.Services.FileDialog;
@@ -110,7 +111,7 @@ namespace Tune.Components.UI
             {
                 // TODO SHOW_TOAST
                 MessageBox.Show(
-                    "Music not exists or unknown problem",
+                    LangStrings.MusicNotExistsOrUnknown,
                     Strings.APPLICATION_NAME,
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);

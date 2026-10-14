@@ -1,9 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
 using System.Windows;
 using Tune.Appearance;
+using Tune.Assets.Localization;
 using Tune.Client.Controllers;
 using Tune.Components.UI;
 using Tune.Models.Messages;
@@ -95,11 +96,20 @@ namespace Tune.ViewModel
 
             if (music.notExists)
             {
-                MessageBox.Show("Music not exists, unable to play it.", Strings.APPLICATION_NAME, MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(LangStrings.MusicNotExists, Strings.APPLICATION_NAME, MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
-            // TODO: Switch ListController.CurrentPlaylist to SourcePlaylist before playing.
+            // Playing a song from the history playlist means the user wants that playlist
+            // back. Playing from any other playlist is just that one song, and leaves the
+            // current playlist alone.
+            if (ListController.IsHistory(SourcePlaylist))
+            {
+                _listController.SetPlaylist(SourcePlaylist);
+
+                // Temporary, so the switch can be seen while this is being built.
+                MessageBox.Show("歌单已切换");
+            }
 
             var result = _playback.PlayMusic(music);
             if (result.IsSucceeded)
@@ -109,9 +119,15 @@ namespace Tune.ViewModel
         }
 
         // ==== Navigation ====
+        /// <summary>
+        /// Gets or sets the page the back button returns to. Whoever opens the list page sets
+        /// it, so the page itself never has to look anybody up to find out where it belongs.
+        /// </summary>
+        public static Type ReturnPageType { get; set; } = typeof(Main);
+
         [RelayCommand]
         public void NavigateToMain() =>
-            WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(Main)));
+            WeakReferenceMessenger.Default.Send(new NavigationMessage(ReturnPageType));
 
         [RelayCommand]
         public void AddMusicClicked()

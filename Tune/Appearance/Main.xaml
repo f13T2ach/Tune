@@ -9,6 +9,7 @@
       xmlns:lang="clr-namespace:Tune.Assets.Localization"
       xmlns:converters="clr-namespace:Tune.Helpers.ValueConverters"
       xmlns:components="clr-namespace:Tune.Components"
+      xmlns:effects="clr-namespace:Tune.Engine.Effects"
       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       mc:Ignorable="d" 
       d:DesignHeight="800" d:DesignWidth="1600"
@@ -202,7 +203,8 @@
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
                                     <TextBlock Text="LOAD" Margin="0,0,0,0" VerticalAlignment="Center" FontWeight="SemiBold"/>
                                     <Grid Width="12"/>
-                                    <components:Button Width="540" Height="63" Margin="12,0,0,0" Text="{Binding MusicDisplay.Title}" Command="{Binding OpenFileCommand}" VerticalAlignment="Center"/>
+                                    <components:Button Width="410" Height="63" Margin="12,0,0,0" Text="{Binding MusicDisplay.Title}" Command="{Binding OpenFileCommand}" ToolTip="{x:Static lang:LangStrings.SelectCurrentMusicFromFileSystem}" VerticalAlignment="Center"/>
+                                    <components:Button Height="63" Margin="12,0,0,0" Text="{x:Static lang:LangStrings.HistoryPlaylistName}" Command="{Binding NavigateToHistoryCommand}" ToolTip="{x:Static lang:LangStrings.HistoryPlaylistName}" VerticalAlignment="Center"/>
                                 </StackPanel>
 
                                 <!--Channel-->
@@ -248,20 +250,20 @@
                                 </Grid.RowDefinitions>
                                 <Grid Grid.Row="0">
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <components:Button Margin="10,0,0,0" Text="循环" Command="{Binding SetLoopStatusCommand}" VerticalAlignment="Center"/>
-                                        <components:Button Margin="10,0,0,0" Text="收藏" Command="{Binding FavoriteCurrentMusicCommand}" VerticalAlignment="Center"/>
-                                        <components:Button Margin="10,0,0,0" Text="列表" Command="{Binding NavigateToPlaylistCommand}" VerticalAlignment="Center"/>
-                                        <components:Button Margin="10,0,0,0" Text="声效" Command="{Binding NavigateToSoundEffectCommand}" VerticalAlignment="Center"/>
+                                        <components:Button Margin="10,0,0,0" Text="{x:Static lang:LangStrings.Loop}" Command="{Binding SetLoopStatusCommand}" VerticalAlignment="Center"/>
+                                        <components:Button Margin="10,0,0,0" Text="{x:Static lang:LangStrings.Favorite}" Command="{Binding FavoriteCurrentMusicCommand}" VerticalAlignment="Center"/>
+                                        <components:Button Margin="10,0,0,0" Text="{x:Static lang:LangStrings.List}" Command="{Binding NavigateToPlaylistCommand}" VerticalAlignment="Center"/>
+                                        <components:Button Margin="10,0,0,0" Text="{x:Static lang:LangStrings.SoundEffect}" Command="{Binding NavigateToSoundEffectCommand}" VerticalAlignment="Center"/>
 
-                                        <components:Button Margin="10,0,0,0" Text="设置" VerticalAlignment="Center"/>
+                                        <components:Button Margin="10,0,0,0" Text="{x:Static lang:LangStrings.Settings}" Command="{Binding NavigateToSettingsCommand}" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Grid>
                                 <Grid Grid.Row="1" Background="White" Margin="10,0,0,0">
                                     <StackPanel Margin="10,0,10,0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                        <TextBlock Foreground="Black" Text="方案:NONE" FontSize="23" Margin="0,4,0,0" VerticalAlignment="Center"/>
+                                        <TextBlock Foreground="Black" Text="{Binding DisplayText, Source={x:Static effects:EqualizerScheme.Current}}" FontSize="23" Margin="0,4,0,0" VerticalAlignment="Center"/>
                                     </StackPanel>
                                     <StackPanel Margin="10,0,10,0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                        <TextBlock Foreground="Black" Text="无参数可用" FontSize="23" Margin="0,4,0,0" VerticalAlignment="Center"/>
+                                        <TextBlock Foreground="Black" Text="{x:Static lang:LangStrings.NoParametersAvailable}" FontSize="23" Margin="0,4,0,0" VerticalAlignment="Center"/>
                                     </StackPanel>
                                     <StackPanel Margin="10,0,10,0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <components:ImageButton Source="{Binding ListController.ListIconSource}" Command="{Binding SetNoLoopCommand}"  Margin="1,1,1,1" Cursor="Hand"/>
@@ -281,7 +283,8 @@
                                         <TextBlock Text="PLAY" Margin="0,0,0,-6" HorizontalAlignment="Right" FontWeight="SemiBold"/>
                                         <TextBlock Text="LIST" Margin="0,0,0,0" HorizontalAlignment="Right" FontWeight="SemiBold"/>
                                     </StackPanel>
-                                    <components:Button Width="220" Command="{Binding SetPlaylistCommand}" Height="63" Margin="12,0,0,0" Text="{Binding ListController.CurrentPlaylistNameDisplay}" VerticalAlignment="Center"/>
+                                    <components:Button Width="220" Command="{Binding SetPlaylistCommand}" ToolTip="{x:Static lang:LangStrings.BrowsePlaylist}" Height="63" Margin="12,0,0,0" Text="{Binding ListController.CurrentPlaylistNameDisplay}" VerticalAlignment="Center"/>
+                                    
                                 </StackPanel>
                             </Grid>
                         </Grid>

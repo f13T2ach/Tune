@@ -12,7 +12,11 @@
     <None Remove="Assets\Components\Arrow\More.png" />
     <None Remove="Assets\Components\Arrow\SignalInDirection.png" />
     <None Remove="Assets\Components\Contents\SoundEffectToolsHelp.png" />
+    <None Remove="Assets\Components\EditButton.png" />
+    <None Remove="Assets\Components\EQ\FaderAxisL.png" />
+    <None Remove="Assets\Components\EQ\FaderAxisR.png" />
     <None Remove="Assets\Components\HomeButton.png" />
+    <None Remove="Assets\Components\InfoSymbol.png" />
     <None Remove="Assets\Components\KnobBorder.png" />
     <None Remove="Assets\Components\Leave.png" />
     <None Remove="Assets\Components\LeaveRev.png" />
@@ -47,6 +51,8 @@
   <ItemGroup>
     <Resource Include="Assets\Components\Arrow\More.png" />
     <Resource Include="Assets\Components\Arrow\SignalInDirection.png" />
+    <Resource Include="Assets\Components\EQ\FaderAxisL.png" />
+    <Resource Include="Assets\Components\EQ\FaderAxisR.png" />
     <Resource Include="Assets\Components\Status\Enabled.png">
       <CopyToOutputDirectory></CopyToOutputDirectory>
     </Resource>
@@ -69,7 +75,9 @@
 
   <ItemGroup>
     <Resource Include="Assets\Components\Contents\SoundEffectToolsHelp.png" />
+    <Resource Include="Assets\Components\EditButton.png" />
     <Resource Include="Assets\Components\HomeButton.png" />
+    <Resource Include="Assets\Components\InfoSymbol.png" />
     <Resource Include="Assets\Components\KnobBorder.png" />
     <Resource Include="Assets\Components\Leave.png" />
     <Resource Include="Assets\Components\LeaveRev.png" />

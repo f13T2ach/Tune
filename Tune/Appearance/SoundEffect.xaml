@@ -38,7 +38,7 @@
                         <components:ClickableTextBlock HorizontalAlignment="Center" Text="" x:Name="TitleButton" Click="OnBackToMainClick" FontFamily="/Tune;component/Assets/Rajdhani/#Rajdhani" Foreground="White" VerticalAlignment="Center" FontSize="32" Margin="2,2,8,0"/>
                     </Grid>
                     
-                    <components:Button Text="帮助" Tag="Tune.Appearance.SoundEffectTools.HelpPage"  Click="OnToolBarButtonClick" Margin="2,0" />
+                    <components:Button Text="{x:Static lang:LangStrings.Help}" Tag="Tune.Appearance.SoundEffectTools.HelpPage"  Click="OnToolBarButtonClick" Margin="2,0" />
 
                     <Rectangle Width="1" 
                        Height="40" 
@@ -47,9 +47,9 @@
                        VerticalAlignment="Center" />
 
                     <!-- EQ -->
-                    <components:Button Text="均衡器" Tag="Tune.Appearance.SoundEffectTools.EqualizerPage" Click="OnToolBarButtonClick" Margin="2,0" />
+                    <components:Button Text="{x:Static lang:LangStrings.Equalizer}" Tag="Tune.Appearance.SoundEffectTools.EqualizerPage" Click="OnToolBarButtonClick" Margin="2,0" />
                     <!-- Effect -->
-                    <components:Button Text="效果器" Tag="Tune.Appearance.SoundEffectTools.EffectPage" Click="OnToolBarButtonClick" Margin="2,0" />
+                    <components:Button Text="{x:Static lang:LangStrings.EffectsPedal}" Tag="Tune.Appearance.SoundEffectTools.EffectPage" Click="OnToolBarButtonClick" Margin="2,0" />
 
                     <Rectangle Width="1" 
                        Height="40" 
@@ -59,14 +59,14 @@
 
                     <!-- Analysis -->
 
-                    <components:Button Text="分析" Tag="Tune.Appearance.SoundEffectTools.AnalysisPage"  Click="OnToolBarButtonClick" Margin="2,0" />
+                    <components:Button Text="{x:Static lang:LangStrings.Analysis}" Tag="Tune.Appearance.SoundEffectTools.AnalysisPage"  Click="OnToolBarButtonClick" Margin="2,0" />
                     <Rectangle Width="1" 
                                 Height="40" 
                                 Fill="#888888" 
                                 Margin="8,0" 
                                 VerticalAlignment="Center" />
                     <!-- Music Info -->
-                    <components:Button Text="歌曲"  Tag="Tune.Appearance.SoundEffectTools.SongPage"  Click="OnToolBarButtonClick" Margin="2,0" />
+                    <components:Button Text="{x:Static lang:LangStrings.Song}"  Tag="Tune.Appearance.SoundEffectTools.SongPage"  Click="OnToolBarButtonClick" Margin="2,0" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" 
                             HorizontalAlignment="Right" 

@@ -1,7 +1,75 @@
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Tune.Helpers;
+using Tune.Local;
 
 namespace Tune.Engine.Effects
 {
+    /// <summary>
+    /// A single adjustable value owned by the effect chain.
+    /// The value is expressed on the UI scale, so a knob can bind directly to one.
+    /// </summary>
+    public interface IAudioEffectParameter : INotifyPropertyChanged
+    {
+        /// <summary>
+        /// Gets the key used to persist the value.
+        /// </summary>
+        string Key { get; }
+
+        /// <summary>
+        /// Gets the short label shown on the UI, such as "VOL" or "BASS".
+        /// </summary>
+        string DisplayName { get; }
+
+        /// <summary>
+        /// Gets the lowest accepted value.
+        /// </summary>
+        double MinValue { get; }
+
+        /// <summary>
+        /// Gets the highest accepted value.
+        /// </summary>
+        double MaxValue { get; }
+
+        /// <summary>
+        /// Gets the value used when nothing has been persisted yet.
+        /// </summary>
+        double DefaultValue { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the range crosses zero,
+        /// meaning the control trims instead of attenuating.
+        /// </summary>
+        bool IsBipolar { get; }
+
+        /// <summary>
+        /// Gets or sets the current value, clamped to the range.
+        /// </summary>
+        double Value { get; set; }
+    }
+
+    /// <summary>
+    /// Persistence seam for effect parameters.
+    /// Keeping it an interface lets the chain run against plain memory in tests.
+    /// </summary>
+    public interface IAudioEffectParameterStore
+    {
+        /// <summary>
+        /// Tries to read a persisted value.
+        /// </summary>
+        /// <param name="key">The parameter key.</param>
+        /// <param name="value">The stored value, or zero when nothing was stored.</param>
+        /// <returns><c>true</c> when a value was found.</returns>
+        bool TryLoad(string key, out double value);
+
+        /// <summary>
+        /// Persists a value.
+        /// </summary>
+        /// <param name="key">The parameter key.</param>
+        /// <param name="value">The value to store.</param>
+        void Save(string key, double value);
+    }
+
     /// <summary>
     /// An effect parameter that clamps its value and writes it through to the store.
     /// The stored value is loaded once on construction.
@@ -66,6 +134,49 @@ namespace Tune.Engine.Effects
                 double clamped = Math.Clamp(value, MinValue, MaxValue);
                 if (SetProperty(ref _value, clamped))
                     _store.Save(Key, clamped);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Stores effect parameters in the user settings file.
+    /// Every parameter key must exist in TuneSettings, otherwise the write is refused.
+    /// </summary>
+    internal sealed class TuneSettingsParameterStore : IAudioEffectParameterStore
+    {
+        /// <inheritdoc />
+        public bool TryLoad(string key, out double value)
+        {
+            value = 0;
+
+            try
+            {
+                object? stored = TuneSettings.Default[key];
+                if (stored == null || stored == DBNull.Value)
+                    return false;
+
+                value = Convert.ToDouble(stored);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // A missing key is not fatal, the caller falls back to the default value.
+                LoggerHelper.LogError($"Unable to read effect parameter '{key}'", ex, nameof(TryLoad));
+                return false;
+            }
+        }
+
+        /// <inheritdoc />
+        public void Save(string key, double value)
+        {
+            try
+            {
+                TuneSettings.Default[key] = value;
+                TuneSettings.Default.Save();
+            }
+            catch (Exception ex)
+            {
+                LoggerHelper.LogError($"Unable to save effect parameter '{key}'", ex, nameof(Save));
             }
         }
     }
