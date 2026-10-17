@@ -1,4 +1,5 @@
 using NAudio.Wave;
+using Tune.Engine.Audio;
 using NAudio.Wave.SampleProviders;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -10,6 +11,7 @@ namespace Tune.Engine
     public class AudioPlayerEngine : IAudioPlayerEngine, IDisposable
     {
         private readonly IAudioEffectChain _effectChain;
+        private SystemOutputStage? _systemStage;
 
         /// <summary>Stored AudioApi value that selects the WaveOut device.</summary>
         internal const string WaveOutApiName = "waveout";
@@ -114,9 +116,11 @@ namespace Tune.Engine
                 // Play through the effect chain instead of handing the raw reader to the device.
                 var processor = _effectChain.CreateProcessor(_audioReader);
 
-                // Outside the whole chain, so the limiter covers the effects and the volume too.
-                if (Tune.Local.TuneSettings.Default.AudioLimiter)
-                    processor = new LimitingSampleProvider(processor);
+                // The system layer sits outside the user chain: a fixed safety limiter and the meter.
+                // It is not configurable, so nothing the user does can bypass it.
+                _systemStage?.Dispose();
+                _systemStage = new SystemOutputStage(processor);
+                processor = _systemStage;
 
                 _output.Init(new SampleToWaveProvider(processor));
                 _output.PlaybackStopped += OnPlaybackStopped;
@@ -169,6 +173,9 @@ namespace Tune.Engine
 
         public void Unload()
         {
+            _systemStage?.Dispose();
+            _systemStage = null;
+
             if (_output != null)
             {
                 _output.PlaybackStopped -= OnPlaybackStopped;

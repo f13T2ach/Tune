@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -21,6 +22,7 @@ namespace Tune.Engine.Effects
         private EffectChainSampleProvider? _processor;
         private MeteringSampleProvider? _meter;
         private OutputLimiterProvider? _limiter;
+        private readonly List<Func<ISampleProvider, ISampleProvider>> _attached = new();
         private WaveFormat? _format;
 
         [ObservableProperty]
@@ -78,7 +80,16 @@ namespace Tune.Engine.Effects
             foreach (EffectSlot slot in Slots)
                 slot.Configure(_format);
 
+            // The chain is: effects -> meter -> output limiter -> device. The meter sits before the
+            // limiter on purpose: it measures what the user added, so clipping is judged on the real
+            // signal rather than on samples the limiter has already flattened to full scale.
             _processor = new EffectChainSampleProvider(source, BuildEffects());
+
+            // Everything the user attached wraps the finished user layer, in the order it was added.
+            ISampleProvider userTail = _processor;
+
+            foreach (Func<ISampleProvider, ISampleProvider> attach in _attached)
+                userTail = attach(userTail);
 
             // The meter sits at the very end, so it measures what is actually played. It is
             // rebuilt with every file, while this event stays put for whoever listens to it.
@@ -86,16 +97,17 @@ namespace Tune.Engine.Effects
                 _meter.LevelReported -= OnMeterReported;
 
             // The limiter sits before the meter, so the meter shows what actually leaves the chain.
-            _limiter = new OutputLimiterProvider(_processor)
+            _meter = new MeteringSampleProvider(_attached.Count > 0 ? userTail : (ISampleProvider)_processor);
+            _limiter = new OutputLimiterProvider(_meter)
             {
                 CeilingDecibels = _outputLimitDecibels,
                 IsEnabled = _isOutputLimited
             };
 
-            _meter = new MeteringSampleProvider(_limiter);
+
             _meter.LevelReported += OnMeterReported;
 
-            return _meter;
+            return _limiter;
         }
 
         /// <inheritdoc />
@@ -103,6 +115,14 @@ namespace Tune.Engine.Effects
 
         private double _outputLimitDecibels;
         private bool _isOutputLimited = true;
+
+        /// <inheritdoc />
+        public void AttachEffect(Func<ISampleProvider, ISampleProvider> attach)
+        {
+            ArgumentNullException.ThrowIfNull(attach);
+
+            _attached.Add(attach);
+        }
 
         /// <inheritdoc />
         public double OutputLimitDecibels

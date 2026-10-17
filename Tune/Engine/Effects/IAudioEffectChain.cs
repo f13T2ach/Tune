@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -71,6 +72,14 @@ namespace Tune.Engine.Effects
         /// <param name="source">The sample source to process.</param>
         /// <returns>The processing node, which carries the source wave format.</returns>
         ISampleProvider CreateProcessor(ISampleProvider source);
+
+        /// <summary>
+        /// Attaches an effect at the end of the user layer. This is the only way outside code may
+        /// extend the chain: the order of the built-in nodes, and everything the system layer does
+        /// afterwards, stays out of reach.
+        /// </summary>
+        /// <param name="attach">Builds the effect on top of the given source.</param>
+        void AttachEffect(Func<ISampleProvider, ISampleProvider> attach);
 
         /// <summary>Gets or sets the output ceiling in decibels; zero leaves the sound untouched.</summary>
         double OutputLimitDecibels { get; set; }
