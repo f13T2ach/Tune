@@ -112,7 +112,13 @@ namespace Tune.Engine
                 _output = CreateOutputDevice();
 
                 // Play through the effect chain instead of handing the raw reader to the device.
-                _output.Init(new SampleToWaveProvider(_effectChain.CreateProcessor(_audioReader)));
+                var processor = _effectChain.CreateProcessor(_audioReader);
+
+                // Outside the whole chain, so the limiter covers the effects and the volume too.
+                if (Tune.Local.TuneSettings.Default.AudioLimiter)
+                    processor = new LimitingSampleProvider(processor);
+
+                _output.Init(new SampleToWaveProvider(processor));
                 _output.PlaybackStopped += OnPlaybackStopped;
 
                 OnPropertyChanged(nameof(CurrentSeconds));

@@ -118,10 +118,77 @@ namespace Tune.Local {
                 this["AudioApi"] = value;
             }
         }
-        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+ public bool AudioLimiter {
+            get {
+                return ((bool)(this["AudioLimiter"]));
+            }
+            set {
+                this["AudioLimiter"] = value;
+            }
+        }
+
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        
+        public string SecondaryLyric {
+        
+            get {
+        
+                return ((string)(this["SecondaryLyric"]));
+        
+            }
+        
+            set {
+        
+                this["SecondaryLyric"] = value;
+        
+            }
+        
+        }
+        
+        
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        
+        
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        
+        
+        
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        
+        
+        
+        public int LyricLineLimit {
+        
+            get {
+        
+                return ((int)(this["LyricLineLimit"]));
+        
+            }
+        
+            set {
+        
+                this["LyricLineLimit"] = value;
+        
+            }
+        
+        }
+        
+        
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        
         [global::System.Configuration.DefaultSettingValueAttribute("-12")]
+        
         public double EffectEqBandMinimum {
             get {
                 return ((double)(this["EffectEqBandMinimum"]));

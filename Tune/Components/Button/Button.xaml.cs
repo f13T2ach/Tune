@@ -5,9 +5,6 @@ using System.Windows.Media;
 
 namespace Tune.Components
 {
-    /// <summary>
-    /// Button.xaml 的交互逻辑
-    /// </summary>
     public partial class Button : UserControl
     {
         // 依赖属性
@@ -196,7 +193,6 @@ namespace Tune.Components
                 return;
             }
 
-            //System.Diagnostics.Debug.WriteLine("MouseLeftButtonUp 触发"); // 加这行
             if (_isPressed)
             {
                 _isPressed = false;
@@ -208,7 +204,6 @@ namespace Tune.Components
 
                 if (IsMouseOver)
                 {
-                    //System.Diagnostics.Debug.WriteLine("准备执行点击"); // 加这行
                     ExecuteClick();
                 }
                 e.Handled = true;
@@ -253,12 +248,11 @@ namespace Tune.Components
             // 检查 Click 是否被订阅
             if (Click == null)
             {
-                //System.Diagnostics.Debug.WriteLine("警告：Click 事件无订阅者！");
+                return;
             }
             else
             {
                 Click?.Invoke(this, new RoutedEventArgs());
-                //System.Diagnostics.Debug.WriteLine("Click 事件已触发");
             }
         }
 

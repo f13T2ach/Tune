@@ -1,0 +1,28 @@
+<UserControl x:Class="Tune.Components.IlluminatedButton"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Tune.Components"
+             x:Name="Root"
+             Height="57"
+               MinWidth="60"
+             Background="Transparent"
+             Focusable="True"
+             IsTabStop="True">
+
+    <UserControl.Style>
+        <Style TargetType="{x:Type local:IlluminatedButton}">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.4"/>
+                    <Setter Property="Cursor" Value="Arrow"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Style>
+
+    <Grid>
+        <Border x:Name="BackgroundBorder" Background="White" Padding="12,0"/>
+        <TextBlock x:Name="ContentText" Margin="12,0,12,0" Text="BUTTON" Foreground="Black" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    </Grid>
+</UserControl>

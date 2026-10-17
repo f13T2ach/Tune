@@ -228,7 +228,8 @@ namespace Tune.Tests.Engine.Effects
         /// <summary>Creates a chain over an in-memory store.</summary>
         private static AudioEffectChain CreateChain()
         {
-            return new AudioEffectChain(new InMemoryAudioEffectParameterStore());
+            // These tests measure the equalizer and the rack, so the output limiter is turned off here.
+            return new AudioEffectChain(new InMemoryAudioEffectParameterStore()) { IsOutputLimited = false };
         }
 
         /// <summary>Adds the catalog entry with the given label to the rack.</summary>

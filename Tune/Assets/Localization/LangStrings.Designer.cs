@@ -106,6 +106,24 @@ namespace Tune.Assets.Localization {
         }
         
         /// <summary>
+        ///   查找类似 Limiter 的本地化字符串。
+        /// </summary>
+        public static string AudioLimiter {
+            get {
+                return ResourceManager.GetString("AudioLimiter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Holds peaks under a ceiling, so loud effects do not clip. 的本地化字符串。
+        /// </summary>
+        public static string AudioLimiterHint {
+            get {
+                return ResourceManager.GetString("AudioLimiterHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Browse your playlist 的本地化字符串。
         /// </summary>
         public static string BrowsePlaylist {
@@ -183,6 +201,15 @@ namespace Tune.Assets.Localization {
         public static string CategoryGeneral {
             get {
                 return ResourceManager.GetString("CategoryGeneral", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Lyrics 的本地化字符串。
+        /// </summary>
+        public static string CategoryLyric {
+            get {
+                return ResourceManager.GetString("CategoryLyric", resourceCulture);
             }
         }
         
@@ -529,6 +556,24 @@ namespace Tune.Assets.Localization {
         }
         
         /// <summary>
+        ///   查找类似 Global Limiter 的本地化字符串。
+        /// </summary>
+        public static string GlobalLimiter {
+            get {
+                return ResourceManager.GetString("GlobalLimiter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Global Limiter would cap audio peaks below 0 dBFS to prevent digital clipping and distortion. 的本地化字符串。
+        /// </summary>
+        public static string GlobalLimiterDesc {
+            get {
+                return ResourceManager.GetString("GlobalLimiterDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 GraphEQ 的本地化字符串。
         /// </summary>
         public static string GraphicEqualizer {
@@ -615,6 +660,42 @@ namespace Tune.Assets.Localization {
         public static string Loop {
             get {
                 return ResourceManager.GetString("Loop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Lines per timestamp 的本地化字符串。
+        /// </summary>
+        public static string LyricLineLimit {
+            get {
+                return ResourceManager.GetString("LyricLineLimit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Third lyric 的本地化字符串。
+        /// </summary>
+        public static string LyricSecondaryThirdLine {
+            get {
+                return ResourceManager.GetString("LyricSecondaryThirdLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Translation 的本地化字符串。
+        /// </summary>
+        public static string LyricSecondaryTranslation {
+            get {
+                return ResourceManager.GetString("LyricSecondaryTranslation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 The third line can hold the reading. When it is asked for but missing, the translation is shown instead. 的本地化字符串。
+        /// </summary>
+        public static string LyricThirdLineHint {
+            get {
+                return ResourceManager.GetString("LyricThirdLineHint", resourceCulture);
             }
         }
         
@@ -849,6 +930,15 @@ namespace Tune.Assets.Localization {
         public static string SchemeTenBand {
             get {
                 return ResourceManager.GetString("SchemeTenBand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Secondary lyric 的本地化字符串。
+        /// </summary>
+        public static string SecondaryLyric {
+            get {
+                return ResourceManager.GetString("SecondaryLyric", resourceCulture);
             }
         }
         

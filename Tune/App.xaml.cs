@@ -54,6 +54,7 @@ namespace Tune
                 services.AddSingleton<ListController>();
                 services.AddSingleton<MusicDisplayPresenter>();
                 services.AddSingleton<MusicLyricPresenter>();
+                services.AddSingleton<AudioLevelPresenter>();
 
                 services.AddSingleton<MusicPlaybackController>();
 
@@ -96,6 +97,19 @@ namespace Tune
                         EqualizerScheme.Current.Set(kind, lastPreset.Name);
                     }
                 }
+
+                // The lyric line limit is settled once at startup, the same way the language is.
+
+                Services.GetRequiredService<MusicLyricPresenter>().LineLimit = Tune.Local.TuneSettings.Default.LyricLineLimit;
+
+                // A secondary lyric of "third" shows the reading; anything else shows the translation.
+                Services.GetRequiredService<MusicLyricPresenter>().SecondaryIsThirdLine =
+                    string.Equals(Tune.Local.TuneSettings.Default.SecondaryLyric, "third", StringComparison.OrdinalIgnoreCase);
+
+                // The meters read the level of the chain, which is the end of the audio path.
+                Services.GetRequiredService<AudioLevelPresenter>()
+                    .Attach(Services.GetRequiredService<IAudioEffectChain>());
+
 
                 // Register loadable services
                 var provider = new PlaylistProvider();

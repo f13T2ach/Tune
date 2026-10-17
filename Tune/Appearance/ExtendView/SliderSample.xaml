@@ -1,0 +1,34 @@
+<UserControl x:Class="Tune.Appearance.ExtendView.SliderSample"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:slider="clr-namespace:Tune.Components.Slider"
+             mc:Ignorable="d"
+             d:DesignHeight="500" d:DesignWidth="600">
+
+    <StackPanel VerticalAlignment="Center" Margin="24,0">
+
+        <!-- The value, bound to the slider and shown as a whole number -->
+        <TextBlock Text="{Binding Value, ElementName=DemoSlider, StringFormat={}{0:0}}"
+                   FontSize="34"
+                   HorizontalAlignment="Left"/>
+
+        <slider:CustomSlider x:Name="DemoSlider"
+                             Minimum="0"
+                             Maximum="100"
+                             Value="35"
+                             Margin="0,14"
+                             OnlyThumbEvent="False"
+                             EditingChanged="OnEditingChanged"
+                             GotFocus="OnSliderFocus"
+                             LostFocus="OnSliderLostFocus"/>
+
+        <!-- The two ways to follow the "being picked" state: the EditingChanged event, and the
+             IsEditing property, which can also be bound -->
+        <TextBlock x:Name="PART_EditingHint"
+                   FontSize="20"
+                   Opacity="0.6"
+                   HorizontalAlignment="Left"/>
+    </StackPanel>
+</UserControl>

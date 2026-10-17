@@ -9,6 +9,8 @@
       xmlns:lang="clr-namespace:Tune.Assets.Localization"
       xmlns:converters="clr-namespace:Tune.Helpers.ValueConverters"
       xmlns:components="clr-namespace:Tune.Components"
+      xmlns:content="clr-namespace:Tune.Components.Content"
+      xmlns:extend="clr-namespace:Tune.Appearance.ExtendView"
       xmlns:effects="clr-namespace:Tune.Engine.Effects"
       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       mc:Ignorable="d" 
@@ -64,12 +66,18 @@
                                 <Grid Grid.Row="0">
                                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                                         <!--Current Lyric-->
-                                        <TextBlock Text="{Binding MusicLyric.TranslatedLyric}" Visibility="{Binding MusicDisplay.IsTranslated, Converter={StaticResource BoolToVisConverter}}" FontSize="24"/>
+                                        <ItemsControl ItemsSource="{Binding MusicLyric.ExtraLines}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding}" FontSize="24"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
                                         <TextBlock Text="{Binding MusicLyric.Lyric}" FontSize="40"  Margin="2,0,0,0"/>
                                         <StackPanel Orientation="Horizontal" Margin="5,7,0,0">
                                             <TextBlock Text="LYRIC" FontWeight="SemiBold" VerticalAlignment="Center" />
                                             <Grid Width="12"/>
-                                            <TextBlock Text="--/--" FontSize="28" VerticalAlignment="Center" />
+                                            <TextBlock Text="{Binding MusicLyric.LyricPosition}" FontSize="28" VerticalAlignment="Center" />
                                         </StackPanel>
                                     </StackPanel>
                                     <!--Pause Control-->
@@ -230,11 +238,13 @@
                             <RowDefinition Height="74*"/>
                         </Grid.RowDefinitions>
                         <!--Right Up Content-->
-                        <Grid Grid.Row="0">
-                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,0">
-                                <TextBlock Text="EMPTY" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                                <TextBlock HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" FontSize="30" Text="{x:Static lang:LangStrings.EmptyControlAreaDesc}"/>
-                            </StackPanel>
+                        <Grid Grid.Row="0" Margin="10">
+                            <!--Panel switcher; the samples are placeholders until the panels are built-->
+                            <content:PanelSwitcher x:Name="ControlArea">
+                                <extend:JogWheelPanel content:PanelSwitcher.PageTitle="DDJ-1000 WHEEL"/>
+                                <extend:PeakMeterView content:PanelSwitcher.PageTitle="PEAK METER"/>
+                                <extend:SliderSample content:PanelSwitcher.PageTitle="CUSTOM SLIDER"/>
+                            </content:PanelSwitcher>
                         </Grid>
                         <!--Right Down Content-->
                         <Grid Grid.Row="1">

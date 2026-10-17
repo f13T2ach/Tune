@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NAudio.Wave;
+using Tune.Engine.Audio;
 
 namespace Tune.Engine.Effects
 {
@@ -9,9 +10,10 @@ namespace Tune.Engine.Effects
     /// The sound effect processor of the player.
     /// It owns the fixed equalizer, the output level and a rack of effects the user
     /// stacks up. The equalizer is deliberately not part of the rack, so the rack can
-    /// never reshape the knobs the main page binds to.
+    /// never reshape the knobs the main page binds to. It also reports the output level,
+    /// so the meters have one place to read from.
     /// </summary>
-    public interface IAudioEffectChain : INotifyPropertyChanged
+    public interface IAudioEffectChain : INotifyPropertyChanged, IAudioLevelSource
     {
         /// <summary>
         /// Gets the output level of the player, on the 0..100 UI scale.

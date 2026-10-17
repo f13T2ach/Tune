@@ -1,0 +1,36 @@
+<UserControl x:Class="Tune.Appearance.ExtendView.PeakMeterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:samples="clr-namespace:Tune.Appearance.ExtendView"
+             xmlns:components="clr-namespace:Tune.Components"
+             xmlns:slider="clr-namespace:Tune.Components.Slider"
+             d:DesignHeight="500" d:DesignWidth="620"
+             mc:Ignorable="d">
+    <Viewbox>
+        <Grid Width="620" Height="500">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <samples:PeakMeterPanel Grid.Row="0" Margin="0,0,0,10"
+        LeftLevel="{Binding AudioLevel.LeftLevel}"
+        RightLevel="{Binding AudioLevel.RightLevel}"
+        LeftAverage="{Binding AudioLevel.LeftAverage}"
+        RightAverage="{Binding AudioLevel.RightAverage}"
+        LeftPeak="{Binding AudioLevel.LeftPeak}"
+        RightPeak="{Binding AudioLevel.RightPeak}"
+        LeftWindowPeak="{Binding AudioLevel.LeftWindowPeak}"
+        RightWindowPeak="{Binding AudioLevel.RightWindowPeak}"
+        IsClipping="{Binding AudioLevel.IsClipping}"/>
+        <Grid Grid.Row="1" Margin="20,0,15,0">
+            <components:IlluminatedButton Text="OUTLMT" IsChecked="True" HorizontalAlignment="Left"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <TextBlock Text="0db" FontWeight="SemiBold" Margin="5" VerticalAlignment="Center"/>
+                    <slider:CustomSlider Width="250"/>
+                </StackPanel>
+        </Grid>
+    </Grid>
+    </Viewbox>
+</UserControl>

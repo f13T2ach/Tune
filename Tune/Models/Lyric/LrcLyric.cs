@@ -1,4 +1,4 @@
-﻿using DevBase.Format;
+using DevBase.Format;
 using DevBase.Format.Formats.LrcFormat;
 using DevBase.Format.Structure;
 using DevBase.Generics;
@@ -36,10 +36,14 @@ namespace Tune.Models.Lyric
 
             //Lyrics.ForEach(line => Debug.WriteLine($"[{line.StartTime.ToString(@"mm\:ss\.ff")}] {line.Text}"));
             GetIsTranslatedAndFlag(Lyrics);
+
+            // The grouping runs whether or not the file is translated, because a plain lyric
+            // is simply a list of groups that hold one line each.
+            DepartTranslatedLyrics(Lyrics);
+
             if (isTranslated)
             {
                 Debug.WriteLine($"[{nameof(LrcLyric)}] Current LrcLyric is translated.");
-                DepartTranslatedLyrics(Lyrics);
                 //TranslatedLyrics.ForEach(line => Debug.WriteLine($"[{line.StartTime.ToString(@"mm\:ss\.ff")}] {line.Text}"));
             }
         }

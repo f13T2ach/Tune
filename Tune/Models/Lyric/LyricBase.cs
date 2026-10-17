@@ -1,4 +1,4 @@
-﻿using DevBase.Format.Structure;
+using DevBase.Format.Structure;
 using DevBase.Generics;
 using Tune.Values.Static;
 
@@ -14,6 +14,12 @@ namespace Tune.Models.Lyric
         public abstract AList<TimeStampedLyric> Lyrics { get; set; }
         public abstract AList<TimeStampedLyric> TranslatedLyrics { get; set; }
         public abstract List<TimeSpan> TranslatedTimestamps { get; set; }
+
+        /// <summary>
+        /// All lyric lines grouped by timestamp, each group keeping the order it had in the
+        /// file. A group of three normally reads as original, translation, romanisation.
+        /// </summary>
+        public List<List<TimeStampedLyric>> LyricsByTimestamp { get; set; } = new List<List<TimeStampedLyric>>();
 
         /// <summary>
         /// Gets the isTranslated flag by checking if there are any timestamps with different texts in the raw parse result.
@@ -52,6 +58,15 @@ namespace Tune.Models.Lyric
                 return;
             }
 
+            // Every line of a timestamp is kept in file order, which is what lets a group of
+            // three be shown as original, translation and romanisation.
+            LyricsByTimestamp = rawParseResult
+                .Where(l => !string.IsNullOrWhiteSpace(l.Text))
+                .GroupBy(l => l.StartTimestamp)
+                .OrderBy(g => g.Key)
+                .Select(g => g.ToList())
+                .ToList();
+
             // 过滤空文本并按时间戳分组
             var grouped = rawParseResult
                 .Where(l => !string.IsNullOrWhiteSpace(l.Text))
@@ -78,6 +93,64 @@ namespace Tune.Models.Lyric
                     TranslatedTimestamps.Add(TimeSpan.FromMilliseconds(g.Key));
                 }
             }
+        }
+
+        /// <summary>Gets how many lyric entries the file has, one per timestamp.</summary>
+        public int LyricCount => LyricsByTimestamp.Count;
+
+        /// <summary>
+        /// Gets the one-based position of the entry that belongs to a moment, or zero when the
+        /// moment comes before the first entry.
+        /// </summary>
+        /// <param name="seconds">The moment to look up, in seconds.</param>
+        public int GetLyricPositionAtTime(double seconds)
+        {
+            TimeSpan target = TimeSpan.FromSeconds(seconds);
+            int position = 0;
+
+            for (int i = 0; i < LyricsByTimestamp.Count; i++)
+            {
+                List<TimeStampedLyric> group = LyricsByTimestamp[i];
+                if (group.Count == 0) continue;
+                if (group[0].StartTime > target) break;
+
+                position = i + 1;
+            }
+
+            return position;
+        }
+
+        /// <summary>
+        /// Gets the lines that belong to a moment, in file order and at most
+        /// <paramref name="limit"/> of them.
+        /// </summary>
+        /// <param name="seconds">The moment to look up, in seconds.</param>
+        /// <param name="limit">How many lines may be shown; zero or less shows none.</param>
+        public List<string> GetLyricLinesAtTime(double seconds, int limit)
+        {
+            var lines = new List<string>();
+
+            if (limit <= 0 || LyricsByTimestamp.Count == 0)
+                return lines;
+
+            TimeSpan target = TimeSpan.FromSeconds(seconds);
+            List<TimeStampedLyric>? current = null;
+
+            foreach (List<TimeStampedLyric> group in LyricsByTimestamp)
+            {
+                if (group.Count == 0) continue;
+                if (group[0].StartTime > target) break;
+
+                current = group;
+            }
+
+            if (current == null)
+                return lines;
+
+            foreach (TimeStampedLyric line in current.Take(limit))
+                lines.Add(line.Text);
+
+            return lines;
         }
 
         /// <summary>

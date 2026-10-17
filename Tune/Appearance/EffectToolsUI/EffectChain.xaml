@@ -53,7 +53,7 @@
                              Value="{Binding Value, Mode=OneWay}"
                              Visibility="{Binding ShowMeter, Converter={StaticResource BoolToVis}}" />
 
-                <TextBlock Grid.Column="2" Text="{Binding DisplayValue}" Foreground="#AAAAAA"
+                <TextBlock Grid.Column="2" Text="{Binding DisplayValue}" Foreground="#AAAAAA" Width="200"
                            TextAlignment="Right" TextTrimming="CharacterEllipsis"
                            ToolTip="{Binding DisplayValue}" VerticalAlignment="Center" />
             </Grid>

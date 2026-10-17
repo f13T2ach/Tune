@@ -41,6 +41,43 @@ namespace Tune.ViewModel
         /// <summary>Equalizer band step as it is stored on disk.</summary>
         private string _savedBandStep = string.Empty;
 
+        /// <summary>Lyric lines per timestamp as stored on disk.</summary>
+        private int _savedLineLimit;
+
+        /// <summary>Gets or sets which line is shown under the main lyric: translation or third line.</summary>
+        [ObservableProperty]
+        private string _selectedSecondaryLyric = TuneSettings.Default.SecondaryLyric;
+
+        /// <summary>Secondary lyric as it is stored on disk, used to tell whether there are changes.</summary>
+        private string _savedSecondaryLyric = TuneSettings.Default.SecondaryLyric;
+
+        /// <summary>Gets or sets whether the limiter protects the output from clipping.</summary>
+        [ObservableProperty]
+        private bool _audioLimiter = TuneSettings.Default.AudioLimiter;
+
+        /// <summary>Limiter state as it is stored on disk, used to tell whether there are changes.</summary>
+        private bool _savedAudioLimiter = TuneSettings.Default.AudioLimiter;
+
+        /// <summary>
+        /// Gets or sets which secondary lyric option is selected, counted from zero, because a
+        /// combo box index is zero based and the stored value is not.
+        /// </summary>
+        public int SelectedSecondaryLyricIndex
+        {
+            get => string.Equals(SelectedSecondaryLyric, "third", StringComparison.OrdinalIgnoreCase) ? 1 : 0;
+            set => SelectedSecondaryLyric = value == 1 ? "third" : "translation";
+        }
+
+        /// <summary>The line limit as a combo box index, which counts from zero.</summary>
+        public int SelectedLineLimitIndex
+        {
+            get => SelectedLineLimit - 1;
+            set => SelectedLineLimit = value + 1;
+        }
+
+        /// <summary>The lyric presenter, so a saved line limit takes effect right away.</summary>
+        private readonly MusicLyricPresenter _musicLyric;
+
         // ==== Categories ====
 
         public ObservableCollection<string> Categories { get; } = new()
@@ -48,7 +85,8 @@ namespace Tune.ViewModel
             LangStrings.CategoryGeneral,
             LangStrings.CategoryAudio,
             LangStrings.CategoryEffect,
-            LangStrings.CategoryAbout
+            LangStrings.CategoryLyric,
+            LangStrings.CategoryAbout,
         };
 
         [ObservableProperty]
@@ -57,7 +95,8 @@ namespace Tune.ViewModel
         public bool IsGeneralSelected => SelectedCategoryIndex == 0;
         public bool IsAudioSelected => SelectedCategoryIndex == 1;
         public bool IsEffectSelected => SelectedCategoryIndex == 2;
-        public bool IsAboutSelected => SelectedCategoryIndex == 3;
+        public bool IsLyricSelected => SelectedCategoryIndex == 3;
+        public bool IsAboutSelected => SelectedCategoryIndex == 4;
 
         // ==== General settings ====
 
@@ -85,6 +124,9 @@ namespace Tune.ViewModel
         // ==== Effect settings ====
 
         /// <summary>Gets or sets the smallest gain an equalizer band accepts, as typed.</summary>
+        [ObservableProperty]
+        private int _selectedLineLimit;
+
         [ObservableProperty]
         private string _bandMinimumText = string.Empty;
 
@@ -122,6 +164,7 @@ namespace Tune.ViewModel
             MusicLyricPresenter musicLyric)
         {
             // Show the stored values, falling back to the first entry when one is unknown.
+            _musicLyric = musicLyric;
             _savedLanguage = TuneSettings.Default.Language;
             _savedAudioApi = TuneSettings.Default.AudioApi;
 
@@ -137,6 +180,7 @@ namespace Tune.ViewModel
             _savedBandMinimum = BandMinimumText = Format(TuneSettings.Default.EffectEqBandMinimum);
             _savedBandMaximum = BandMaximumText = Format(TuneSettings.Default.EffectEqBandMaximum);
             _savedBandStep = BandStepText = Format(TuneSettings.Default.EffectEqBandStep);
+            _savedLineLimit = SelectedLineLimit = TuneSettings.Default.LyricLineLimit;
         }
 
         /// <summary>Formats a stored number so it can be typed back unchanged.</summary>
@@ -154,11 +198,22 @@ namespace Tune.ViewModel
             !TryRead(saved, out double stored) ||
             Math.Abs(typed - stored) > 1e-9;
 
+        partial void OnSelectedLineLimitChanged(int value)
+
+        {
+
+            OnPropertyChanged(nameof(SelectedLineLimitIndex));
+
+        }
+
+
         partial void OnSelectedCategoryIndexChanged(int value)
+
         {
             OnPropertyChanged(nameof(IsGeneralSelected));
             OnPropertyChanged(nameof(IsAudioSelected));
             OnPropertyChanged(nameof(IsEffectSelected));
+            OnPropertyChanged(nameof(IsLyricSelected));
             OnPropertyChanged(nameof(IsAboutSelected));
         }
 
@@ -177,7 +232,10 @@ namespace Tune.ViewModel
             !string.Equals(_savedAudioApi, SelectedAudioApi.Value, StringComparison.OrdinalIgnoreCase) ||
             TextDiffers(BandMinimumText, _savedBandMinimum) ||
             TextDiffers(BandMaximumText, _savedBandMaximum) ||
-            TextDiffers(BandStepText, _savedBandStep);
+            TextDiffers(BandStepText, _savedBandStep) ||
+            SelectedLineLimit != _savedLineLimit ||
+            !string.Equals(SelectedSecondaryLyric, _savedSecondaryLyric, StringComparison.OrdinalIgnoreCase) ||
+            AudioLimiter != _savedAudioLimiter;
 
         private void RefreshSaveState()
         {
@@ -210,13 +268,28 @@ namespace Tune.ViewModel
                 TuneSettings.Default.EffectEqBandStep = step;
             }
 
+            TuneSettings.Default.LyricLineLimit = SelectedLineLimit;
+
+            TuneSettings.Default.SecondaryLyric = SelectedSecondaryLyric;
+            _savedSecondaryLyric = SelectedSecondaryLyric;
+
+            TuneSettings.Default.AudioLimiter = AudioLimiter;
+            _savedAudioLimiter = AudioLimiter;
+            _musicLyric.SecondaryIsThirdLine =
+                string.Equals(SelectedSecondaryLyric, "third", StringComparison.OrdinalIgnoreCase);
+
+            _musicLyric.LineLimit = SelectedLineLimit;
+
             TuneSettings.Default.Save();
+
+
 
             _savedLanguage = SelectedLanguage.Value;
             _savedAudioApi = SelectedAudioApi.Value;
             _savedBandMinimum = BandMinimumText = Format(TuneSettings.Default.EffectEqBandMinimum);
             _savedBandMaximum = BandMaximumText = Format(TuneSettings.Default.EffectEqBandMaximum);
             _savedBandStep = BandStepText = Format(TuneSettings.Default.EffectEqBandStep);
+            _savedLineLimit = SelectedLineLimit = TuneSettings.Default.LyricLineLimit;
 
             SaveHint = LangStrings.Saved;
             RefreshSaveState();

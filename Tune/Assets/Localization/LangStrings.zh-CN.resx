@@ -231,6 +231,30 @@
   <data name="NewFromCover" xml:space="preserve">
     <value>按封面以新建歌单</value>
   </data>
+  <data name="AudioLimiter" xml:space="preserve">
+    <value>压限器</value>
+  </data>
+  <data name="AudioLimiterHint" xml:space="preserve">
+    <value>把峰值压在阈值以下，避免效果增益过大时爆音</value>
+  </data>
+  <data name="SecondaryLyric" xml:space="preserve">
+    <value>次要歌词</value>
+  </data>
+  <data name="LyricSecondaryTranslation" xml:space="preserve">
+    <value>翻译</value>
+  </data>
+  <data name="LyricSecondaryThirdLine" xml:space="preserve">
+    <value>第三歌词</value>
+  </data>
+  <data name="LyricThirdLineHint" xml:space="preserve">
+    <value>第三歌词可以用来显示读音，当选择显示第三歌词却没有第三歌词时，会自动退回显示翻译</value>
+  </data>
+  <data name="CategoryLyric" xml:space="preserve">
+    <value>歌词显示</value>
+  </data>
+  <data name="LyricLineLimit" xml:space="preserve">
+    <value>同时间戳歌词行数</value>
+  </data>
   <data name="PlaylistEmptyCoverName" xml:space="preserve">
     <value>空</value>
   </data>
@@ -431,5 +455,11 @@
   </data>
   <data name="EqNew" xml:space="preserve">
     <value>NEW EQ</value>
+  </data>
+  <data name="GlobalLimiter" xml:space="preserve">
+    <value>全局压限器</value>
+  </data>
+  <data name="GlobalLimiterDesc" xml:space="preserve">
+    <value>全局压限器能将电平压到0dBFS以下，来防止削波失真引起的爆音</value>
   </data>
 </root>

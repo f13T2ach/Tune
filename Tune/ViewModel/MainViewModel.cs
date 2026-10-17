@@ -23,6 +23,7 @@ namespace Tune.ViewModel
         private readonly ListController _listController;
         private readonly MusicPlaybackController _playback;
         private readonly MusicLyricPresenter _musicLyric;
+        private readonly AudioLevelPresenter _audioLevel;
         private readonly MusicDisplayPresenter _musicDisplay;
         private readonly IAudioEffectChain _effectChain;
 
@@ -37,6 +38,9 @@ namespace Tune.ViewModel
         public MusicPlaybackController Playback => _playback;
         public MusicDisplayPresenter MusicDisplay => _musicDisplay;
         public MusicLyricPresenter MusicLyric => _musicLyric;
+
+        /// <summary>The level of the chain, which the level meter shows.</summary>
+        public AudioLevelPresenter AudioLevel => _audioLevel;
         public Music CurrentMusic => _playback.CurrentMusic;
 
         /// <summary>
@@ -57,7 +61,7 @@ namespace Tune.ViewModel
         ListController listController,
         MusicPlaybackController playback,
         MusicDisplayPresenter musicDisplay,
-        MusicLyricPresenter musicLyric,
+        MusicLyricPresenter musicLyric, AudioLevelPresenter audioLevel,
         IAudioEffectChain effectChain)
         {
             _fileDialogService = fileDialogService;
@@ -67,7 +71,8 @@ namespace Tune.ViewModel
             _listController = listController;
             _playback = playback;
             _musicDisplay = musicDisplay;
-            _musicLyric = musicLyric;
+            _musicLyric = musicLyric;
+            _audioLevel = audioLevel;
             _effectChain = effectChain;
 
             // Events registration

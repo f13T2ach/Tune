@@ -35,6 +35,7 @@
     <None Remove="Assets\Components\Status\NotEnabled.png" />
     <None Remove="Assets\Components\Tab\TabClicked.png" />
     <None Remove="Assets\Components\Tab\TabStandby.png" />
+    <None Remove="Assets\Components\Thumb\SliderThumb.png" />
     <None Remove="Assets\Components\Timeline.png" />
     <None Remove="Assets\Components\TimelineEnd.png" />
     <None Remove="Assets\Icons\BlankAlbum.png" />
@@ -59,6 +60,7 @@
     <Resource Include="Assets\Components\Status\NotEnabled.png">
       <CopyToOutputDirectory></CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Components\Thumb\SliderThumb.png" />
     <Resource Include="Assets\TuneWallpaper.png" />
   </ItemGroup>
 
@@ -122,6 +124,9 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>LangStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Components\Button\IlluminatedButton.xaml.cs">
+      <SubType>Code</SubType>
     </Compile>
     <Compile Update="Components\Content\NewPlaylistItem.xaml.cs">
       <SubType>Code</SubType>

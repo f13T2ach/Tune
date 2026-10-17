@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NAudio.Effects;
 using NAudio.Wave;
+using Tune.Engine.Audio;
 using Tune.Helpers.FormatConverters;
 
 namespace Tune.Engine.Effects
@@ -18,6 +19,8 @@ namespace Tune.Engine.Effects
         private readonly VolumeFader _fader;
 
         private EffectChainSampleProvider? _processor;
+        private MeteringSampleProvider? _meter;
+        private OutputLimiterProvider? _limiter;
         private WaveFormat? _format;
 
         [ObservableProperty]
@@ -77,8 +80,54 @@ namespace Tune.Engine.Effects
 
             _processor = new EffectChainSampleProvider(source, BuildEffects());
 
-            return _processor;
+            // The meter sits at the very end, so it measures what is actually played. It is
+            // rebuilt with every file, while this event stays put for whoever listens to it.
+            if (_meter != null)
+                _meter.LevelReported -= OnMeterReported;
+
+            // The limiter sits before the meter, so the meter shows what actually leaves the chain.
+            _limiter = new OutputLimiterProvider(_processor)
+            {
+                CeilingDecibels = _outputLimitDecibels,
+                IsEnabled = _isOutputLimited
+            };
+
+            _meter = new MeteringSampleProvider(_limiter);
+            _meter.LevelReported += OnMeterReported;
+
+            return _meter;
         }
+
+        /// <inheritdoc />
+        public event EventHandler<AudioLevelEventArgs>? LevelReported;
+
+        private double _outputLimitDecibels;
+        private bool _isOutputLimited = true;
+
+        /// <inheritdoc />
+        public double OutputLimitDecibels
+        {
+            get => _outputLimitDecibels;
+            set
+            {
+                _outputLimitDecibels = value;
+                if (_limiter != null) _limiter.CeilingDecibels = value;
+            }
+        }
+
+        /// <inheritdoc />
+        public bool IsOutputLimited
+        {
+            get => _isOutputLimited;
+            set
+            {
+                _isOutputLimited = value;
+                if (_limiter != null) _limiter.IsEnabled = value;
+            }
+        }
+
+        private void OnMeterReported(object? sender, AudioLevelEventArgs e) =>
+            LevelReported?.Invoke(this, e);
 
         /// <inheritdoc />
         public void Reset()
