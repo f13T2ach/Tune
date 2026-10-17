@@ -19,6 +19,7 @@ namespace Tune.Engine.Audio
 
         private float _ceiling = 1f;
         private double _gain = 1;
+        private double _holdSamples;
 
         /// <param name="source">The provider to limit; it is read through.</param>
         public OutputLimiterProvider(ISampleProvider source)
@@ -39,7 +40,13 @@ namespace Tune.Engine.Audio
         /// Gets or sets how long the gain takes to come back after it was turned down, in seconds.
         /// Longer is smoother but pumps; shorter is punchier but more audible.
         /// </summary>
-        public double ReleaseSeconds { get; set; } = 0.2;
+        public double ReleaseSeconds { get; set; } = 0.5;
+
+        /// <summary>
+        /// Gets or sets how long the gain stays down before it starts coming back, in seconds. A
+        /// hold is what keeps the level from pumping between beats.
+        /// </summary>
+        public double HoldSeconds { get; set; } = 0.15;
 
         /// <summary>
         /// Gets or sets the ceiling in decibels below full scale. Zero means full scale, so nothing
@@ -72,9 +79,22 @@ namespace Tune.Engine.Audio
 
                 double target = peak <= _ceiling ? 1.0 : _ceiling / peak;
 
-                // Attack is immediate, release is exponential, and both are applied before the
-                // samples are written, so the level never jumps between them.
-                _gain = target < _gain ? target : target + (_gain - target) * release;
+                // Attack is immediate, then the gain holds before it starts coming back. Without the
+                // hold the gain would rise between beats and be pushed down again, which is heard as
+                // pumping.
+                if (target < _gain)
+                {
+                    _gain = target;
+                    _holdSamples = Math.Max(0, HoldSeconds) * WaveFormat.SampleRate;
+                }
+                else if (_holdSamples > 0)
+                {
+                    _holdSamples--;
+                }
+                else
+                {
+                    _gain = target + (_gain - target) * release;
+                }
 
                 for (int c = 0; c < channels && i + c < read; c++)
                     buffer[i + c] = (float)(buffer[i + c] * _gain);
