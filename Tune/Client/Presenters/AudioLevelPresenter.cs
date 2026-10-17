@@ -208,7 +208,9 @@ namespace Tune.Client.Presenters
 
             // Clipping means the window reached full scale, not that it entered the red band:
             // mastered music sits in that band all the time without ever clipping.
-            IsClipping = Math.Max(window.MaxLeft, window.MaxRight) >= 0;
+            // Reaching full scale is normal for a mastered track; only going past it means the
+            // signal would have clipped without the limiter.
+            IsClipping = Math.Max(window.MaxLeft, window.MaxRight) > 0;
         }
     }
 }
