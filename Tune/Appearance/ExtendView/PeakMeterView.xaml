@@ -3,34 +3,53 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:samples="clr-namespace:Tune.Appearance.ExtendView"
-             xmlns:components="clr-namespace:Tune.Components"
+             xmlns:extend="clr-namespace:Tune.Appearance.ExtendView"
              xmlns:slider="clr-namespace:Tune.Components.Slider"
-             d:DesignHeight="500" d:DesignWidth="620"
              mc:Ignorable="d">
-    <Viewbox>
-        <Grid Width="620" Height="500">
+
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="5*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <samples:PeakMeterPanel Grid.Row="0" Margin="0,0,0,10"
-        LeftLevel="{Binding AudioLevel.LeftLevel}"
-        RightLevel="{Binding AudioLevel.RightLevel}"
-        LeftAverage="{Binding AudioLevel.LeftAverage}"
-        RightAverage="{Binding AudioLevel.RightAverage}"
-        LeftPeak="{Binding AudioLevel.LeftPeak}"
-        RightPeak="{Binding AudioLevel.RightPeak}"
-        LeftWindowPeak="{Binding AudioLevel.LeftWindowPeak}"
-        RightWindowPeak="{Binding AudioLevel.RightWindowPeak}"
-        IsClipping="{Binding AudioLevel.IsClipping}"/>
-        <Grid Grid.Row="1" Margin="20,0,15,0">
-            <components:IlluminatedButton Text="OUTLMT" IsChecked="True" HorizontalAlignment="Left"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <TextBlock Text="0db" FontWeight="SemiBold" Margin="5" VerticalAlignment="Center"/>
-                    <slider:CustomSlider Width="250"/>
-                </StackPanel>
+
+        <extend:PeakMeterPanel Grid.Row="0"
+            LeftLevel="{Binding AudioLevel.LeftLevel}"
+            RightLevel="{Binding AudioLevel.RightLevel}"
+            LeftAverage="{Binding AudioLevel.LeftAverage}"
+            RightAverage="{Binding AudioLevel.RightAverage}"
+            LeftPeak="{Binding AudioLevel.LeftPeak}"
+            RightPeak="{Binding AudioLevel.RightPeak}"
+            LeftWindowPeak="{Binding AudioLevel.LeftWindowPeak}"
+            RightWindowPeak="{Binding AudioLevel.RightWindowPeak}"
+            IsClipping="{Binding AudioLevel.IsClipping}"/>
+
+        <Grid Grid.Row="1" Margin="10,4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <CheckBox Grid.Column="0"
+                      Content="OUTLMT"
+                      FontSize="16"
+                      VerticalAlignment="Center"
+                      IsChecked="{Binding AudioLevel.IsOutputLimited, Mode=TwoWay}"/>
+
+            <TextBlock Grid.Column="1"
+                       Width="72"
+                       Margin="10,0"
+                       FontSize="16"
+                       VerticalAlignment="Center"
+                       TextAlignment="Right"
+                       Text="{Binding AudioLevel.OutputLimitDecibels, StringFormat={}{0:0.0}dB}"/>
+
+            <slider:CustomSlider Grid.Column="2"
+                                 Minimum="-60"
+                                 Maximum="0"
+                                 Value="{Binding AudioLevel.OutputLimitDecibels, Mode=TwoWay}"
+                                 OnlyThumbEvent="False"/>
         </Grid>
     </Grid>
-    </Viewbox>
 </UserControl>

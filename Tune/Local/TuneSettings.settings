@@ -32,7 +32,31 @@
     <Setting Name="SecondaryLyric" Type="System.String" Scope="User">
       <Value Profile="(Default)">translation</Value>
     </Setting>
-    <Setting Name="LyricLineLimit" Type="System.Int32" Scope="User">
+    <Setting Name="OutputLimitDb" Type="System.Double" Scope="User">
+        <Value Profile="(Default)">0</Value>
+      </Setting>
+      <Setting Name="OutputLimitEnabled" Type="System.Boolean" Scope="User">
+        <Value Profile="(Default)">True</Value>
+      </Setting>
+      <Setting Name="OutputLimitDb" Type="System.Double" Scope="User">
+        <Value Profile="(Default)">0</Value>
+      </Setting>
+      <Setting Name="OutputLimitEnabled" Type="System.Boolean" Scope="User">
+        <Value Profile="(Default)">True</Value>
+      </Setting>
+      <Setting Name="OutputLimitDb" Type="System.Double" Scope="User">
+        <Value Profile="(Default)">0</Value>
+      </Setting>
+      <Setting Name="OutputLimitEnabled" Type="System.Boolean" Scope="User">
+        <Value Profile="(Default)">True</Value>
+      </Setting>
+            <Setting Name="OutputLimitDb" Type="System.Double" Scope="User">
+        <Value Profile="(Default)">0</Value>
+      </Setting>
+      <Setting Name="OutputLimitEnabled" Type="System.Boolean" Scope="User">
+        <Value Profile="(Default)">True</Value>
+      </Setting>
+<Setting Name="LyricLineLimit" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">3</Value>
     </Setting>
     <Setting Name="EffectEqBandMinimum" Type="System.Double" Scope="User">

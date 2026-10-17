@@ -47,6 +47,14 @@ namespace Tune.Client.Presenters
         [ObservableProperty]
         private bool _isClipping;
 
+        /// <summary>Gets or sets the output ceiling in decibels; zero leaves the sound alone.</summary>
+        [ObservableProperty]
+        private double _outputLimitDecibels = Tune.Local.TuneSettings.Default.OutputLimitDb;
+
+        /// <summary>Gets or sets a value indicating whether the output is limited.</summary>
+        [ObservableProperty]
+        private bool _isOutputLimited = Tune.Local.TuneSettings.Default.OutputLimitEnabled;
+
         /// <summary>The loudest left peak of the last sampling window, which colours the clip strip.</summary>
         [ObservableProperty]
         private double _leftWindowPeak = SilenceDecibels;
@@ -74,6 +82,34 @@ namespace Tune.Client.Presenters
 
             if (_source != null)
                 _source.LevelReported += OnLevelReported;
+
+            // The chain is what can actually limit, so the two settings are pushed to it here and
+            // whenever they change.
+            _chain = _source as Tune.Engine.Effects.IAudioEffectChain;
+
+            if (_chain != null)
+            {
+                _chain.OutputLimitDecibels = OutputLimitDecibels;
+                _chain.IsOutputLimited = IsOutputLimited;
+            }
+        }
+
+        private Tune.Engine.Effects.IAudioEffectChain? _chain;
+
+        partial void OnOutputLimitDecibelsChanged(double value)
+        {
+            if (_chain != null) _chain.OutputLimitDecibels = value;
+
+            Tune.Local.TuneSettings.Default.OutputLimitDb = value;
+            Tune.Local.TuneSettings.Default.Save();
+        }
+
+        partial void OnIsOutputLimitedChanged(bool value)
+        {
+            if (_chain != null) _chain.IsOutputLimited = value;
+
+            Tune.Local.TuneSettings.Default.OutputLimitEnabled = value;
+            Tune.Local.TuneSettings.Default.Save();
         }
 
         /// <summary>Forgets the highest level so far, which belongs to the track being played.</summary>

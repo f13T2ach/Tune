@@ -165,7 +165,31 @@ namespace Tune.Local {
         
         
         
-        public int LyricLineLimit {
+        public double OutputLimitDb {
+            get {
+                return ((double)(this["OutputLimitDb"]));
+            }
+            set {
+                this["OutputLimitDb"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool OutputLimitEnabled {
+            get {
+                return ((bool)(this["OutputLimitEnabled"]));
+            }
+            set {
+                this["OutputLimitEnabled"] = value;
+            }
+        }
+        
+                  [global::System.Configuration.UserScopedSettingAttribute()]
+          [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+          [global::System.Configuration.DefaultSettingValueAttribute("3")]
+          public int LyricLineLimit {
         
             get {
         

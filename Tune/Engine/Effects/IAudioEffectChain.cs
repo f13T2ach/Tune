@@ -72,6 +72,12 @@ namespace Tune.Engine.Effects
         /// <returns>The processing node, which carries the source wave format.</returns>
         ISampleProvider CreateProcessor(ISampleProvider source);
 
+        /// <summary>Gets or sets the output ceiling in decibels; zero leaves the sound untouched.</summary>
+        double OutputLimitDecibels { get; set; }
+
+        /// <summary>Gets or sets a value indicating whether the output is limited.</summary>
+        bool IsOutputLimited { get; set; }
+
         /// <summary>
         /// Clears the state of every effect. Called when playback jumps, so a filter
         /// never carries samples across a seek.
