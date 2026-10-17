@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NAudio.Wave;
-using Tune.Engine.Audio;
 
 namespace Tune.Engine.Effects
 {
@@ -14,7 +13,7 @@ namespace Tune.Engine.Effects
     /// never reshape the knobs the main page binds to. It also reports the output level,
     /// so the meters have one place to read from.
     /// </summary>
-    public interface IAudioEffectChain : INotifyPropertyChanged, IAudioLevelSource
+    public interface IAudioEffectChain : INotifyPropertyChanged
     {
         /// <summary>
         /// Gets the output level of the player, on the 0..100 UI scale.

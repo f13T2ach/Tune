@@ -20,7 +20,6 @@ namespace Tune.Engine.Effects
         private readonly VolumeFader _fader;
 
         private EffectChainSampleProvider? _processor;
-        private MeteringSampleProvider? _meter;
         private OutputLimiterProvider? _limiter;
         private readonly List<Func<ISampleProvider, ISampleProvider>> _attached = new();
         private WaveFormat? _format;
@@ -91,27 +90,19 @@ namespace Tune.Engine.Effects
             foreach (Func<ISampleProvider, ISampleProvider> attach in _attached)
                 userTail = attach(userTail);
 
-            // The meter sits at the very end, so it measures what is actually played. It is
-            // rebuilt with every file, while this event stays put for whoever listens to it.
-            if (_meter != null)
-                _meter.LevelReported -= OnMeterReported;
+            // The user layer ends here. The limiter below is OUTLMT and belongs to the user layer;
+            // everything after this point is the fixed system stage, not this class.
+            ISampleProvider userOutput = _attached.Count > 0 ? userTail : (ISampleProvider)_processor;
 
-            // The limiter sits before the meter, so the meter shows what actually leaves the chain.
-            _meter = new MeteringSampleProvider(_attached.Count > 0 ? userTail : (ISampleProvider)_processor);
-            _limiter = new OutputLimiterProvider(_meter)
+            _limiter = new OutputLimiterProvider(userOutput)
             {
                 CeilingDecibels = _outputLimitDecibels,
                 IsEnabled = _isOutputLimited
             };
 
-
-            _meter.LevelReported += OnMeterReported;
-
             return _limiter;
         }
 
-        /// <inheritdoc />
-        public event EventHandler<AudioLevelEventArgs>? LevelReported;
 
         private double _outputLimitDecibels;
         private bool _isOutputLimited = true;
@@ -146,8 +137,6 @@ namespace Tune.Engine.Effects
             }
         }
 
-        private void OnMeterReported(object? sender, AudioLevelEventArgs e) =>
-            LevelReported?.Invoke(this, e);
 
         /// <inheritdoc />
         public void Reset()
