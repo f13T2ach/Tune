@@ -108,7 +108,7 @@ namespace Tune
 
                 // The meters read the level of the chain, which is the end of the audio path.
                 Services.GetRequiredService<AudioLevelPresenter>()
-                    .Attach(Services.GetRequiredService<IAudioEffectChain>());
+                    .Attach(Services.GetRequiredService<IAudioPlayerEngine>(), Services.GetRequiredService<IAudioEffectChain>());
 
 
                 // Register loadable services

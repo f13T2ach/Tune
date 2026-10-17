@@ -13,6 +13,12 @@ namespace Tune.Engine
         private readonly IAudioEffectChain _effectChain;
         private SystemOutputStage? _systemStage;
 
+        /// <inheritdoc />
+        public event EventHandler<AudioLevelEventArgs>? LevelReported;
+
+        private void OnSystemLevelReported(object? sender, AudioLevelEventArgs e) =>
+            LevelReported?.Invoke(this, e);
+
         /// <summary>Stored AudioApi value that selects the WaveOut device.</summary>
         internal const string WaveOutApiName = "waveout";
 
@@ -120,6 +126,7 @@ namespace Tune.Engine
                 // It is not configurable, so nothing the user does can bypass it.
                 _systemStage?.Dispose();
                 _systemStage = new SystemOutputStage(processor);
+            _systemStage.LevelReported += OnSystemLevelReported;
                 processor = _systemStage;
 
                 _output.Init(new SampleToWaveProvider(processor));

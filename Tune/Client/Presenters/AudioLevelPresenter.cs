@@ -73,7 +73,7 @@ namespace Tune.Client.Presenters
         /// Takes the levels from the given source, replacing any earlier one. Passing null stops
         /// the listening, which is what an unloaded player should do.
         /// </summary>
-        public void Attach(IAudioLevelSource? source)
+        public void Attach(IAudioLevelSource? source, Tune.Engine.Effects.IAudioEffectChain? chain = null)
         {
             if (_source != null)
                 _source.LevelReported -= OnLevelReported;
@@ -85,7 +85,7 @@ namespace Tune.Client.Presenters
 
             // The chain is what can actually limit, so the two settings are pushed to it here and
             // whenever they change.
-            _chain = _source as Tune.Engine.Effects.IAudioEffectChain;
+            _chain = chain ?? _source as Tune.Engine.Effects.IAudioEffectChain;
 
             if (_chain != null)
             {

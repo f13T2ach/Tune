@@ -2,7 +2,8 @@ using System.ComponentModel;
 
 namespace Tune.Engine
 {
-    public interface IAudioPlayerEngine : INotifyPropertyChanged
+    using Tune.Engine.Audio;
+    public interface IAudioPlayerEngine : IAudioLevelSource, INotifyPropertyChanged
     {
         /// <summary>
         /// 当前播放时间（秒）
