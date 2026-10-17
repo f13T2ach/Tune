@@ -113,17 +113,6 @@
                             <TextBlock Text="{x:Static lang:LangStrings.AudioApiRestartHint}" FontSize="20"
                                        Opacity="0.7" Margin="0,12,0,0"/>
                             <TextBlock Text="{x:Static lang:LangStrings.AudioApi}" Margin="0,14,0,0" FontSize="30" FontWeight="SemiBold"/>
-                            <StackPanel Orientation="Horizontal">
-                                
-                                <components:CheckBox IsChecked="{Binding AudioLimiter, Mode=TwoWay}"
-                                                     VerticalAlignment="Center" Width="20" Margin="0,-5,0,0"/>
-                                <TextBlock Text="{x:Static lang:LangStrings.AudioLimiter}" FontSize="24"
-                                           Opacity="0.7" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                            </StackPanel>
-
-                            <TextBlock Text="{x:Static lang:LangStrings.AudioLimiterHint}" FontSize="20"
-                                       Opacity="0.6" TextWrapping="Wrap" Margin="0,6,0,0" MaxWidth="560"
-                                       HorizontalAlignment="Left"/>
                         </StackPanel>
 
                         <!-- Effects -->

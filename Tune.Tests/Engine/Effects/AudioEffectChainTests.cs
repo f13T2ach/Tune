@@ -341,5 +341,45 @@ namespace Tune.Tests.Engine.Effects
 
             return SineSignal.MeasureAmplitude(output, frequency, SampleRate) / InputAmplitude;
         }
+#region ==== Attaching An Effect ====
+
+        /// <summary>
+        /// Verifies that an effect attached from outside is built on top of the finished user layer,
+        /// which is the only place user code may extend the chain.
+        /// </summary>
+        [Fact]
+        public void AttachEffect_AfterAttaching_IsBuiltWhenTheProcessorIsCreated()
+        {
+            AudioEffectChain chain = CreateChain();
+            int built = 0;
+
+            chain.AttachEffect(source =>
+            {
+                built++;
+                return source;
+            });
+
+            var source = new FakeSampleProvider(new float[64], SampleRate, channels: 1);
+            chain.CreateProcessor(source).Read(new float[64]);
+
+            Assert.Equal(1, built);
+        }
+        #endregion
+
+        /// <summary>An attached user effect that simply halves everything, for the test above.</summary>
+        private sealed class HalfGain(ISampleProvider source) : ISampleProvider
+        {
+            public WaveFormat WaveFormat => source.WaveFormat;
+
+            public int Read(Span<float> buffer)
+            {
+                int read = source.Read(buffer);
+                for (int i = 0; i < read; i++) buffer[i] *= 0.5f;
+
+                return read;
+            }
+
+            public int Read(float[] buffer, int offset, int count) => Read(buffer.AsSpan(offset, count));
+        }
     }
 }

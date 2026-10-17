@@ -51,12 +51,6 @@ namespace Tune.ViewModel
         /// <summary>Secondary lyric as it is stored on disk, used to tell whether there are changes.</summary>
         private string _savedSecondaryLyric = TuneSettings.Default.SecondaryLyric;
 
-        /// <summary>Gets or sets whether the limiter protects the output from clipping.</summary>
-        [ObservableProperty]
-        private bool _audioLimiter = TuneSettings.Default.AudioLimiter;
-
-        /// <summary>Limiter state as it is stored on disk, used to tell whether there are changes.</summary>
-        private bool _savedAudioLimiter = TuneSettings.Default.AudioLimiter;
 
         /// <summary>
         /// Gets or sets which secondary lyric option is selected, counted from zero, because a
@@ -234,8 +228,7 @@ namespace Tune.ViewModel
             TextDiffers(BandMaximumText, _savedBandMaximum) ||
             TextDiffers(BandStepText, _savedBandStep) ||
             SelectedLineLimit != _savedLineLimit ||
-            !string.Equals(SelectedSecondaryLyric, _savedSecondaryLyric, StringComparison.OrdinalIgnoreCase) ||
-            AudioLimiter != _savedAudioLimiter;
+            !string.Equals(SelectedSecondaryLyric, _savedSecondaryLyric, StringComparison.OrdinalIgnoreCase) ;
 
         private void RefreshSaveState()
         {
@@ -273,8 +266,6 @@ namespace Tune.ViewModel
             TuneSettings.Default.SecondaryLyric = SelectedSecondaryLyric;
             _savedSecondaryLyric = SelectedSecondaryLyric;
 
-            TuneSettings.Default.AudioLimiter = AudioLimiter;
-            _savedAudioLimiter = AudioLimiter;
             _musicLyric.SecondaryIsThirdLine =
                 string.Equals(SelectedSecondaryLyric, "third", StringComparison.OrdinalIgnoreCase);
 
