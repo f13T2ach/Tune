@@ -55,15 +55,6 @@ namespace Tune.Appearance.ExtendView
             double barWidth = Math.Max(2, (width - gap * (barCount - 1)) / barCount);
 double segmentHeight = height / Segments;
 
-            // Temporary probe: one lit square at the top of the first bar as soon as any level has
-            // arrived. It tells "no data" apart from "all bands are at the floor"; remove it once the
-            // feed is confirmed.
-            if (levels != null && levels.Count > 0)
-            {
-                var probe = new Rect(0, 0, barWidth, segmentHeight * 0.6);
-                drawingContext.DrawRectangle(LitBrush, null, probe);
-            }
-
             for (int band = 0; band < barCount; band++)
             {
                 double x = band * (barWidth + gap);

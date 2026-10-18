@@ -62,10 +62,9 @@ namespace Tune.Client.Presenters
         [ObservableProperty]
         private double _rightWindowPeak = SilenceDecibels;
 
-        private IReadOnlyList<float> _spectrumBands = Array.Empty<float>();
-
         /// <summary>Gets the level of each spectrum band, in decibels, from low to high.</summary>
-        public IReadOnlyList<float> SpectrumBands => _spectrumBands;
+        [ObservableProperty]
+        private IReadOnlyList<float> _spectrumBands = Array.Empty<float>();
 
         public AudioLevelPresenter()
         {
@@ -217,8 +216,7 @@ namespace Tune.Client.Presenters
                 for (int i = 0; i < copy.Length; i++)
                     copy[i] = e.Bands[i];
 
-                _spectrumBands = copy;
-                OnPropertyChanged(nameof(SpectrumBands));
+                SpectrumBands = copy;
             }
 
             LeftLevel = Smooth(LeftLevel, e.PeakLeft, seconds, ReleaseDecibelsPerSecond);

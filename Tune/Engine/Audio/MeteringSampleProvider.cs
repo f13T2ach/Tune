@@ -12,12 +12,14 @@ namespace Tune.Engine.Audio
             double right,
             double peakLeft,
             double peakRight,
+            IReadOnlyList<float> bands,
             LevelWindowResult? window)
         {
             Left = left;
             Right = right;
             PeakLeft = peakLeft;
             PeakRight = peakRight;
+            Bands = bands;
             Window = window;
         }
 
@@ -108,12 +110,15 @@ namespace Tune.Engine.Audio
 
             double seconds = (double)read / channels / WaveFormat.SampleRate;
 
+            _spectrum.Add(buffer, read, channels, WaveFormat.SampleRate, seconds);
+
             LevelWindowResult? closed = _window.Add(ToDecibels(peakLeft), ToDecibels(peakRight), seconds);
             LevelReported?.Invoke(this, new AudioLevelEventArgs(
                 ToDecibels(rmsLeft),
                 ToDecibels(rmsRight),
                 ToDecibels(peakLeft),
                 ToDecibels(peakRight),
+                _spectrum.Bands,
                 closed));
             return read;
         }
