@@ -208,9 +208,16 @@ namespace Tune.Client.Presenters
             // Like the meter this follows: the bar is the peak, which falls away at a fixed rate,
             // while the mark inside it is the live loudness, so it moves with the sound instead of
             // only once per sampling window.
-            if (!ReferenceEquals(e.Bands, _spectrumBands))
+            if (e.Bands.Count > 0)
             {
-                _spectrumBands = e.Bands;
+                // A fresh array each time: the analyser mutates its own, and a binding only reacts
+                // when the value it sees actually changes.
+                var copy = new float[e.Bands.Count];
+
+                for (int i = 0; i < copy.Length; i++)
+                    copy[i] = e.Bands[i];
+
+                _spectrumBands = copy;
                 OnPropertyChanged(nameof(SpectrumBands));
             }
 
