@@ -2,7 +2,6 @@ using System;
 using System.Windows.Threading;
 
 using CommunityToolkit.Mvvm.ComponentModel;
-using Tune.Appearance.ExtendView;
 using Tune.Engine.Audio;
 
 namespace Tune.Client.Presenters
