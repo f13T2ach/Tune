@@ -1,7 +1,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
+using System.Windows.Media;
 
 using Tune.ViewModel;
 
@@ -11,30 +11,52 @@ namespace Tune.Appearance.ExtendView
     /// Turns the inner wheel while music is playing. The angle is kept across tracks, and only a
     /// change of playlist puts it back to the top; the turns themselves are counted as it goes.
     /// </summary>
+    /// <remarks>
+    /// The updates are driven by <see cref="CompositionTarget.Rendering"/> rather than a timer: it
+    /// runs on the UI thread once per frame, so the wheel moves with the display instead of racing
+    /// a separate timer that can fire in bursts and make the motion stutter.
+    /// </remarks>
     public partial class JogWheelPanel : UserControl
     {
-        /// <summary>A third of a turn per second, which is 33 1/3 rpm, the speed of a record.</summary>
-        private const double DegreesPerSecond = 200;
-
-        private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromMilliseconds(16) };
+        /// <summary>One turn per minute, about 6 degrees a second.</summary>
+        private const double DegreesPerSecond = 6;
 
         private object? _playlist;
         private double _angle;
         private DateTime _last = DateTime.UtcNow;
+        private bool _rendering;
 
         public JogWheelPanel()
         {
             InitializeComponent();
 
-            _timer.Tick += OnTick;
-            Loaded += (_, _) => _timer.Start();
-            Unloaded += (_, _) => _timer.Stop();
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
         }
 
         /// <summary>Gets how many full turns the wheel has made since the playlist was chosen.</summary>
         public int Turns { get; private set; }
 
-        private void OnTick(object? sender, EventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (_rendering)
+                return;
+
+            _last = DateTime.UtcNow;
+            CompositionTarget.Rendering += OnRendering;
+            _rendering = true;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (!_rendering)
+                return;
+
+            CompositionTarget.Rendering -= OnRendering;
+            _rendering = false;
+        }
+
+        private void OnRendering(object? sender, EventArgs e)
         {
             DateTime now = DateTime.UtcNow;
             double seconds = (now - _last).TotalSeconds;
