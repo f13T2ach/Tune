@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using Tune.Assets.Localization;
 using Tune.Client.Controllers;
 using Tune.Models.Music;
@@ -17,7 +19,10 @@ namespace Tune.Tests.Client.Controllers
         /// </summary>
         static ListControllerHistoryPlaylistTests()
         {
-            LoadableServicesManager.Register(new PlaylistService(new PlaylistProvider()));
+            // A directory of its own, cleared first, so the history these tests create is the only
+            // one that exists and nothing leaks in from another test or from the application.
+            string directory = Path.Combine(Path.GetTempPath(), "tune-history-tests", Guid.NewGuid().ToString("N"));
+            LoadableServicesManager.Register(new PlaylistService(new PlaylistProvider(directory)));
         }
 
         /// <summary>

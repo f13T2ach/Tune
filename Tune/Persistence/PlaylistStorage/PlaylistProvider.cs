@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using System.IO;
 using Tune.Client.Logger;
 using Tune.Helpers;
@@ -26,6 +26,15 @@ namespace Tune.Persistence.PlaylistStorage
         {
             string env = EnvironmentUtils.GetEnvironmentDir();
             _playlistDirectory = Path.Combine(env, LocalPaths.LOCAL_PLAYLIST_N);
+        }
+        /// <summary>
+        /// Points the provider at a directory of its own, which the tests use so they never touch
+        /// the playlists of the real application.
+        /// </summary>
+        /// <param name="directory">The directory to store playlists in.</param>
+        public PlaylistProvider(string directory)
+        {
+            _playlistDirectory = directory;
         }
 
 
