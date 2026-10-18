@@ -62,6 +62,12 @@ namespace Tune.Client.Presenters
         [ObservableProperty]
         private double _rightWindowPeak = SilenceDecibels;
 
+        /// <summary>Gets the frames of the last block as one mono channel, for a scope or a spectrogram.</summary>
+        public ReadOnlyMemory<float> Waveform { get; private set; } = ReadOnlyMemory<float>.Empty;
+
+        /// <summary>Gets the sample rate of the stream the waveform came from.</summary>
+        public int SampleRate { get; private set; }
+
         /// <summary>Gets the level of each spectrum band, in decibels, from low to high.</summary>
         [ObservableProperty]
         private IReadOnlyList<float> _spectrumBands = Array.Empty<float>();
@@ -225,6 +231,9 @@ namespace Tune.Client.Presenters
             // Like the meter this follows: the bar is the peak, which falls away at a fixed rate,
             // while the mark inside it is the live loudness, so it moves with the sound instead of
             // only once per sampling window.
+            Waveform = e.Frames;
+            SampleRate = e.SampleRate;
+
             if (e.Bands.Count > 0)
             {
                 // A fresh array each time: the analyser mutates its own, and a binding only reacts

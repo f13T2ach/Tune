@@ -38,6 +38,15 @@ namespace Tune.Engine.Audio
         /// <summary>Gets the level of each spectrum band, in decibels, from low to high.</summary>
         public IReadOnlyList<float> Bands { get; } = Array.Empty<float>();
 
+        /// <summary>
+        /// The frames of the block as one mono channel. The memory points at a buffer the provider
+        /// reuses, so a reader has to copy what it needs before returning.
+        /// </summary>
+        public ReadOnlyMemory<float> Frames { get; init; }
+
+        /// <summary>The sample rate of the stream.</summary>
+        public int SampleRate { get; init; }
+
         /// <summary>Gets the closed sampling window, or null while the window is still open.</summary>
         public LevelWindowResult? Window { get; }
     }
@@ -55,6 +64,7 @@ namespace Tune.Engine.Audio
         private readonly ISampleProvider _source;
         private readonly LevelWindow _window;
         private readonly SpectrumAnalyzer _spectrum;
+        private readonly float[] _frames = new float[2048];
 
         /// <param name="source">The provider to measure; it is read through unchanged.</param>
         /// <param name="window">How long a sampling window lasts, or null for the meter's default.</param>
@@ -116,6 +126,19 @@ namespace Tune.Engine.Audio
 
             _spectrum.Add(buffer, read, channels, WaveFormat.SampleRate, seconds);
 
+            int monoFrames = read / Math.Max(1, channels);
+            int copied = Math.Min(monoFrames, _frames.Length);
+
+            for (int i = 0; i < copied; i++)
+            {
+                float sum = 0;
+
+                for (int channel = 0; channel < Math.Max(1, channels); channel++)
+                    sum += buffer[i * Math.Max(1, channels) + channel];
+
+                _frames[i] = sum / Math.Max(1, channels);
+            }
+
             LevelWindowResult? closed = _window.Add(ToDecibels(peakLeft), ToDecibels(peakRight), seconds);
             LevelReported?.Invoke(this, new AudioLevelEventArgs(
                 ToDecibels(rmsLeft),
@@ -123,7 +146,11 @@ namespace Tune.Engine.Audio
                 ToDecibels(peakLeft),
                 ToDecibels(peakRight),
                 _spectrum.Bands,
-                closed));
+                closed)
+            {
+                Frames = _frames.AsMemory(0, copied),
+                SampleRate = WaveFormat.SampleRate
+            });
             return read;
         }
 
