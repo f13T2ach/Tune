@@ -130,6 +130,12 @@ namespace Tune.Client.Presenters
         /// <summary>How fast the loudness mark falls back, slower so it does not twitch.</summary>
         private const double LoudnessReleaseDecibelsPerSecond = 8;
 
+        /// <summary>
+        /// How long the bar takes to move most of the way to a new peak, in seconds. Shorter is
+        /// punchier but twitchier; this is about the pace a hardware meter moves at.
+        /// </summary>
+        private const double AttackSeconds = 0.03;
+
         /// <summary>How long a peak stays on the marker before it is forgotten, like OBS's top dot.</summary>
         private static readonly TimeSpan PeakHold = TimeSpan.FromSeconds(20);
 
@@ -156,16 +162,27 @@ namespace Tune.Client.Presenters
         private DateTime _lastUpdate = DateTime.UtcNow;
 
         /// <summary>
-        /// Follows a rise at once and drops back at a steady rate, so a loud block does not throw
-        /// the bar up and the next quiet one drop it again.
+        /// Rises towards the incoming peak and falls at a steady rate. The rise is smoothed rather
+        /// than instant: neighbouring block peaks differ by a few decibels, and jumping straight to
+        /// each of them is what makes the bar twitch at the top.
         /// </summary>
         /// <param name="shown">The level on screen now.</param>
         /// <param name="target">The level that just arrived.</param>
         /// <param name="seconds">How long since the last update, taken once for both sides.</param>
-        private static double Smooth(double shown, double target, double seconds, double release) =>
-            target >= shown
-                ? target
-                : Math.Max(target, shown - release * seconds);
+        /// <param name="release">How fast it falls, in decibels per second.</param>
+        private static double Smooth(double shown, double target, double seconds, double release)
+        {
+            if (target >= shown)
+            {
+                // An exponential approach with a short time constant: quick enough to follow a hit,
+                // slow enough that neighbouring blocks average out.
+                double rise = 1 - Math.Exp(-seconds / AttackSeconds);
+
+                return shown + (target - shown) * rise;
+            }
+
+            return Math.Max(target, shown - release * seconds);
+        }
 
         private void OnLevelReported(object? sender, AudioLevelEventArgs e)
         {
