@@ -4,15 +4,46 @@
              mc:Ignorable="d"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:components="clr-namespace:Tune.Components"
+             xmlns:slider="clr-namespace:Tune.Components.Slider"
              d:DesignHeight="500" d:DesignWidth="600">
 
-    <!-- Placeholder for the jog wheel. The turning surface itself is not built yet, this only
-         marks the space it will take so the switcher can be seen working. -->
-    <Grid>
-        <TextBlock Text="DDJ-1000 WHEEL"
-                   FontSize="20"
-                   Opacity="0.7"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
-    </Grid>
+    <Viewbox>
+        <Grid Width="620" Height="500">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid  HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Image Source="/Assets/ExResources/Wheel/Ex_Wheel_Outer.png" Width="400" Height="400"/>
+                    <Image x:Name="InnerWheel"
+                           Source="/Assets/ExResources/Wheel/Ex_Wheel_Inner.png"
+                           Width="300" Height="300"
+                           RenderTransformOrigin="0.5,0.5">
+                        <Image.RenderTransform>
+                            <RotateTransform x:Name="WheelRotation"/>
+                        </Image.RenderTransform>
+                    </Image>
+                </Grid>
+                <Grid HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,25,0">
+                    <TextBlock Text="Damping" FontWeight="SemiBold"/>
+                </Grid>
+            </Grid>
+            <Grid Grid.Row="1" Margin="20,0,15,0">
+                <StackPanel Orientation="Horizontal">
+                <components:IlluminatedButton Text="Vinyl" HorizontalAlignment="Left"
+                              IsChecked="True" Margin="0,0,15,0"/>
+                <components:IlluminatedButton Text="Search" HorizontalAlignment="Left"
+              IsChecked="False" Margin="0,0,10,0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <slider:CustomSlider Width="250"
+                             Minimum="0"
+                             Maximum="100"
+                             Value="50"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Viewbox>
 </UserControl>
