@@ -37,7 +37,10 @@ namespace Tune.Engine.Audio
             _releasePerSecond = releasePerSecond;
 
             for (int i = 0; i < _bands.Length; i++)
+            {
                 _bands[i] = FloorDecibels;
+                _latest[i] = (float)FloorDecibels;
+            }
         }
 
         /// <summary>Gets the level of each band, in decibels below full scale, from low to high.</summary>
@@ -109,7 +112,9 @@ namespace Tune.Engine.Audio
                     peak = Math.Max(peak, Math.Sqrt(real * real + imaginary * imaginary));
                 }
 
-                _bands[band] = ToDecibels(peak);
+// The FFT is not normalised: its magnitudes grow with the window length, so they
+                // have to be scaled back to full scale before they mean anything in decibels.
+                _bands[band] = ToDecibels(peak / FftLength);
             }
         }
 
@@ -142,6 +147,8 @@ namespace Tune.Engine.Audio
         }
 
         private static double ToDecibels(double magnitude) =>
-            magnitude <= 0 ? FloorDecibels : Math.Max(FloorDecibels, 20 * Math.Log10(magnitude));
+            magnitude <= 0
+                ? FloorDecibels
+                : Math.Clamp(20 * Math.Log10(magnitude), FloorDecibels, 0);
     }
 }
