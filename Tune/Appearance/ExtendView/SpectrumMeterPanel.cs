@@ -6,16 +6,13 @@ using System.Windows.Media;
 namespace Tune.Appearance.ExtendView
 {
     /// <summary>
-    /// Shows one bar per spectrum band. Each bar is made of separated segments and only the
-    /// segments up to the band's level are lit, which is what makes the level readable at a glance.
+    /// Shows one vertical line per spectrum band. The length of the line is the loudness of that
+    /// band, so the shape of the music is readable at a glance without any grid behind it.
     /// </summary>
     public class SpectrumMeterPanel : FrameworkElement
     {
         /// <summary>The bottom of the scale, in decibels below full scale.</summary>
         public const double FloorDecibels = -60;
-
-        /// <summary>How many segments one bar is divided into.</summary>
-        private const int Segments = 24;
 
         private static readonly Brush LitBrush = Frozen(Color.FromRgb(0x3C, 0x9B, 0xF0));
         private static readonly Brush UnlitBrush = Frozen(Color.FromRgb(0x2A, 0x2A, 0x2A));
@@ -51,29 +48,27 @@ namespace Tune.Appearance.ExtendView
             IReadOnlyList<float>? levels = Levels;
             int barCount = levels == null || levels.Count == 0 ? 16 : levels.Count;
 
-            double gap = 2;
-            double barWidth = Math.Max(2, (width - gap * (barCount - 1)) / barCount);
-double segmentHeight = height / Segments;
+            double gap = 4;
+            double lineWidth = Math.Max(1, (width - gap * (barCount - 1)) / barCount);
 
             for (int band = 0; band < barCount; band++)
             {
-                double x = band * (barWidth + gap);
+                double x = band * (lineWidth + gap);
                 double level = levels != null && band < levels.Count ? levels[band] : FloorDecibels;
-                // How much of the bar the level covers: the floor is 0, full scale is 1.
-                double lit = (level - FloorDecibels) / -FloorDecibels;
-                int litSegments = (int)Math.Round(Math.Clamp(lit, 0, 1) * Segments);
 
-                for (int segment = 0; segment < Segments; segment++)
-                {
-                    // The bottom segment sits at the bottom of the control, so the bars grow upwards.
-                    double y = height - (segment + 1) * segmentHeight;
+                // How much of the height the band covers: the floor is 0, full scale is 1.
+                double lit = Math.Clamp((level - FloorDecibels) / -FloorDecibels, 0, 1);
+                double lineHeight = lit * height;
 
-                    var rect = new Rect(x, y + segmentHeight * 0.2, barWidth, segmentHeight * 0.6);
-                    drawingContext.DrawRectangle(segment < litSegments ? LitBrush : UnlitBrush, null, rect);
-                }
+                if (lineHeight <= 0)
+                    continue;
+
+                drawingContext.DrawRectangle(
+                    LitBrush,
+                    null,
+                    new Rect(x, height - lineHeight, lineWidth, lineHeight));
             }
         }
-
         private static SolidColorBrush Frozen(Color color)
         {
             var brush = new SolidColorBrush(color);
