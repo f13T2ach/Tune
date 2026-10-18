@@ -11,13 +11,13 @@ namespace Tune.Tests.ViewModel
     /// <summary>Verifies what the playlists page does with the empty cover.</summary>
     public class PlaylistsPageViewModelTests : IDisposable
     {
-        private readonly List<Type> _navigated = new();
+        private readonly List<PageKind> _navigated = new();
 
         /// <summary>Listens to where the page asks the application to go.</summary>
         public PlaylistsPageViewModelTests()
         {
             WeakReferenceMessenger.Default.Register<NavigationMessage>(
-                this, (_, message) => _navigated.Add(message.PageType));
+                this, (_, message) => _navigated.Add(message.Kind));
         }
 
         /// <summary>Stops listening.</summary>
@@ -73,8 +73,8 @@ namespace Tune.Tests.ViewModel
             view.OpenPlaylistCommand.Execute(playlist);
 
             Assert.Same(playlist, controller.CurrentPlaylist);
-            Assert.Contains(typeof(CurrentPlaylist), _navigated);
-            Assert.Equal(typeof(PlaylistsPage), CurrentPlaylistViewModel.ReturnPageType);
+            Assert.Contains(PageKind.CurrentPlaylist, _navigated);
+            Assert.Equal(PageKind.Playlists, CurrentPlaylistViewModel.ReturnPageKind);
         }
 
         /// <summary>

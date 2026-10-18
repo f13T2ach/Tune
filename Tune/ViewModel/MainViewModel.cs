@@ -1,7 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Tune.Appearance;
 using Tune.Client.Controllers;
 using Tune.Client.Presenters;
 using Tune.Components.UI;
@@ -169,13 +168,13 @@ namespace Tune.ViewModel
         [RelayCommand] public void SetNoLoop() => _listController.OnSetNoLoop();
         [RelayCommand] public void SetLoopStatus() => _listController.OnSetLoopStatus();
         //[RelayCommand] public void SetPlaylist() => _listController.OnSetPlaylist();
-        [RelayCommand] public void SetPlaylist() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(PlaylistsPage)));
+        [RelayCommand] public void SetPlaylist() => WeakReferenceMessenger.Default.Send(new NavigationMessage(PageKind.Playlists));
         [RelayCommand]
         public void NavigateToPlaylist()
         {
             // Opened from the main page, so the back button belongs there.
-            CurrentPlaylistViewModel.ReturnPageType = typeof(Main);
-            WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(CurrentPlaylist)));
+            CurrentPlaylistViewModel.ReturnPageKind = PageKind.Main;
+            WeakReferenceMessenger.Default.Send(new NavigationMessage(PageKind.CurrentPlaylist));
         }
 
         [RelayCommand]
@@ -186,13 +185,13 @@ namespace Tune.ViewModel
 
             // Opened from the main page, so the back button belongs there, and the history
             // playlist becomes the current one so the list page shows it.
-            CurrentPlaylistViewModel.ReturnPageType = typeof(Main);
+            CurrentPlaylistViewModel.ReturnPageKind = PageKind.Main;
             _listController.SetPlaylist(history);
 
-            WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(CurrentPlaylist)));
+            WeakReferenceMessenger.Default.Send(new NavigationMessage(PageKind.CurrentPlaylist));
         }
-        [RelayCommand] public void NavigateToSoundEffect() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(SoundEffect)));
-        [RelayCommand] public void NavigateToSettings() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(SettingsPage)));
+        [RelayCommand] public void NavigateToSoundEffect() => WeakReferenceMessenger.Default.Send(new NavigationMessage(PageKind.SoundEffect));
+        [RelayCommand] public void NavigateToSettings() => WeakReferenceMessenger.Default.Send(new NavigationMessage(PageKind.Settings));
         [RelayCommand] public void PlayNextMusic() => _playback.PlayNextMusic();
         [RelayCommand] public void PlayPreviousMusic() => _playback.PlayPreviousMusic();
 

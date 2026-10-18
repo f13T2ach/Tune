@@ -1,7 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Tune.Appearance;
 using Tune.Client.Controllers;
 using Tune.Client.Presenters;
 using Tune.Models.Messages;
@@ -42,6 +41,6 @@ namespace Tune.Models.ViewModelImpl
 
         [RelayCommand]
         private void NavigateToMain() =>
-            WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(Main)));
+            WeakReferenceMessenger.Default.Send(new NavigationMessage(PageKind.Main));
     }
 }

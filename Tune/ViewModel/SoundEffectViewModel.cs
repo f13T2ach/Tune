@@ -1,7 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Tune.Appearance;
 using Tune.Client.Controllers;
 using Tune.Client.Presenters;
 using Tune.Engine.Effects;
@@ -65,7 +64,7 @@ namespace Tune.ViewModel
             //_playerController.PropertyChanged += OnPlayerControllerPropertyChanged;
         }
 
-        [RelayCommand] public void NavigateToMain() => WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(Main)));
+        [RelayCommand] public void NavigateToMain() => WeakReferenceMessenger.Default.Send(new NavigationMessage(PageKind.Main));
 
         private void OnEffectChainPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {

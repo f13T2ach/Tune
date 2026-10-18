@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
 using System.Windows;
-using Tune.Appearance;
 using Tune.Assets.Localization;
 using Tune.Client.Controllers;
 using Tune.Components.UI;
@@ -123,11 +122,11 @@ namespace Tune.ViewModel
         /// Gets or sets the page the back button returns to. Whoever opens the list page sets
         /// it, so the page itself never has to look anybody up to find out where it belongs.
         /// </summary>
-        public static Type ReturnPageType { get; set; } = typeof(Main);
+        public static PageKind ReturnPageKind { get; set; } = PageKind.Main;
 
         [RelayCommand]
         public void NavigateToMain() =>
-            WeakReferenceMessenger.Default.Send(new NavigationMessage(ReturnPageType));
+            WeakReferenceMessenger.Default.Send(new NavigationMessage(ReturnPageKind));
 
         [RelayCommand]
         public void AddMusicClicked()

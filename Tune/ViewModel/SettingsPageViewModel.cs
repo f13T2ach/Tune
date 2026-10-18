@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Reflection;
-using Tune.Appearance;
 using Tune.Assets.Localization;
 using Tune.Client.Controllers;
 using Tune.Client.Presenters;
@@ -288,7 +287,7 @@ namespace Tune.ViewModel
 
         [RelayCommand]
         private void NavigateToMain() =>
-            WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(Main)));
+            WeakReferenceMessenger.Default.Send(new NavigationMessage(PageKind.Main));
     }
 
     /// <summary>One selectable language.</summary>

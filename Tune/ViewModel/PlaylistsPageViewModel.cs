@@ -2,7 +2,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
-using Tune.Appearance;
 using Tune.Client.Controllers;
 using Tune.Components.UI;
 using Tune.Helpers;
@@ -120,11 +119,11 @@ namespace Tune.ViewModel
             }
 
             _listController.SetPlaylist(playlist);
-            WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(CurrentPlaylist)));
+            WeakReferenceMessenger.Default.Send(new NavigationMessage(PageKind.CurrentPlaylist));
 
             // That navigation builds the list page. Tell it where its back button belongs,
             // so leaving it comes back here instead of going to the main page.
-            CurrentPlaylistViewModel.ReturnPageType = typeof(PlaylistsPage);
+            CurrentPlaylistViewModel.ReturnPageKind = PageKind.Playlists;
         }
 
         /// <summary>
@@ -160,7 +159,7 @@ namespace Tune.ViewModel
         // ==== Navigation ====
         [RelayCommand]
         public void NavigateToMain() =>
-            WeakReferenceMessenger.Default.Send(new NavigationMessage(typeof(Main)));
+            WeakReferenceMessenger.Default.Send(new NavigationMessage(PageKind.Main));
 
         [RelayCommand]
         public void AddMusicClicked()

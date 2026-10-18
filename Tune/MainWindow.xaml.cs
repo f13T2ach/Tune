@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using Tune.Appearance;
@@ -19,8 +19,21 @@ namespace Tune
 
         private void OnNavigationMessage(object recipient, NavigationMessage message)
         {
-            NavigateTo(message.PageType);
+            NavigateTo(Resolve(message.Kind));
         }
+
+        /// <summary>
+        /// The only place that knows which type draws which page, so the view models stay free of
+        /// any view type.
+        /// </summary>
+        private static Type Resolve(PageKind kind) => kind switch
+        {
+            PageKind.Playlists => typeof(PlaylistsPage),
+            PageKind.CurrentPlaylist => typeof(CurrentPlaylist),
+            PageKind.Settings => typeof(SettingsPage),
+            PageKind.SoundEffect => typeof(SoundEffect),
+            _ => typeof(Main)
+        };
 
         private void NavigateTo(Type pageType)
         {
