@@ -19,7 +19,15 @@ namespace Tune.Tests.Engine.Audio
             var meter = new MeteringSampleProvider(new Block(samples));
 
             IReadOnlyList<float>? bands = null;
-            meter.LevelReported += (_, e) => bands = e.Bands;
+            ReadOnlyMemory<float> frames = ReadOnlyMemory<float>.Empty;
+            int sampleRate = 0;
+
+            meter.LevelReported += (_, e) =>
+            {
+                bands = e.Bands;
+                frames = e.Frames;
+                sampleRate = e.SampleRate;
+            };
 
             while (meter.Read(new float[4096], 0, 4096) > 0) { }
 
@@ -29,6 +37,10 @@ namespace Tune.Tests.Engine.Audio
             float loudest = bands.Max();
 
             Assert.True(loudest > SpectrumAnalyzer.FloorDecibels + 15, $"loudest band {loudest:0.0} dB");
+
+            // The same event has to carry what a scope or a spectrogram needs.
+            Assert.True(frames.Length > 0, "no frames were reported");
+            Assert.Equal(44100, sampleRate);
         }
 
         private static float[] Sine(double frequency, double amplitude, int count)
