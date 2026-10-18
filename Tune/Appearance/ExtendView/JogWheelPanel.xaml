@@ -22,7 +22,7 @@
                            Width="300" Height="300"
                            RenderTransformOrigin="0.5,0.5">
                         <Image.RenderTransform>
-                            <RotateTransform x:Name="WheelRotation"/>
+                            <RotateTransform Angle="{Binding Wheel.Angle}"/>
                         </Image.RenderTransform>
                     </Image>
                 </Grid>

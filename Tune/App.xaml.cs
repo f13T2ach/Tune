@@ -55,6 +55,8 @@ namespace Tune
                 services.AddSingleton<MusicDisplayPresenter>();
                 services.AddSingleton<MusicLyricPresenter>();
                 services.AddSingleton<AudioLevelPresenter>();
+        services.AddSingleton<Tune.Client.Tasks.TaskRegister>();
+        services.AddSingleton<Tune.Client.Presenters.WheelPresenter>();
 
                 services.AddSingleton<MusicPlaybackController>();
 
