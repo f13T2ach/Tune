@@ -59,7 +59,8 @@ double segmentHeight = height / Segments;
             {
                 double x = band * (barWidth + gap);
                 double level = levels != null && band < levels.Count ? levels[band] : FloorDecibels;
-                double lit = (FloorDecibels - level) / -FloorDecibels;
+                // How much of the bar the level covers: the floor is 0, full scale is 1.
+                double lit = (level - FloorDecibels) / -FloorDecibels;
                 int litSegments = (int)Math.Round(Math.Clamp(lit, 0, 1) * Segments);
 
                 for (int segment = 0; segment < Segments; segment++)
