@@ -73,7 +73,10 @@ namespace Tune.Components.Content
             PART_CurrentNumber.Text = Pages.Count > 0 ? (_currentIndex + 1).ToString() : string.Empty;
             PART_TotalNumber.Text = Pages.Count > 0 ? Pages.Count.ToString() : string.Empty;
 
-            string title = Pages.Count > 0 ? GetPageTitle(Pages[_currentIndex] as DependencyObject) : string.Empty;
+string title = string.Empty;
+
+            if (Pages.Count > 0 && Pages[_currentIndex] is DependencyObject page)
+                title = GetPageTitle(page);
             PART_Header.Text = Pages.Count > 0
                 ? $"{title} {_currentIndex + 1}/{Pages.Count}".Trim()
                 : string.Empty;

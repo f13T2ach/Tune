@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
@@ -81,16 +81,6 @@ namespace Tune.Components.TabFrame
 
         #region ItemsPanel - 页签排列方式
 
-        public static readonly DependencyProperty ItemsPanelProperty =
-            DependencyProperty.Register(
-                nameof(ItemsPanel), typeof(ItemsPanelTemplate), typeof(TabFrame),
-                new PropertyMetadata(null));
-
-        public ItemsPanelTemplate? ItemsPanel
-        {
-            get => (ItemsPanelTemplate?)GetValue(ItemsPanelProperty);
-            set => SetValue(ItemsPanelProperty, value);
-        }
 
         #endregion
 
