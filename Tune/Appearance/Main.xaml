@@ -243,7 +243,7 @@
                             <content:PanelSwitcher x:Name="ControlArea">
                                 <extend:JogWheelPanel content:PanelSwitcher.PageTitle="DDJ-1000 WHEEL"/>
                                 <extend:PeakMeterView content:PanelSwitcher.PageTitle="PEAK METER"/>
-                                <extend:SliderSample content:PanelSwitcher.PageTitle="CUSTOM SLIDER"/>
+                                <extend:SpectrumMeterView content:PanelSwitcher.PageTitle="SPECTRUM"/>
                             </content:PanelSwitcher>
                         </Grid>
                         <!--Right Down Content-->

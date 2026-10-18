@@ -1,0 +1,11 @@
+<UserControl x:Class="Tune.Appearance.ExtendView.SpectrumMeterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:extend="clr-namespace:Tune.Appearance.ExtendView"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="600">
+
+    <extend:SpectrumMeterPanel Margin="10" Levels="{Binding AudioLevel.SpectrumBands}"/>
+</UserControl>

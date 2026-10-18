@@ -62,6 +62,11 @@ namespace Tune.Client.Presenters
         [ObservableProperty]
         private double _rightWindowPeak = SilenceDecibels;
 
+        private IReadOnlyList<float> _spectrumBands = Array.Empty<float>();
+
+        /// <summary>Gets the level of each spectrum band, in decibels, from low to high.</summary>
+        public IReadOnlyList<float> SpectrumBands => _spectrumBands;
+
         public AudioLevelPresenter()
         {
             // The presenter is built on the interface thread, so this is the thread to post back to.
@@ -203,6 +208,12 @@ namespace Tune.Client.Presenters
             // Like the meter this follows: the bar is the peak, which falls away at a fixed rate,
             // while the mark inside it is the live loudness, so it moves with the sound instead of
             // only once per sampling window.
+            if (!ReferenceEquals(e.Bands, _spectrumBands))
+            {
+                _spectrumBands = e.Bands;
+                OnPropertyChanged(nameof(SpectrumBands));
+            }
+
             LeftLevel = Smooth(LeftLevel, e.PeakLeft, seconds, ReleaseDecibelsPerSecond);
             RightLevel = Smooth(RightLevel, e.PeakRight, seconds, ReleaseDecibelsPerSecond);
 

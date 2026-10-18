@@ -33,6 +33,9 @@ namespace Tune.Engine.Audio
         /// <summary>Gets the right peak of the block, which is what clipping is judged on.</summary>
         public double PeakRight { get; }
 
+        /// <summary>Gets the level of each spectrum band, in decibels, from low to high.</summary>
+        public IReadOnlyList<float> Bands { get; } = Array.Empty<float>();
+
         /// <summary>Gets the closed sampling window, or null while the window is still open.</summary>
         public LevelWindowResult? Window { get; }
     }
@@ -49,6 +52,7 @@ namespace Tune.Engine.Audio
 
         private readonly ISampleProvider _source;
         private readonly LevelWindow _window;
+        private readonly SpectrumAnalyzer _spectrum = new SpectrumAnalyzer();
 
         /// <param name="source">The provider to measure; it is read through unchanged.</param>
         /// <param name="window">How long a sampling window lasts, or null for the meter's default.</param>
