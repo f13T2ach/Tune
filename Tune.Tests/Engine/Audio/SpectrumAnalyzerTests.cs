@@ -11,7 +11,7 @@ namespace Tune.Tests.Engine.Audio
         private const int SampleRate = 44100;
 
         /// <summary>Verifies that a tone lands in a band and the other bands stay quiet.</summary>
-        [Fact(Skip = "The spectrum meter does not show anything yet: with a 1 kHz tone every band still reads the floor, so the FFT path produces no usable magnitude. The drawing side is in place; this is the one thing left to debug.")]
+        [Fact]
         public void Add_WithAThousandHertzTone_LiftsOneBandOnly()
         {
             var analyzer = new SpectrumAnalyzer();
