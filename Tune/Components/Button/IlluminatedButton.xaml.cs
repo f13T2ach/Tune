@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -83,10 +83,10 @@ namespace Tune.Components
         #region Checked / Unchecked Routed Event
 
         public static readonly RoutedEvent CheckedEvent = EventManager.RegisterRoutedEvent(
-            "Checked", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(CheckBox));
+            "Checked", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(IlluminatedButton));
 
         public static readonly RoutedEvent UncheckedEvent = EventManager.RegisterRoutedEvent(
-            "Unchecked", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(CheckBox));
+            "Unchecked", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(IlluminatedButton));
 
         public event RoutedEventHandler Checked
         {

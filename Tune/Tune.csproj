@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Appearance\Demo\**" />
+    <EmbeddedResource Remove="Appearance\Demo\**" />
+    <None Remove="Appearance\Demo\**" />
+    <Page Remove="Appearance\Demo\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Assets\Components\Arrow\More.png" />
     <None Remove="Assets\Components\Arrow\SignalInDirection.png" />
     <None Remove="Assets\Components\Contents\SoundEffectToolsHelp.png" />
@@ -109,7 +116,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Appearance\Demo\" />
     <Folder Include="Persistence\Lifecycle\" />
     <Folder Include="Utils\JsonUtils\" />
   </ItemGroup>
