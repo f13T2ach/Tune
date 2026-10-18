@@ -16,6 +16,12 @@ namespace Tune.Engine
         /// <inheritdoc />
         public event EventHandler<AudioLevelEventArgs>? LevelReported;
 
+        /// <inheritdoc />
+        public event EventHandler? LevelsReset;
+
+        private void OnSystemLevelsReset(object? sender, EventArgs e) =>
+            LevelsReset?.Invoke(this, e);
+
         private void OnSystemLevelReported(object? sender, AudioLevelEventArgs e) =>
             LevelReported?.Invoke(this, e);
 
@@ -127,6 +133,7 @@ namespace Tune.Engine
                 _systemStage?.Dispose();
                 _systemStage = new SystemOutputStage(processor);
             _systemStage.LevelReported += OnSystemLevelReported;
+            _systemStage.LevelsReset += OnSystemLevelsReset;
                 processor = _systemStage;
 
                 _output.Init(new SampleToWaveProvider(processor));

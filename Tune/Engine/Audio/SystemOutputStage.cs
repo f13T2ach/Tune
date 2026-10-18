@@ -38,6 +38,9 @@ namespace Tune.Engine.Audio
         /// <inheritdoc/>
         public event EventHandler<AudioLevelEventArgs>? LevelReported;
 
+        /// <inheritdoc />
+        public event EventHandler? LevelsReset;
+
         /// <inheritdoc/>
         public int Read(Span<float> buffer) => _limiter.Read(buffer);
 
@@ -45,7 +48,12 @@ namespace Tune.Engine.Audio
         public int Read(float[] buffer, int offset, int count) => Read(buffer.AsSpan(offset, count));
 
         /// <summary>Stops forwarding the meter, so a discarded stage goes quiet.</summary>
-        public void Dispose() => _meter.LevelReported -= OnMeterReported;
+        public void Dispose()
+        {
+            _meter.LevelReported -= OnMeterReported;
+            _meter.Dispose();
+            LevelsReset?.Invoke(this, EventArgs.Empty);
+        }
 
         private void OnMeterReported(object? sender, AudioLevelEventArgs e) =>
             LevelReported?.Invoke(this, e);

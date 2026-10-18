@@ -13,5 +13,11 @@ namespace Tune.Engine.Audio
         /// window when a sampling window runs out.
         /// </summary>
         event EventHandler<AudioLevelEventArgs>? LevelReported;
+
+        /// <summary>
+        /// Raised when the source is about to go away, so whatever shows the levels can go back to
+        /// silence instead of freezing on the last reading.
+        /// </summary>
+        event EventHandler? LevelsReset;
     }
 }

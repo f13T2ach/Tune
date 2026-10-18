@@ -188,6 +188,24 @@ namespace Tune.Client.Presenters
             return Math.Max(target, shown - release * seconds);
         }
 
+        /// <summary>Puts everything back to silence when the player lets go of the audio.</summary>
+        private void OnLevelsReset(object? sender, EventArgs e)
+        {
+            _dispatcher.BeginInvoke(DispatcherPriority.Render, () =>
+            {
+                LeftLevel = SilenceDecibels;
+                RightLevel = SilenceDecibels;
+                LeftAverage = SilenceDecibels;
+                RightAverage = SilenceDecibels;
+                LeftWindowPeak = SilenceDecibels;
+                RightWindowPeak = SilenceDecibels;
+                IsClipping = false;
+                SpectrumBands = Array.Empty<float>();
+
+                ResetPeaks();
+            });
+        }
+
         private void OnLevelReported(object? sender, AudioLevelEventArgs e)
         {
             // Report priority lets several blocks of a frame collapse into one update.

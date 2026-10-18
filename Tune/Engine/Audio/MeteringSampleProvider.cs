@@ -47,20 +47,21 @@ namespace Tune.Engine.Audio
     /// reported per block so the bar can follow the sound, while the average and the maximum are
     /// only reported when a sampling window closes.
     /// </summary>
-    public sealed class MeteringSampleProvider : ISampleProvider, IAudioLevelSource
+    public sealed class MeteringSampleProvider : ISampleProvider, IAudioLevelSource, IDisposable
     {
         /// <summary>Reported for silence, which has no decibel value of its own.</summary>
         public const double SilenceDecibels = -100;
 
         private readonly ISampleProvider _source;
         private readonly LevelWindow _window;
-        private readonly SpectrumAnalyzer _spectrum = new SpectrumAnalyzer();
+        private readonly SpectrumAnalyzer _spectrum;
 
         /// <param name="source">The provider to measure; it is read through unchanged.</param>
         /// <param name="window">How long a sampling window lasts, or null for the meter's default.</param>
         public MeteringSampleProvider(ISampleProvider source, TimeSpan? window = null)
         {
             _source = source ?? throw new ArgumentNullException(nameof(source));
+            _spectrum = new SpectrumAnalyzer(sampleRate: source.WaveFormat.SampleRate);
             _window = new LevelWindow(window ?? LevelWindow.DefaultWindow);
         }
 
@@ -72,6 +73,9 @@ namespace Tune.Engine.Audio
 
         /// <inheritdoc/>
         public event EventHandler<AudioLevelEventArgs>? LevelReported;
+
+        /// <inheritdoc />
+        public event EventHandler? LevelsReset;
 
         /// <inheritdoc/>
         public int Read(Span<float> buffer)
@@ -125,6 +129,9 @@ namespace Tune.Engine.Audio
 
         /// <summary>Reads a slice of an array, which is the form older callers use.</summary>
         public int Read(float[] buffer, int offset, int count) => Read(buffer.AsSpan(offset, count));
+
+        /// <summary>Tells whoever listens that the levels are gone.</summary>
+        public void Dispose() => LevelsReset?.Invoke(this, EventArgs.Empty);
 
         /// <summary>Turns a linear peak into decibels, keeping silence at a floor far below the scale.</summary>
         /// <param name="peak">The linear peak, from zero to one.</param>
