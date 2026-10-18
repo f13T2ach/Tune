@@ -81,6 +81,21 @@ namespace Tune.Components.TabFrame
 
         #region ItemsPanel - 页签排列方式
 
+        // Deliberately shadows ItemsControl.ItemsPanel. The inherited property defaults to a
+        // vertical StackPanel, and the code below copies the value into the inner host only when it
+        // is set. Without this property the host would always be overwritten with a vertical panel,
+        // which is exactly what turns the tabs into a stack.
+        public static new readonly DependencyProperty ItemsPanelProperty =
+            DependencyProperty.Register(
+                nameof(ItemsPanel), typeof(ItemsPanelTemplate), typeof(TabFrame),
+                new PropertyMetadata(null));
+
+        public new ItemsPanelTemplate? ItemsPanel
+        {
+            get => (ItemsPanelTemplate?)GetValue(ItemsPanelProperty);
+            set => SetValue(ItemsPanelProperty, value);
+        }
+
 
         #endregion
 

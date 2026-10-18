@@ -103,7 +103,17 @@ EventManager.RegisterRoutedEvent("Checked", ..., typeof(CheckBox));
 EventManager.RegisterRoutedEvent("Checked", ..., typeof(IlluminatedButton));
 ```
 
-- **不要重复声明基类已有的依赖属性**（例如自己再写一个 `ItemsPanel`），会隐藏基类成员并产生 `CS0108`。
+- **重复声明基类已有的依赖属性要看情况**，并且必须显式 `new`：
+
+  ```csharp
+  // ✗ 会隐藏基类成员并产生 CS0108
+  public static readonly DependencyProperty ItemsPanelProperty = ...;
+
+  // ✓ 确实需要独立默认值时才这么做，并写清原因
+  public static new readonly DependencyProperty ItemsPanelProperty = ...;
+  ```
+
+  `TabFrame` 就是这种情形：继承来的 `ItemsPanel` 默认是**竖向** `StackPanel`，而代码只在"显式设置过"时才把它写进内层宿主 —— 没有自己的 null 默认值，页签就会全部竖着堆叠。删掉它看起来是清理，实际是回归。
 - 自绘控件（`PeakMeterPanel`、`CustomSlider`、`EqFader`）**按比例绘制，不用图片**；几何用统一的 dB→像素换算，不要各自算一套。
 - 项目是固定 1600×792 画布 + `Viewbox`，改动布局时按像素对齐，别引入会随窗口变化的相对尺寸。
 
