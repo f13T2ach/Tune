@@ -42,19 +42,24 @@ namespace Tune.Appearance.ExtendView
 
             double width = ActualWidth;
             double height = ActualHeight;
-            IReadOnlyList<float>? levels = Levels;
 
-            if (width <= 0 || height <= 0 || levels == null || levels.Count == 0)
+            if (width <= 0 || height <= 0)
                 return;
 
+            // The grid is drawn even before any level has arrived, so an empty meter can be told
+            // apart from a meter that was never rendered.
+            IReadOnlyList<float>? levels = Levels;
+            int barCount = levels == null || levels.Count == 0 ? 16 : levels.Count;
+
             double gap = 2;
-            double barWidth = Math.Max(2, (width - gap * (levels.Count - 1)) / levels.Count);
+            double barWidth = Math.Max(2, (width - gap * (barCount - 1)) / barCount);
             double segmentHeight = height / Segments;
 
-            for (int band = 0; band < levels.Count; band++)
+            for (int band = 0; band < barCount; band++)
             {
                 double x = band * (barWidth + gap);
-                double lit = (FloorDecibels - levels[band]) / -FloorDecibels;
+                double level = levels != null && band < levels.Count ? levels[band] : FloorDecibels;
+                double lit = (FloorDecibels - level) / -FloorDecibels;
                 int litSegments = (int)Math.Round(Math.Clamp(lit, 0, 1) * Segments);
 
                 for (int segment = 0; segment < Segments; segment++)
