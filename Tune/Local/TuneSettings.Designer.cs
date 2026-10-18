@@ -118,17 +118,6 @@ namespace Tune.Local {
                 this["AudioApi"] = value;
             }
         }
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
- public bool AudioLimiter {
-            get {
-                return ((bool)(this["AudioLimiter"]));
-            }
-            set {
-                this["AudioLimiter"] = value;
-            }
-        }
 
         
         [global::System.Configuration.UserScopedSettingAttribute()]

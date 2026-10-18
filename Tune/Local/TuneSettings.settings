@@ -26,9 +26,6 @@
     <Setting Name="AudioApi" Type="System.String" Scope="User">
       <Value Profile="(Default)">wasapi</Value>
     </Setting>
-    <Setting Name="AudioLimiter" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
     <Setting Name="SecondaryLyric" Type="System.String" Scope="User">
       <Value Profile="(Default)">translation</Value>
     </Setting>

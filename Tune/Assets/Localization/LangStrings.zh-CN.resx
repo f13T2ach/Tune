@@ -231,12 +231,6 @@
   <data name="NewFromCover" xml:space="preserve">
     <value>按封面以新建歌单</value>
   </data>
-  <data name="AudioLimiter" xml:space="preserve">
-    <value>压限器</value>
-  </data>
-  <data name="AudioLimiterHint" xml:space="preserve">
-    <value>把峰值压在阈值以下，避免效果增益过大时爆音</value>
-  </data>
   <data name="SecondaryLyric" xml:space="preserve">
     <value>次要歌词</value>
   </data>

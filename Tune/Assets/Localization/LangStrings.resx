@@ -231,12 +231,6 @@
   <data name="NewFromCover" xml:space="preserve">
     <value>New from cover</value>
   </data>
-  <data name="AudioLimiter" xml:space="preserve">
-    <value>Limiter</value>
-  </data>
-  <data name="AudioLimiterHint" xml:space="preserve">
-    <value>Holds peaks under a ceiling, so loud effects do not clip.</value>
-  </data>
   <data name="SecondaryLyric" xml:space="preserve">
     <value>Secondary lyric</value>
   </data>
