@@ -7,5 +7,19 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="600">
 
-    <extend:SpectrumMeterPanel Margin="10" Levels="{Binding AudioLevel.SpectrumBands}"/>
+<Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <extend:SpectrumMeterPanel Grid.Row="0" Margin="10" Levels="{Binding AudioLevel.SpectrumBands}"/>
+
+        <!-- Diagnostic readout: 16 means the bands arrive, 0 means they do not. -->
+        <TextBlock Grid.Row="1"
+                   Margin="10,0,0,4"
+                   FontSize="16"
+                   Opacity="0.7"
+                   Text="{Binding AudioLevel.SpectrumBands.Count, StringFormat=BANDS {0}}"/>
+    </Grid>
 </UserControl>
