@@ -36,35 +36,7 @@ dotnet run --project Tune.csproj
 ```
 你还可以直接用 Visual Studio 打开解决方案来构建运行。
 
-## 结构
-```
-Tune/
-├── Appearance/         # 页面
-├── Assets/             # 资产
-├── Client/             # 播放控制层和 Presenter 层
-├── Components/         # 自定义控件
-├── Engine/             # 播放器
-├── Generic/            # 泛型类
-├── Helpers/            # 辅助方法（转换器、扩展方法等）
-├── Local               # 本地数据访问层
-├── Models/             # 数据实体（音乐、歌单、歌词等）
-├── Services/           # 服务
-├── Utils/              # 工具类（解析和IO等）
-├── Values/             # 常量
-├── ViewModel/          # ViewModel
-```
-
 ## 第三方库的使用
-|类|用途|备注|许可证|
-|---|---|
-|CommunityToolkit.Mvvm|MVVM|-|MIT|
-|DevBase.Format|解析歌词|这简直就是一坨|MIT|
-|Microsoft.Extensions.DependencyInjection|DI|-|MIT|
-|NAudio|音乐播放|-|MIT|
-|NWave|音乐解析|-|MIT|
-|Newtonsoft.Json|JSON解析|-|MIT|
-|TagLibSharp|文件标签解析|-|LGPL-2.1-only|
-|WPFLocalizeExtension|本地化|-|Ms-PL|
 
 Tune 会严格按照开源许可协议工作
 

@@ -5,16 +5,9 @@ namespace Tune.Appearance.ExtendView
     /// <summary>Which colour band a level falls into, from the loudest down.</summary>
     public enum PeakMeterBand
     {
-        /// <summary>Below the floor, so nothing is shown.</summary>
         Silent,
-
-        /// <summary>Below the warning line, drawn green.</summary>
         Normal,
-
-        /// <summary>Between the warning line and the clipping line, drawn orange.</summary>
         Warning,
-
-        /// <summary>At or above the clipping line, drawn red.</summary>
         Clip
     }
 

@@ -6,13 +6,6 @@ using System.Windows.Media;
 
 namespace Tune.Appearance.ExtendView
 {
-    /// <summary>
-    /// The level meter, drawn entirely in code so every part keeps the proportions of the design.
-    /// The whole scale is drawn dim in its three colours; the level is the bright bar that grows
-    /// upwards from the floor and takes the colour of every zone it covers. A short strip under
-    /// each bar tells the colour of the last sampling window's peak, and a window that ran past
-    /// full scale turns the whole bar red as a warning.
-    /// </summary>
     public class PeakMeterPanel : FrameworkElement
     {
         /// <summary>The proportion of the meter's frame, from the design: 115 wide by 310 tall.</summary>

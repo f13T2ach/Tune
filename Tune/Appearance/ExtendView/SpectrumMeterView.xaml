@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:extend="clr-namespace:Tune.Appearance.ExtendView"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="600">
+             d:DesignHeight="500" d:DesignWidth="600">
 
     <extend:SpectrumMeterPanel Margin="10" Levels="{Binding AudioLevel.SpectrumBands}"/>
 </UserControl>

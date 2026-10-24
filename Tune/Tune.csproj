@@ -45,6 +45,9 @@
     <None Remove="Assets\Components\Thumb\SliderThumb.png" />
     <None Remove="Assets\Components\Timeline.png" />
     <None Remove="Assets\Components\TimelineEnd.png" />
+    <None Remove="Assets\ExPerview\Ex_Wheel_Perview.png" />
+    <None Remove="Assets\ExResources\Wheel\Ex_Wheel_Inner.png" />
+    <None Remove="Assets\ExResources\Wheel\Ex_Wheel_Outer.png" />
     <None Remove="Assets\Icons\BlankAlbum.png" />
     <None Remove="Assets\Icons\TuneDataBaseIcon.png" />
     <None Remove="Assets\Rajdhani\Rajdhani-Bold.ttf" />
@@ -68,6 +71,9 @@
       <CopyToOutputDirectory></CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Components\Thumb\SliderThumb.png" />
+    <Resource Include="Assets\ExPerview\Ex_Wheel_Perview.png" />
+    <Resource Include="Assets\ExResources\Wheel\Ex_Wheel_Inner.png" />
+    <Resource Include="Assets\ExResources\Wheel\Ex_Wheel_Outer.png" />
     <Resource Include="Assets\TuneWallpaper.png" />
   </ItemGroup>
 

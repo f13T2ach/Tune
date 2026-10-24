@@ -13,12 +13,9 @@ using System.Windows.Shapes;
 
 namespace Tune.Components
 {
-    /// <summary>
-    /// CheckBox.xaml 的交互逻辑
-    /// </summary>
     public partial class CheckBox : UserControl
     {
-        // 选中时的填充色：rgba(255,255,255,0.39) -> #63FFFFFF
+        // rgba(255,255,255,0.39)
         private static readonly Color CheckedFill = Color.FromArgb(0x63, 0xFF, 0xFF, 0xFF);
 
         private readonly SolidColorBrush _fillBrush = new SolidColorBrush(Colors.Transparent);
@@ -64,7 +61,7 @@ namespace Tune.Components
 
         #endregion
 
-        #region Checked / Unchecked 路由事件
+        #region Checked / Unchecked Routed Events
 
         public static readonly RoutedEvent CheckedEvent = EventManager.RegisterRoutedEvent(
             "Checked", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(CheckBox));
@@ -86,7 +83,7 @@ namespace Tune.Components
 
         #endregion
 
-        #region 交互
+        #region Interfaces
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {

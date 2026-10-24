@@ -5,10 +5,6 @@ using System.Windows.Media;
 
 namespace Tune.Appearance.ExtendView
 {
-    /// <summary>
-    /// Shows one vertical line per spectrum band. The length of the line is the loudness of that
-    /// band, so the shape of the music is readable at a glance without any grid behind it.
-    /// </summary>
     public class SpectrumMeterPanel : FrameworkElement
     {
         /// <summary>The bottom of the scale, in decibels below full scale.</summary>
