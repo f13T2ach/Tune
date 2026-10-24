@@ -1,6 +1,8 @@
 # Tune
 **A professional desktop music player, for playing music the way a mixing engineer or a DJ does**
 
+![Preview](https://raw.githubusercontent.com/f13T2ach/Tune/refs/heads/master/image.png)
+
 ![Platform](https://img.shields.io/badge/Platform-Windows-0078D4?style=flat-square)
 ![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?style=flat-square)
 ![UI](https://img.shields.io/badge/UI-WPF-68217A?style=flat-square)
@@ -9,6 +11,8 @@
 
 Tune is an extensible music player built on .NET. The move to Avalonia for cross-platform
 support has to wait for TuneII, or for TuneLite, the C++ version.
+
+简体中文的 README 在 English 版本结尾处。
 
 ## Getting started
 
@@ -139,6 +143,8 @@ Email: f12fds@163.com
 
 # Tune
 **像调音师或 DJ 一样播放音乐的专业桌面播放器**
+
+![预览](https://githubproxy.cc/https://raw.githubusercontent.com/f13T2ach/Tune/refs/heads/master/image.png)
 
 ![Platform](https://img.shields.io/badge/Platform-Windows-0078D4?style=flat-square)
 ![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?style=flat-square)
