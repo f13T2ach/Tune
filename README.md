@@ -133,6 +133,12 @@ it is practical.
 
 MIT. See [LICENSE.txt](LICENSE.txt).
 
+## Attribution
+
+Modified versions and distributed versions must credit the author `Sokasne Redmaple` in the
+source code, and the interface of modified and distributed versions must carry a clear
+attribution, or an author notice that is easy to reach.
+
 ## Contact
 
 Repository: <https://github.com/f13T2ach/Tune>
@@ -247,6 +253,10 @@ Fork 仓库，在分支上修改，然后提交 Pull Request。跟随附近的�
 ## 许可证
 
 MIT，见 [LICENSE.txt](LICENSE.txt)。
+
+## 署名要求
+
+要求修改版和分发版必须在源代码署作者名 `Sokasne Redmaple`，并在修改版和分发版的 UI 必须有明显署名或者不复杂可达的作者提示。
 
 ## 联系方式
 
